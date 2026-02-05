@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.1.0 Beta</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.1.1 Beta</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -32,8 +32,8 @@
             background-color: #000d21;
             background-image: var(--bg-mesh);
             background-attachment: fixed;
-            background-size: cover; /* 🟢 แก้ปัญหาพื้นหลังบนมือถือ */
-            margin: 0; padding: 10px; /* ลด Padding บนมือถือ */
+            background-size: cover;
+            margin: 0; padding: 10px;
             color: var(--text);
             min-height: 100vh;
             transition: 0.3s;
@@ -44,9 +44,9 @@
         .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
         .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 
-        /* 📱 Header Responsive */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
-        .header h2 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 800; white-space: nowrap; }
+        /* 🟢 Header Adjustment */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+        .header h2 { margin: 0; font-size: 22px; color: var(--primary); font-weight: 800; white-space: nowrap; letter-spacing: -0.5px; }
 
         .action-bar { display: flex; align-items: center; gap: 8px; }
         .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; color: var(--text); font-weight: 800; transition: 0.2s; flex-shrink: 0; }
@@ -59,7 +59,6 @@
         .top-section { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 1100px) { .top-section { grid-template-columns: 1.8fr 1.2fr; } }
 
-        /* 📱 Mobile Grid Adjustments */
         .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px; }
         @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(4, 1fr); } }
         
@@ -78,7 +77,7 @@
         .stat-card h3 { font-size: 10px; font-weight: 700; margin: 0; opacity: 0.8; text-transform: uppercase; }
         .stat-card .value { font-size: 24px; font-weight: 800; color: var(--primary); margin-top: 2px; }
 
-        .table-wrap { padding: 15px; overflow-x: auto; -webkit-overflow-scrolling: touch; } /* 🟢 เลื่อนลื่นๆ บนมือถือ */
+        .table-wrap { padding: 15px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 1300px; border-collapse: collapse; } 
         @media (min-width: 1300px) { table { width: 100%; table-layout: fixed; } }
         th { padding: 12px 10px; text-align: left; font-size: 13px; border-bottom: 2px solid var(--glass-border); color: var(--primary); font-weight: 800; }
@@ -95,7 +94,7 @@
         #refreshIndicator { height: 100%; background: var(--primary); width: 0%; transition: width 1s linear; }
 
         .copy-toast {
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); /* 🟢 ขยับขึ้นหลบนิ้วโป้ง */
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 20px;
             border-radius: 20px; font-weight: 700; display: none; z-index: 10000;
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
@@ -108,23 +107,21 @@
         .field-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: var(--font-main); box-sizing: border-box; font-size: 16px; }
         .field-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: var(--primary); }
 
-        /* 📱 Mobile Specific Media Query */
+        /* 📱 Mobile Specific Layout */
         @media (max-width: 768px) {
-            .header { justify-content: space-between; padding: 10px 15px; }
-            .header h2 { font-size: 18px; width: auto; }
-            .action-bar { margin-top: 5px; width: 100%; justify-content: space-between; } /* 🟢 กระจายปุ่มให้กดง่าย */
-            .search-container.expanded { width: 100%; position: absolute; left: 15px; right: 15px; z-index: 100; background: #0f1015; border: 1px solid var(--primary); }
+            .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .header h2 { font-size: 20px; width: 100%; margin-bottom: 5px; } /* 🟢 ชื่อเต็มบรรทัดแรก */
+            .action-bar { width: 100%; justify-content: space-between; margin-top: 0; } /* 🟢 ปุ่มเครื่องมือบรรทัดสอง เต็มจอ */
             
-            /* 🟢 จัด Stat Grid ใหม่บนมือถือ: แถวบน 3 (Total,ค้าง,รอ) แถวล่าง 2 (ทำ,ปิด) */
+            .search-container.expanded { width: 100%; position: absolute; left: 15px; right: 15px; top: 60px; z-index: 100; background: #0f1015; border: 1px solid var(--primary); }
+            
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            #stat-process, #stat-closed { grid-column: span 1; } /* หรือจะให้ span 1.5 ก็ได้ถ้าอยากให้เต็ม */
-            .stat-card { padding: 8px 2px; }
-            .stat-card .value { font-size: 20px; }
-
-            .top-section { grid-template-columns: 1fr; }
-            #chart_div { height: 200px; } /* ลดความสูงกราฟบนมือถือ */
+            #stat-process, #stat-closed { grid-column: span 1; } 
             
-            .modal-content { padding: 20px; margin-top: 20px; margin-bottom: 50px; } /* เว้นที่ให้คีย์บอร์ด */
+            .top-section { grid-template-columns: 1fr; }
+            #chart_div { height: 200px; }
+            
+            .modal-content { padding: 20px; margin-top: 20px; margin-bottom: 50px; }
         }
     </style>
 </head>
@@ -132,7 +129,7 @@
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA CS <span style="font-size:10px; opacity:0.5;">v.0.1.0</span></h2>
+        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.1.1 Beta</span></h2>
         <div class="action-bar">
             <div id="countdown" style="font-size:11px; font-weight:800; font-variant-numeric: tabular-nums; opacity:0.7;">05:00</div>
             
