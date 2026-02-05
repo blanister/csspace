@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.0.6.5</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <title id="tabTitle">ULKA : CS Dashboard v.0.0.7.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
         :root {
@@ -17,6 +17,8 @@
                        radial-gradient(at 50% 0%, hsla(225,39%,20%,1) 0, transparent 50%), 
                        radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
             --danger: #d63031;
+            --line: #2ecc71;
+            --fb: #3b5998;
         }
 
         [data-theme="dark"] {
@@ -41,7 +43,18 @@
         .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .header h2 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 600; }
+        .header h2 { margin: 0; font-size: 18px; color: var(--primary); font-weight: 800; }
+
+        .action-bar { display: flex; align-items: center; gap: 8px; }
+        .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; font-size: 14px; font-weight: 800; transition: 0.2s; color: var(--text); }
+        
+        .btn-l.active { background: var(--line); color: #fff; border-color: var(--line); box-shadow: 0 0 10px var(--line); }
+        .btn-fb.active { background: var(--fb); color: #fff; border-color: var(--fb); box-shadow: 0 0 10px var(--fb); }
+        .btn-search.active { background: var(--primary); color: #fff; }
+
+        .search-container { display: flex; align-items: center; background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); overflow: hidden; width: 0; transition: width 0.3s ease; }
+        .search-container.expanded { width: 160px; padding: 0 10px; }
+        .search-container input { border: none; background: transparent; padding: 8px; color: var(--text); outline: none; width: 100%; font-family: 'Sarabun'; font-size: 14px; }
 
         .refresh-bar-container { width: 100%; height: 4px; background: rgba(0,0,0,0.1); margin-bottom: 15px; border-radius: 10px; overflow: hidden; }
         #refreshBar { width: 0%; height: 100%; background: var(--primary); transition: width 1s linear; }
@@ -52,12 +65,14 @@
         .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(4, 1fr); } }
         
-        .person-card { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; border: 3px solid transparent; transition: 0.2s; color: white; cursor: pointer; }
-        .person-card.active-filter { border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .person-card { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; border: 3px solid transparent; transition: 0.3s; color: white; cursor: pointer; }
         
-        .card-best { background: #d63031; }
-        .card-friend { background: #0984e3; }
-        .card-ball { background: #e67e22; }
+        /* ✨ Glow Effect when Active */
+        .person-card.active-filter { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.6); transform: translateY(-2px); }
+        
+        .card-best { background: #d63031; } 
+        .card-friend { background: #0984e3; } 
+        .card-ball { background: #e67e22; } 
         .card-ohm { background: #f1c40f; color: #000; }
         
         .person-name { font-weight: 800; font-size: 16px; text-transform: uppercase; }
@@ -68,13 +83,10 @@
         .stat-card { padding: 15px; text-align: center; cursor: pointer; }
         .stat-card .value { font-size: 28px; font-weight: 600; color: var(--text); }
 
-        .copyable-name { cursor: pointer; color: var(--accent); font-weight: 600; text-decoration: underline dotted; }
-        .copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 8px 20px; border-radius: 20px; display: none; z-index: 10000; }
-
         .table-wrap { padding: 10px; overflow-x: auto; }
         table { width: 1200px; border-collapse: collapse; } 
         @media (min-width: 1200px) { table { width: 100%; table-layout: fixed; } }
-        th { padding: 12px 8px; text-align: left; font-size: 12px; border-bottom: 2px solid var(--glass-border); color: var(--primary); }
+        th { padding: 12px 8px; text-align: left; font-size: 12px; border-bottom: 2px solid var(--glass-border); color: var(--primary); font-weight: 800; }
         td { padding: 12px 8px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
 
         .badge { padding: 4px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #fff; text-align: center; display: block; }
@@ -82,32 +94,41 @@
         .status-closed { background: #34c759; } .status-process { background: #ffcc00; color: #000; } .status-pending { background: #8e8e93; }
 
         .btn-add { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+        
+        /* 📂 Interface Modal (บันทึกเคสใหม่) กลับมาแล้ว */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 9999; overflow-y: auto; }
         .modal-content { background: var(--glass); margin: 20px auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 25px; border: 1px solid var(--glass-border); }
-        input, select, textarea { width:100%; padding:10px; border-radius:10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; margin-top: 5px; box-sizing: border-box; }
+        .modal-content input, .modal-content select, .modal-content textarea { width:100%; padding:12px; border-radius:12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; margin-top: 5px; box-sizing: border-box; font-size: 16px; }
+        .modal-content label { font-size: 12px; font-weight: 600; opacity: 0.8; }
 
         #chart_div { width: 100%; height: 220px; }
+        .copyable-name { cursor: pointer; color: var(--accent); font-weight: 600; text-decoration: underline dotted; }
+        .copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 8px 20px; border-radius: 20px; display: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.6.5</span></h2>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <div id="countdownText" style="font-size: 12px; font-weight: 600;">05:00</div>
+        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.7.0 Alpha</span></h2>
+        <div class="action-bar">
+            <div id="countdownText" style="font-size: 11px; font-weight: 600; opacity: 0.7;">05:00</div>
+            <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="applyFilters()"></div>
+            <div class="icon-btn btn-search" onclick="toggleSearch()">🔍</div>
+            <div class="icon-btn btn-l" onclick="toggleChannelFilter('Line OA', this)">L</div>
+            <div class="icon-btn btn-fb" onclick="toggleChannelFilter('Facebook', this)">FB</div>
             <button class="btn-add" onclick="openAddModal()">+ เพิ่มเคส</button>
-            <button onclick="toggleTheme()" class="filter-btn" id="themeBtn" style="padding: 8px 12px; border-radius: 10px; cursor: pointer; background: var(--glass); color: var(--text); border: 1px solid var(--glass-border);">☀</button>
+            <button onclick="toggleTheme()" class="icon-btn" id="themeBtn">☀</button>
         </div>
     </div>
-    
+
     <div class="refresh-bar-container"><div id="refreshBar"></div></div>
 
     <div class="main-grid">
         <div style="display: flex; flex-direction: column; gap: 15px;">
             <div class="leaderboard-grid" id="csLeaderboard"></div>
             <div class="stats-grid">
-                <div class="glass-panel stat-card" onclick="setQuickFilter('all')"><h3>งานค้างทั้งหมด</h3><div class="value" id="totalTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="setQuickFilter('all')"><h3>งานค้าง</h3><div class="value" id="totalTickets">0</div></div>
                 <div class="glass-panel stat-card" onclick="setQuickFilter('รอดำเนินการ')"><h3>🔴 รอ</h3><div class="value" id="pendingTickets">0</div></div>
                 <div class="glass-panel stat-card" onclick="setQuickFilter('กำลังดำเนินการ')"><h3>🟡 ทำ</h3><div class="value" id="processTickets">0</div></div>
                 <div class="glass-panel stat-card" onclick="setQuickFilter('ปิดเคส')"><h3>🟢 ปิด</h3><div class="value" id="closedTickets">0</div></div>
@@ -131,7 +152,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div style="grid-column: span 2;"><label>ผู้รับผิดชอบ</label>
                     <select name="owner" id="ownerSelect" required onchange="savePreferredOwner()">
-                        <option value="">-- เลือก --</option>
+                        <option value="">-- เลือกพนักงาน --</option>
                         <option value="Best">Best</option><option value="Friend">Friend</option><option value="Ball">Ball</option><option value="Ohm">Ohm</option>
                     </select>
                 </div>
@@ -149,11 +170,11 @@
                 </div>
                 <div><label>ความด่วน</label><select name="urgency"><option value="1.ด่วนมาก">1.ด่วนมาก</option><option value="2.ปานกลาง">2.ปานกลาง</option><option value="3.ไม่รีบ" selected>3.ไม่รีบ</option></select></div>
                 <div><label>ช่องทาง</label><select name="channel" required><option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option></select></div>
-                <div style="grid-column: span 2;"><label>ปัญหา</label><textarea name="issue" rows="2"></textarea></div>
-                <div style="grid-column: span 2;"><label>วิธีแก้</label><textarea name="solution" rows="2"></textarea></div>
+                <div style="grid-column: span 2;"><label>ปัญหาที่แจ้ง</label><textarea name="issue" rows="2"></textarea></div>
+                <div style="grid-column: span 2;"><label>วิธีแก้เบื้องต้น</label><textarea name="solution" rows="2"></textarea></div>
             </div>
-            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:20px; padding:15px; color:#fff;">💾 บันทึกข้อมูล</button>
-            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; margin-top:10px; opacity:0.5; border:none; background:none; cursor:pointer; color:inherit;">ยกเลิก</button>
+            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:20px; padding:15px; color:#fff;">💾 บันทึกข้อมูลลงชีต</button>
+            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; margin-top:10px; border:none; background:none; cursor:pointer; color:inherit; opacity:0.5;">ยกเลิก</button>
         </form>
     </div>
 </div>
@@ -164,16 +185,42 @@
     google.charts.load('current', {'packages':['corechart']});
     const SHEET_ID = '1yP4soDSWwjomPVP3_udd2m3SZlm5j5XVo32tbKGvwdA';
     const SHEET_GID = '816388223';
-    let allTickets = [], currentQuickFilter = 'all', currentOwnerFilter = null;
+    const REFRESH_TIME = 300; let countdown = REFRESH_TIME;
+    let allTickets = [], currentQuickFilter = 'all', currentOwnerFilter = null, currentChannelFilter = 'all';
+
+    function startCountdown() {
+        setInterval(() => {
+            countdown--;
+            const min = Math.floor(countdown / 60), sec = countdown % 60;
+            document.getElementById('countdownText').innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+            document.getElementById('refreshBar').style.width = ((REFRESH_TIME - countdown) / REFRESH_TIME) * 100 + "%";
+            if (countdown <= 0) location.reload();
+        }, 1000);
+    }
 
     function openAddModal() {
         document.getElementById('ticketForm').reset();
-        const preferred = localStorage.getItem('preferredOwner');
-        if (preferred) document.getElementById('ownerSelect').value = preferred;
+        const pref = localStorage.getItem('preferredOwner');
+        if(pref) document.getElementById('ownerSelect').value = pref;
         document.getElementById('addModal').style.display = 'block';
     }
 
     function savePreferredOwner() { localStorage.setItem('preferredOwner', document.getElementById('ownerSelect').value); }
+
+    function toggleSearch() {
+        const wrap = document.getElementById('searchWrap');
+        wrap.classList.toggle('expanded');
+        if(wrap.classList.contains('expanded')) document.getElementById('searchInput').focus();
+    }
+
+    function toggleChannelFilter(c, btn) {
+        currentChannelFilter = (currentChannelFilter === c) ? 'all' : c;
+        document.querySelectorAll('.btn-l, .btn-fb').forEach(b => b.classList.remove('active'));
+        if(currentChannelFilter !== 'all') btn.classList.add('active');
+        renderTable(allTickets);
+    }
+
+    function applyFilters() { renderTable(allTickets); }
 
     function copyCustomerName(name) {
         navigator.clipboard.writeText(name).then(() => {
@@ -183,17 +230,68 @@
         });
     }
 
-    function toggleOwnerFilter(name) {
-        currentOwnerFilter = (currentOwnerFilter === name) ? null : name;
-        if(currentOwnerFilter) currentQuickFilter = 'all';
+    window.handleGoogleResponse = (json) => {
+        allTickets = json.table.rows.map(row => {
+            const getV = i => (row.c[i] && (row.c[i].f || row.c[i].v)) ? (row.c[i].f || row.c[i].v) : "-";
+            return { ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), status: getV(4), assignee: getV(5), channel: getV(6), customer: getV(11), solution: getV(13), type: getV(14), model: getV(15), issue: getV(20) };
+        }).filter(it => it.ticketId !== "-" && it.ticketId !== "Ticket ID");
+        
+        allTickets.sort((a, b) => {
+            const p = { "1.ด่วนมาก": 1, "2.ปานกลาง": 2, "3.ไม่รีบ": 3 };
+            const priorityDiff = (p[a.urgent] || 99) - (p[b.urgent] || 99);
+            if (priorityDiff !== 0) return priorityDiff;
+            return (a.status.includes("ดำ") ? 0 : 1) - (b.status.includes("ดำ") ? 0 : 1);
+        });
         renderTable(allTickets);
+        startCountdown();
+    };
+
+    function renderTable(data) {
+        const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
+        let stats = { t:0, p:0, pr:0, c:0 };
+        let csStats = { "Best": 0, "Friend": 0, "Ball": 0, "Ohm": 0 };
+
+        allTickets.forEach(r => {
+            const isClosed = r.status.includes("ปิด");
+            if(r.status.includes("รอ")) stats.p++; else if(r.status.includes("ดำ")) stats.pr++; else if(isClosed) stats.c++;
+            if(!isClosed) { stats.t++; if(csStats.hasOwnProperty(r.owner)) csStats[r.owner]++; }
+        });
+
+        const nameClassMap = { "Best": "card-best", "Friend": "card-friend", "Ball": "card-ball", "Ohm": "card-ohm" };
+        document.getElementById('csLeaderboard').innerHTML = Object.entries(csStats).map(([name, count]) => `
+            <div class="person-card ${nameClassMap[name]} ${currentOwnerFilter === name ? 'active-filter' : ''}" onclick="toggleOwnerFilter('${name}')">
+                <span class="person-name">${name}</span><span class="person-count">${count}</span>
+            </div>
+        `).join('');
+
+        let display = data.filter(r => {
+            const matchStatus = (currentQuickFilter === 'all') ? !r.status.includes("ปิด") : r.status.includes(currentQuickFilter);
+            const matchOwner = currentOwnerFilter ? r.owner === currentOwnerFilter : true;
+            const matchChannel = (currentChannelFilter === 'all') ? true : r.channel.includes(currentChannelFilter);
+            const matchSearch = Object.values(r).some(v => String(v).toLowerCase().includes(document.getElementById("searchInput").value.toLowerCase()));
+            return matchStatus && matchOwner && matchChannel && matchSearch;
+        });
+
+        display.forEach((r, i) => {
+            tbody.innerHTML += `<tr>
+                <td style="opacity:0.4">${i+1}</td><td style="font-weight:600; color:var(--primary)">${r.ticketId}</td><td>${r.date}</td><td>${r.channel}</td>
+                <td><span class="copyable-name" onclick="copyCustomerName('${r.customer}')">${r.customer} 📋</span></td>
+                <td><b>${r.model}</b><br><small style="opacity:0.7">${r.type}</small></td>
+                <td>${r.issue}</td><td style="color:#27ae60">${r.solution}</td><td style="font-weight:600">${r.owner}</td>
+                <td><span class="badge ${r.urgent.includes("1")?'u-vhigh':r.urgent.includes("2")?'u-medium':'u-low'}">${r.urgent}</span></td>
+                <td><span class="badge ${r.status.includes("ปิด")?'status-closed':r.status.includes("ดำ")?'status-process':'status-pending'}">${r.status}</span></td>
+                <td>${r.assignee}</td>
+            </tr>`;
+        });
+        document.getElementById("totalTickets").innerText = stats.t; 
+        document.getElementById("pendingTickets").innerText = stats.p; 
+        document.getElementById("processTickets").innerText = stats.pr; 
+        document.getElementById("closedTickets").innerText = stats.c;
+        drawChart(allTickets);
     }
 
-    function setQuickFilter(status) {
-        currentQuickFilter = status;
-        currentOwnerFilter = null;
-        renderTable(allTickets);
-    }
+    function toggleOwnerFilter(name) { currentOwnerFilter = (currentOwnerFilter === name) ? null : name; renderTable(allTickets); }
+    function setQuickFilter(s) { currentQuickFilter = s; currentOwnerFilter = null; renderTable(allTickets); }
 
     function drawChart(data) {
         const modelCounts = {};
@@ -211,65 +309,6 @@
         };
         const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(google.visualization.arrayToDataTable(chartData), options);
-    }
-
-    window.handleGoogleResponse = (json) => {
-        allTickets = json.table.rows.map(row => {
-            const getV = i => (row.c[i] && (row.c[i].f || row.c[i].v)) ? (row.c[i].f || row.c[i].v) : "-";
-            return { ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), status: getV(4), assignee: getV(5), channel: getV(6), customer: getV(11), solution: getV(13), type: getV(14), model: getV(15), issue: getV(20) };
-        }).filter(it => it.ticketId !== "-" && it.ticketId !== "Ticket ID");
-        
-        // 🟢 ระบบเรียงลำดับอัจฉริยะ (Smart Sorting) กลับมาแล้ว!
-        allTickets.sort((a, b) => {
-            const p = { "1.ด่วนมาก": 1, "2.ปานกลาง": 2, "3.ไม่รีบ": 3 };
-            const priorityDiff = (p[a.urgent] || 99) - (p[b.urgent] || 99);
-            if (priorityDiff !== 0) return priorityDiff;
-            const s = { "กำลังดำเนินการ": 1, "รอดำเนินการ": 2, "ปิดเคส": 3 };
-            return (s[a.status] || 99) - (s[b.status] || 99);
-        });
-        
-        renderTable(allTickets);
-    };
-
-    function renderTable(data) {
-        const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
-        let stats = { t:0, p:0, pr:0, c:0 };
-        let csStats = { "Best": 0, "Friend": 0, "Ball": 0, "Ohm": 0 };
-
-        allTickets.forEach(r => {
-            const isClosed = r.status.includes("ปิด");
-            if(r.status.includes("รอ")) stats.p++; else if(r.status.includes("ดำ")) stats.pr++; else if(isClosed) stats.c++;
-            if(!isClosed) { stats.t++; if(csStats.hasOwnProperty(r.owner)) csStats[r.owner]++; }
-        });
-
-        drawChart(allTickets);
-
-        const nameClassMap = { "Best": "card-best", "Friend": "card-friend", "Ball": "card-ball", "Ohm": "card-ohm" };
-        document.getElementById('csLeaderboard').innerHTML = Object.entries(csStats).map(([name, count]) => `
-            <div class="person-card ${nameClassMap[name]} ${currentOwnerFilter === name ? 'active-filter' : ''}" onclick="toggleOwnerFilter('${name}')">
-                <span class="person-name">${name}</span><span class="person-count">${count}</span>
-            </div>
-        `).join('');
-
-        let display = data.filter(r => {
-            const matchStatus = (currentQuickFilter === 'all') ? !r.status.includes("ปิด") : r.status.includes(currentQuickFilter);
-            const matchOwner = currentOwnerFilter ? r.owner === currentOwnerFilter : true;
-            return matchStatus && matchOwner;
-        });
-
-        display.forEach((r, i) => {
-            tbody.innerHTML += `<tr>
-                <td style="opacity:0.4">${i+1}</td><td style="font-weight:600; color:var(--primary)">${r.ticketId}</td><td>${r.date}</td><td>${r.channel}</td>
-                <td><span class="copyable-name" onclick="copyCustomerName('${r.customer}')">${r.customer} 📋</span></td>
-                <td><b>${r.model}</b><br><small style="opacity:0.7">${r.type}</small></td>
-                <td>${r.issue}</td><td style="color:#27ae60">${r.solution}</td><td style="font-weight:600">${r.owner}</td>
-                <td><span class="badge ${r.urgent.includes("1")?'u-vhigh':r.urgent.includes("2")?'u-medium':'u-low'}">${r.urgent}</span></td>
-                <td><span class="badge ${r.status.includes("ปิด")?'status-closed':r.status.includes("ดำ")?'status-process':'status-pending'}">${r.status}</span></td>
-                <td>${r.assignee}</td>
-            </tr>`;
-        });
-        document.getElementById("totalTickets").innerText = stats.t; document.getElementById("pendingTickets").innerText = stats.p; 
-        document.getElementById("processTickets").innerText = stats.pr; document.getElementById("closedTickets").innerText = stats.c;
     }
 
     const script = document.createElement('script');
