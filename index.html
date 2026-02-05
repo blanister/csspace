@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.0.9.9</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.1.0 Beta</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -32,33 +32,38 @@
             background-color: #000d21;
             background-image: var(--bg-mesh);
             background-attachment: fixed;
-            margin: 0; padding: 15px;
+            background-size: cover; /* 🟢 แก้ปัญหาพื้นหลังบนมือถือ */
+            margin: 0; padding: 10px; /* ลด Padding บนมือถือ */
             color: var(--text);
             min-height: 100vh;
             transition: 0.3s;
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
         .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; }
-        .header h2 { margin: 0; font-size: 22px; color: var(--primary); font-weight: 800; }
+        /* 📱 Header Responsive */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+        .header h2 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 800; white-space: nowrap; }
 
         .action-bar { display: flex; align-items: center; gap: 8px; }
-        .icon-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; color: var(--text); font-weight: 800; transition: 0.2s; }
+        .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; color: var(--text); font-weight: 800; transition: 0.2s; flex-shrink: 0; }
         .icon-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
         
         .search-container { display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 20px; border: 1px solid var(--glass-border); overflow: hidden; width: 0; transition: width 0.3s ease; }
-        .search-container.expanded { width: 170px; padding: 0 10px; }
-        .search-container input { border: none; background: transparent; padding: 8px; color: #fff; outline: none; width: 100%; font-family: var(--font-main); }
+        .search-container.expanded { width: 140px; padding: 0 10px; }
+        .search-container input { border: none; background: transparent; padding: 8px; color: #fff; outline: none; width: 100%; font-family: var(--font-main); font-size: 14px; }
 
         .top-section { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 1100px) { .top-section { grid-template-columns: 1.8fr 1.2fr; } }
 
-        .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 5px; }
+        /* 📱 Mobile Grid Adjustments */
+        .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px; }
         @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(4, 1fr); } }
-        .person-card { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; color: white; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        
+        .person-card { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px; color: white; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
         .person-card.active-filter { border-color: #fff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .card-best { background: linear-gradient(135deg, #d63031, #ff4757); } 
         .card-friend { background: linear-gradient(135deg, #0984e3, #2e86de); } 
@@ -67,54 +72,77 @@
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         @media (min-width: 600px) { .stats-grid { grid-template-columns: repeat(5, 1fr); } }
-        .stat-card { padding: 15px 5px; text-align: center; cursor: pointer; border: 1px solid var(--glass-border); transition: 0.2s; }
+        
+        .stat-card { padding: 12px 5px; text-align: center; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 16px; }
         .stat-card.active-status { background: rgba(255, 140, 0, 0.15); border-color: var(--primary); }
-        .stat-card h3 { font-size: 11px; font-weight: 700; margin: 0; opacity: 0.8; }
-        .stat-card .value { font-size: 28px; font-weight: 800; color: var(--primary); }
+        .stat-card h3 { font-size: 10px; font-weight: 700; margin: 0; opacity: 0.8; text-transform: uppercase; }
+        .stat-card .value { font-size: 24px; font-weight: 800; color: var(--primary); margin-top: 2px; }
 
-        .table-wrap { padding: 15px; overflow-x: auto; width: 100%; }
+        .table-wrap { padding: 15px; overflow-x: auto; -webkit-overflow-scrolling: touch; } /* 🟢 เลื่อนลื่นๆ บนมือถือ */
         table { width: 1300px; border-collapse: collapse; } 
         @media (min-width: 1300px) { table { width: 100%; table-layout: fixed; } }
-        th { padding: 15px; text-align: left; font-size: 13px; border-bottom: 2px solid var(--glass-border); color: var(--primary); font-weight: 800; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; }
+        th { padding: 12px 10px; text-align: left; font-size: 13px; border-bottom: 2px solid var(--glass-border); color: var(--primary); font-weight: 800; }
+        td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; font-size: 14px; }
 
         .customer-name { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: underline dotted; }
         [data-theme="light"] .customer-name { color: #0055ff; }
 
-        .badge { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; color: #fff; display: inline-block; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: #fff; display: inline-block; white-space: nowrap; }
         .u-vhigh { background: #ff3b30; } .u-medium { background: #ff9500; } .u-low { background: #007aff; }
         .status-closed { background: #34c759; } .status-process { background: #f1c40f; color: #000; } .status-pending { background: #8e8e93; }
 
-        .refresh-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: -5px; border-radius: 10px; overflow: hidden; }
+        .refresh-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: -8px; border-radius: 10px; overflow: hidden; }
         #refreshIndicator { height: 100%; background: var(--primary); width: 0%; transition: width 1s linear; }
 
-        /* 🟢 Copy Toast Styling */
         .copy-toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px;
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); /* 🟢 ขยับขึ้นหลบนิ้วโป้ง */
+            background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 20px;
             border-radius: 20px; font-weight: 700; display: none; z-index: 10000;
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Kanit', sans-serif;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Kanit', sans-serif; font-size: 14px;
+            white-space: nowrap;
         }
 
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 9999; padding: 20px; }
-        .modal-content { background: rgba(0, 15, 40, 0.95); border: 1px solid var(--glass-border); margin: auto; padding: 30px; width: 100%; max-width: 550px; border-radius: 25px; color: #fff; }
-        .field-input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: var(--font-main); box-sizing: border-box; font-size: 16px; }
-        .field-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; color: var(--primary); }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 9999; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .modal-content { background: rgba(0, 15, 40, 0.95); border: 1px solid var(--glass-border); margin: auto; padding: 25px; width: 100%; max-width: 550px; border-radius: 25px; color: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .field-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: var(--font-main); box-sizing: border-box; font-size: 16px; }
+        .field-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: var(--primary); }
+
+        /* 📱 Mobile Specific Media Query */
+        @media (max-width: 768px) {
+            .header { justify-content: space-between; padding: 10px 15px; }
+            .header h2 { font-size: 18px; width: auto; }
+            .action-bar { margin-top: 5px; width: 100%; justify-content: space-between; } /* 🟢 กระจายปุ่มให้กดง่าย */
+            .search-container.expanded { width: 100%; position: absolute; left: 15px; right: 15px; z-index: 100; background: #0f1015; border: 1px solid var(--primary); }
+            
+            /* 🟢 จัด Stat Grid ใหม่บนมือถือ: แถวบน 3 (Total,ค้าง,รอ) แถวล่าง 2 (ทำ,ปิด) */
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            #stat-process, #stat-closed { grid-column: span 1; } /* หรือจะให้ span 1.5 ก็ได้ถ้าอยากให้เต็ม */
+            .stat-card { padding: 8px 2px; }
+            .stat-card .value { font-size: 20px; }
+
+            .top-section { grid-template-columns: 1fr; }
+            #chart_div { height: 200px; } /* ลดความสูงกราฟบนมือถือ */
+            
+            .modal-content { padding: 20px; margin-top: 20px; margin-bottom: 50px; } /* เว้นที่ให้คีย์บอร์ด */
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:11px; opacity:0.5;">v.0.0.9.9 Alpha</span></h2>
+        <h2>📊 ULKA CS <span style="font-size:10px; opacity:0.5;">v.0.1.0</span></h2>
         <div class="action-bar">
-            <div id="countdown" style="font-size:12px; font-weight:800;">05:00</div>
+            <div id="countdown" style="font-size:11px; font-weight:800; font-variant-numeric: tabular-nums; opacity:0.7;">05:00</div>
+            
             <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="renderTable(allTickets)"></div>
             <div class="icon-btn" onclick="toggleSearch()">🔍</div>
+            
             <div class="icon-btn" id="btnLine" onclick="toggleChannelFilter('Line OA', this)">L</div>
             <div class="icon-btn" id="btnFb" onclick="toggleChannelFilter('Facebook', this)">f</div>
-            <button style="background:var(--primary); color:#000; border:none; padding:10px 22px; border-radius:12px; font-weight:800; cursor:pointer; font-family:var(--font-main);" onclick="openAddModal()">+ เพิ่มเคสใหม่</button>
+            
+            <button style="background:var(--primary); color:#000; border:none; padding:8px 15px; border-radius:12px; font-weight:800; cursor:pointer; font-family:var(--font-main); font-size:13px;" onclick="openAddModal()">+ เพิ่ม</button>
             <button onclick="toggleTheme()" class="icon-btn" id="themeBtn">☀</button>
         </div>
     </div>
@@ -150,14 +178,14 @@
             <label class="field-label">พนักงานผู้รับผิดชอบ</label>
             <select name="owner" id="ownerSelect" class="field-input" required><option value="Best">Best</option><option value="Friend">Friend</option><option value="Ball">Ball</option><option value="Ohm">Ohm</option></select>
             <label class="field-label">ชื่อลูกค้า</label><input name="customerName" class="field-input" required placeholder="ชื่อลูกค้า...">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div><label class="field-label">ประเภทสินค้า</label><select name="type" class="field-input" required><option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="FUME">FUME</option><option value="BLENDER">BLENDER</option><option value="SODA">SODA</option><option value="เครื่องกรองน้ำ">เครื่องกรองน้ำ</option><option value="ปั๊มดูดน้ำจากถัง">ปั๊มดูดน้ำจากถัง</option><option value="ตู้แช่นม">ตู้แช่นม</option></select></div>
                 <div><label class="field-label">รุ่นสินค้า</label><select name="model" class="field-input" required>
                     <option value="">-- เลือกรุ่น --</option>
                     <option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option><option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option><option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option><option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option><option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option><option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option><option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option><option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option><option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
                 </select></div>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div><label class="field-label">ความเร่งด่วน</label><select name="urgency" class="field-input"><option value="1.ด่วนมาก">1.ด่วนมาก</option><option value="2.ปานกลาง">2.ปานกลาง</option><option value="3.ไม่รีบ" selected>3.ไม่รีบ</option></select></div>
                 <div><label class="field-label">ช่องทาง</label><select name="channel" class="field-input"><option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option></select></div>
             </div>
@@ -248,7 +276,6 @@
         }).forEach((r, i) => {
             let uC = r.urgent.includes("1") ? "u-vhigh" : r.urgent.includes("2") ? "u-medium" : "u-low";
             let sC = r.status.includes("ปิด") ? "status-closed" : r.status.includes("ดำ") ? "status-process" : "status-pending";
-            // 🟢 เพิ่ม onclick เพื่อเรียก copyCustomerName
             tbody.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:700; color:var(--primary)">${r.ticketId}</td><td>${r.date}</td><td><span class="customer-name" onclick="copyCustomerName('${r.customer}')">${r.customer}</span></td><td><b>${r.model}</b><br><small style="opacity:0.6; font-size:11px;">${r.type}</small></td><td>${r.issue}</td><td>${r.solution}</td><td>${r.owner}</td><td><span class="badge ${uC}">${r.urgent}</span></td><td><span class="badge ${sC}">${r.status}</span></td><td>${r.assignee}</td></tr>`;
         });
         
@@ -278,7 +305,6 @@
         chart.draw(chartData, options);
     }
 
-    // 🟢 ฟังก์ชัน Copy + Toast Notification
     function copyCustomerName(name) {
         navigator.clipboard.writeText(name).then(() => {
             const toast = document.getElementById('copyToast');
