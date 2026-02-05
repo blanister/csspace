@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="tabTitle">ULKA : CS Dashboard v.0.0.4.8</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --primary: #003399;
+            --accent: #007aff;
+            --text: #1d1d1f;
+            --bg-mesh: radial-gradient(at 0% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                       radial-gradient(at 50% 0%, hsla(225,39%,20%,1) 0, transparent 50%), 
+                       radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            --danger: #d63031;
+        }
+
+        [data-theme="dark"] {
+            --glass: rgba(15, 15, 25, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --primary: #64d2ff;
+            --accent: #5ac8fa;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-image: var(--bg-mesh);
+            background-attachment: fixed;
+            margin: 0; padding: 15px;
+            color: var(--text);
+            min-height: 100vh;
+            transition: 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container { max-width: 1450px; margin: 0 auto; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .header h2 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 600; }
+
+        .refresh-bar-container { width: 100%; height: 4px; background: rgba(0,0,0,0.1); margin-bottom: 15px; border-radius: 10px; overflow: hidden; }
+        #refreshBar { width: 0%; height: 100%; background: var(--primary); transition: width 1s linear; }
+
+        .leaderboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .person-card { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .person-name { font-weight: 600; font-size: 12px; opacity: 0.8; }
+        .person-count { font-size: 18px; font-weight: 800; color: var(--primary); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stat-card { padding: 15px; text-align: center; cursor: pointer; }
+        .stat-card h3 { font-size: 12px; margin: 0; opacity: 0.7; }
+        .stat-card .value { font-size: 28px; font-weight: 600; margin-top: 5px; color: var(--text); }
+
+        .controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-box { flex-grow: 1; padding: 12px 20px; border-radius: 15px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--text); outline: none; font-size: 14px; min-width: 200px; }
+        .filter-btn { background: var(--glass); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 12px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; }
+        .filter-btn.active { background: var(--primary); color: #000; }
+
+        /* 📱 Mobile Table Support */
+        .table-wrap { padding: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 1200px; border-collapse: collapse; } /* Fix width for scroll on mobile */
+        @media (min-width: 1200px) { table { width: 100%; table-layout: fixed; } }
+        
+        th { padding: 12px 8px; text-align: left; font-size: 12px; border-bottom: 2px solid var(--glass-border); color: var(--primary); }
+        td { padding: 12px 8px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text); vertical-align: top; }
+
+        .key-highlight { color: var(--danger); font-weight: bold; text-decoration: underline; }
+        .badge { padding: 4px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #fff; text-align: center; display: block; }
+        .u-vhigh { background: #ff3b30; } .u-medium { background: #ff9500; } .u-low { background: #007aff; }
+        .status-closed { background: #34c759; } .status-process { background: #ffcc00; color: #000; } .status-pending { background: #8e8e93; }
+
+        .btn-add { background: var(--primary); color: #000; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .btn-edit { background: rgba(0,0,0,0.05); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: var(--text); font-size: 16px; }
+        [data-theme="dark"] .btn-edit { background: rgba(255,255,255,0.1); }
+
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 9999; overflow-y: auto; }
+        .modal-content { background: var(--glass); margin: 20px auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 25px; border: 1px solid var(--glass-border); }
+        input, select, textarea { width:100%; padding:10px; border-radius:10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; font-size: 16px; box-sizing: border-box; }
+        
+        /* Column Widths (Fixed for Desktop, scroll on mobile) */
+        @media (min-width: 1200px) {
+            th:nth-child(1), td:nth-child(1) { width: 30px; } th:nth-child(2), td:nth-child(2) { width: 60px; }
+            th:nth-child(3), td:nth-child(3) { width: 70px; } th:nth-child(4), td:nth-child(4) { width: 70px; }
+            th:nth-child(5), td:nth-child(5) { width: 100px; } th:nth-child(6), td:nth-child(6) { width: 90px; }
+            th:nth-child(7), td:nth-child(7) { width: 18%; } th:nth-child(8), td:nth-child(8) { width: 18%; }
+            th:nth-child(9), td:nth-child(9) { width: 60px; } th:nth-child(10), td:nth-child(10) { width: 80px; }
+            th:nth-child(11), td:nth-child(11) { width: 80px; } th:nth-child(12), td:nth-child(12) { width: 70px; }
+            th:nth-child(13), td:nth-child(13) { width: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="glass-panel header">
+        <h2>📊 ULKA : CS Dashboard</h2>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div id="countdownText" style="font-size: 12px;">05:00</div>
+            <button class="btn-add" onclick="openAddModal()">+</button>
+            <button onclick="toggleTheme()" class="filter-btn" id="themeBtn">☀</button>
+        </div>
+    </div>
+    
+    <div class="refresh-bar-container"><div id="refreshBar"></div></div>
+    <div class="leaderboard-grid" id="csLeaderboard"></div>
+
+    <div class="stats-grid">
+        <div class="glass-panel stat-card" onclick="setQuickFilter('all')"><h3>ค้าง</h3><div class="value" id="totalTickets">0</div></div>
+        <div class="glass-panel stat-card" onclick="setQuickFilter('รอดำเนินการ')"><h3>🔴 รอ</h3><div class="value" id="pendingTickets">0</div></div>
+        <div class="glass-panel stat-card" onclick="setQuickFilter('กำลังดำเนินการ')"><h3>🟡 ทำ</h3><div class="value" id="processTickets">0</div></div>
+        <div class="glass-panel stat-card" onclick="setQuickFilter('ปิดเคส')"><h3>🟢 ปิด</h3><div class="value" id="closedTickets">0</div></div>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="searchInput" class="glass-panel search-box" placeholder="🔍 ค้นหาลูกค้า/รุ่น..." onkeyup="applyFilters()">
+        <button class="filter-btn" onclick="toggleChannelFilter('Line OA', this)">🟢 Line</button>
+        <button class="filter-btn" onclick="toggleChannelFilter('Facebook', this)">📘 FB</button>
+    </div>
+
+    <div class="glass-panel table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>รหัส</th><th>วันที่</th><th>ช่องทาง</th><th>ลูกค้า</th><th>รุ่น</th><th>ปัญหา</th><th>วิธีแก้ไข</th><th>CS</th><th>ด่วน</th><th>สถานะ</th><th>รับต่อ</th><th>⚙️</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="ticketModal" class="modal">
+    <div class="modal-content glass-panel">
+        <h2 id="modalTitle" style="margin:0 0 20px 0; color:var(--primary); font-size: 18px;">📂 จัดการเคส</h2>
+        <form id="ticketForm">
+            <input type="hidden" name="rowIndex" id="editRowIndex" value="">
+            <input type="hidden" name="action" id="formAction" value="add">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="grid-column: span 2;"><label>ผู้รับผิดชอบ</label>
+                    <select name="owner" id="ownerSelect" required onchange="savePreferredOwner()">
+                        <option value="">-- เลือก --</option>
+                        <option value="Best">Best</option><option value="Friend">Friend</option><option value="Ball">Ball</option><option value="Ohm">Ohm</option>
+                    </select>
+                </div>
+                <div><label>ความเร่งรีบ</label><select name="urgency" id="urgencySelect"><option value="1.ด่วนมาก">1.ด่วนมาก</option><option value="2.ปานกลาง">2.ปานกลาง</option><option value="3.ไม่รีบ" selected>3.ไม่รีบ</option></select></div>
+                <div><label>ช่องทาง</label><select name="channel" id="channelSelect" required><option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option></select></div>
+                <div style="grid-column: span 2;"><label>ชื่อลูกค้า</label><input name="customerName" id="customerInput" required></div>
+                <div><label>ประเภทเครื่อง</label><select name="type" id="typeSelect" required><option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="ตู้แช่นม">ตู้แช่นม</option></select></div>
+                <div><label>รุ่น</label><select name="model" id="modelSelect" required>
+                    <option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option><option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option><option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option><option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option><option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option><option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option><option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option><option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option><option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
+                </select></div>
+                <div style="grid-column: span 2;"><label>ปัญหา</label><textarea name="issue" id="issueInput" rows="2"></textarea></div>
+                <div style="grid-column: span 2;"><label>วิธีแก้ไข</label><textarea name="solution" id="solutionInput" rows="2"></textarea></div>
+                <div><label>สถานะ</label><select name="status" id="statusSelect"><option value="รอดำเนินการ">รอดำเนินการ</option><option value="กำลังดำเนินการ">กำลังดำเนินการ</option><option value="ปิดเคส">ปิดเคส</option></select></div>
+                <div><label>รับช่วงต่อ</label><input name="assignee" id="assigneeInput"></div>
+            </div>
+            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:15px; padding:12px;">💾 บันทึก</button>
+            <button type="button" onclick="document.getElementById('ticketModal').style.display='none'" style="width:100%; margin-top:10px; opacity:0.5;">ยกเลิก</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const REFRESH_TIME = 300; let countdown = REFRESH_TIME;
+    const SHEET_ID = '1yP4soDSWwjomPVP3_udd2m3SZlm5j5XVo32tbKGvwdA';
+    const SHEET_GID = '816388223'; 
+    let allTickets = [], currentQuickFilter = 'all', currentChannelFilter = 'all';
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeBtn').innerText = savedTheme === 'dark' ? '☾' : '☀';
+
+    function toggleTheme() {
+        const t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', t);
+        document.getElementById('themeBtn').innerText = t === 'dark' ? '☾' : '☀';
+        localStorage.setItem('theme', t);
+    }
+
+    function openAddModal() {
+        document.getElementById('modalTitle').innerText = "📂 บันทึกเคสใหม่";
+        document.getElementById('formAction').value = "add";
+        document.getElementById('ticketForm').reset();
+        const preferred = localStorage.getItem('preferredOwner');
+        if (preferred) document.getElementById('ownerSelect').value = preferred;
+        document.getElementById('ticketModal').style.display = 'block';
+    }
+
+    function openEditModal(index) {
+        const t = allTickets[index];
+        document.getElementById('modalTitle').innerText = "📝 แก้ไขเคส: " + t.ticketId;
+        document.getElementById('formAction').value = "edit";
+        document.getElementById('editRowIndex').value = t.row;
+        document.getElementById('ownerSelect').value = t.owner;
+        document.getElementById('urgencySelect').value = t.urgent;
+        document.getElementById('customerInput').value = t.customer;
+        document.getElementById('channelSelect').value = t.channel;
+        document.getElementById('typeSelect').value = t.type;
+        document.getElementById('modelSelect').value = t.model;
+        document.getElementById('issueInput').value = t.issue;
+        document.getElementById('solutionInput').value = t.solution;
+        document.getElementById('statusSelect').value = t.status;
+        document.getElementById('assigneeInput').value = t.assignee === "-" ? "" : t.assignee;
+        document.getElementById('ticketModal').style.display = 'block';
+    }
+
+    function savePreferredOwner() { localStorage.setItem('preferredOwner', document.getElementById('ownerSelect').value); }
+
+    function startCountdown() {
+        setInterval(() => {
+            countdown--;
+            const min = Math.floor(countdown / 60), sec = countdown % 60;
+            document.getElementById('countdownText').innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+            document.getElementById('refreshBar').style.width = ((REFRESH_TIME - countdown) / REFRESH_TIME) * 100 + "%";
+            if (countdown <= 0) location.reload();
+        }, 1000);
+    }
+
+    window.handleGoogleResponse = (json) => {
+        allTickets = json.table.rows.map((row, idx) => {
+            const getV = (i) => (row.c[i] && (row.c[i].f || row.c[i].v)) ? (row.c[i].f || row.c[i].v) : "-";
+            return { 
+                row: idx + 2, ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), 
+                status: getV(4), assignee: getV(5), channel: getV(6), 
+                customer: getV(11), solution: getV(13), type: getV(14), model: getV(15), issue: getV(20) 
+            };
+        }).filter(it => it.ticketId !== "-" && it.ticketId !== "Ticket ID");
+        
+        allTickets.sort((a, b) => {
+            const p = { "1.ด่วนมาก": 1, "2.ปานกลาง": 2, "3.ไม่รีบ": 3 };
+            const priorityDiff = (p[a.urgent] || 99) - (p[b.urgent] || 99);
+            if (priorityDiff !== 0) return priorityDiff;
+            const s = { "กำลังดำเนินการ": 1, "รอดำเนินการ": 2, "ปิดเคส": 3 };
+            return (s[a.status] || 99) - (s[b.status] || 99);
+        });
+        renderTable(allTickets);
+        startCountdown();
+    };
+
+    function renderTable(data) {
+        const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
+        let stats = { t:0, p:0, pr:0, c:0 };
+        let csStats = { "Best": 0, "Friend": 0, "Ball": 0, "Ohm": 0 };
+
+        allTickets.forEach(r => {
+            const isClosed = r.status.includes("ปิด");
+            if(r.status.includes("รอ")) stats.p++; else if(r.status.includes("ดำ")) stats.pr++; else if(isClosed) stats.c++;
+            if(!isClosed) { stats.t++; if(csStats.hasOwnProperty(r.owner)) csStats[r.owner]++; }
+        });
+
+        document.getElementById('csLeaderboard').innerHTML = Object.entries(csStats).map(([name, count]) => `
+            <div class="glass-panel person-card"><span class="person-name">${name}</span><span class="person-count">${count}</span></div>
+        `).join('');
+        
+        let display = data.filter(r => {
+            const matchChannel = (currentChannelFilter==='all') ? true : r.channel.includes(currentChannelFilter);
+            const matchSearch = Object.values(r).some(v => String(v).toLowerCase().includes(document.getElementById("searchInput").value.toLowerCase()));
+            const matchStatus = (currentQuickFilter === 'all') ? !r.status.includes("ปิด") : r.status.includes(currentQuickFilter);
+            return matchStatus && matchChannel && matchSearch;
+        });
+        
+        display.forEach((r, i) => {
+            const dangerousTerms = ["รั่ว", "ช็อต", "ระเบิด", "คืน", "เปลี่ยน", "ควัน", "ไฟไหม้"];
+            let highlightedIssue = r.issue;
+            dangerousTerms.forEach(term => highlightedIssue = highlightedIssue.replace(new RegExp(term, "g"), `<span class="key-highlight">${term}</span>`));
+
+            tbody.innerHTML += `<tr>
+                <td style="opacity:0.4">${i+1}</td>
+                <td style="font-weight:600; color:var(--primary)">${r.ticketId}</td>
+                <td>${r.date}</td><td>${r.channel}</td>
+                <td style="font-weight:600">${r.customer}</td>
+                <td><b>${r.model}</b><br><small style="opacity:0.7">${r.type}</small></td>
+                <td>${highlightedIssue}</td><td style="color:#27ae60">${r.solution}</td>
+                <td>${r.owner}</td>
+                <td><span class="badge ${r.urgent.includes("1")?"u-vhigh":r.urgent.includes("2")?"u-medium":"u-low"}">${r.urgent}</span></td>
+                <td><span class="badge ${r.status.includes("ปิด")?"status-closed":r.status.includes("ดำ")?"status-process":"status-pending"}">${r.status}</span></td>
+                <td>${r.assignee}</td>
+                <td><button class="btn-edit" onclick="openEditModal(${allTickets.indexOf(r)})">📝</button></td>
+            </tr>`;
+        });
+        document.getElementById("totalTickets").innerText = stats.t; 
+        document.getElementById("pendingTickets").innerText = stats.p; 
+        document.getElementById("processTickets").innerText = stats.pr; 
+        document.getElementById("closedTickets").innerText = stats.c;
+    }
+
+    function setQuickFilter(v) { currentQuickFilter = v; renderTable(allTickets); }
+    function toggleChannelFilter(c, b) { currentChannelFilter = (currentChannelFilter === c) ? 'all' : c; renderTable(allTickets); }
+    function applyFilters() { renderTable(allTickets); }
+
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleResponse&gid=${SHEET_GID}`;
+    document.body.appendChild(script);
+
+    document.getElementById('ticketForm').onsubmit = function(e) {
+        e.preventDefault(); 
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "..."; btn.disabled = true;
+        fetch("https://script.google.com/macros/s/AKfycbzDRJpLUw51hZi3WI6Su7_LgeXz0GG-bK4CtfGygkmbfne2dMdtbVAVjD0NDmuEaL8v/exec", { 
+            method: 'POST', body: new URLSearchParams(new FormData(this)), mode: 'no-cors' 
+        }).then(() => location.reload());
+    };
+</script>
+</body>
+</html>
