@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.0.7.0</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.0.7.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
@@ -67,7 +67,7 @@
         
         .person-card { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; border: 3px solid transparent; transition: 0.3s; color: white; cursor: pointer; }
         
-        /* ✨ Glow Effect when Active */
+        /* ✨ Glow Effect System */
         .person-card.active-filter { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.6); transform: translateY(-2px); }
         
         .card-best { background: #d63031; } 
@@ -95,7 +95,7 @@
 
         .btn-add { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; cursor: pointer; }
         
-        /* 📂 Interface Modal (บันทึกเคสใหม่) กลับมาแล้ว */
+        /* 📂 Modal Interface */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 9999; overflow-y: auto; }
         .modal-content { background: var(--glass); margin: 20px auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 25px; border: 1px solid var(--glass-border); }
         .modal-content input, .modal-content select, .modal-content textarea { width:100%; padding:12px; border-radius:12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; margin-top: 5px; box-sizing: border-box; font-size: 16px; }
@@ -110,7 +110,7 @@
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.7.0 Alpha</span></h2>
+        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.7.1 Alpha</span></h2>
         <div class="action-bar">
             <div id="countdownText" style="font-size: 11px; font-weight: 600; opacity: 0.7;">05:00</div>
             <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="applyFilters()"></div>
@@ -173,7 +173,7 @@
                 <div style="grid-column: span 2;"><label>ปัญหาที่แจ้ง</label><textarea name="issue" rows="2"></textarea></div>
                 <div style="grid-column: span 2;"><label>วิธีแก้เบื้องต้น</label><textarea name="solution" rows="2"></textarea></div>
             </div>
-            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:20px; padding:15px; color:#fff;">💾 บันทึกข้อมูลลงชีต</button>
+            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:20px; padding:15px; color:#fff;">💾 บันทึกข้อมูล</button>
             <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; margin-top:10px; border:none; background:none; cursor:pointer; color:inherit; opacity:0.5;">ยกเลิก</button>
         </form>
     </div>
