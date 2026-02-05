@@ -3,108 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.1.3 Beta</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.2.9 Beta</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
     <style>
+        /* 🟢 THEME VARIABLES SYSTEM */
         :root {
+            /* Dark Mode (Default) */
             --glass: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.18);
             --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
             --primary: #ff8c00; 
             --bg-mesh: radial-gradient(at 0% 0%, #003399 0, transparent 50%), 
                        radial-gradient(at 100% 0%, #002266 0, transparent 50%), 
                        radial-gradient(at 50% 100%, #001a4d 0, transparent 50%);
+            --bg-color: #000d21;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-border: var(--glass-border);
+            --card-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            --table-border: rgba(255,255,255,0.08);
             --font-main: 'Inter', 'Kanit', sans-serif;
+            --ticker-bg: rgba(220, 53, 69, 0.15);
+            --ticker-text: #ff6b6b;
         }
 
         [data-theme="light"] {
-            --glass: rgba(255, 255, 255, 0.88);
-            --glass-border: rgba(0, 0, 0, 0.12);
-            --text: #1d1d1f;
-            --primary: #e67e00;
+            /* 🟠 Light Mode (Orange Theme) */
+            --glass: rgba(255, 255, 255, 0.92); /* ขาวเกือบทึบเพื่อให้ลอยจากพื้นส้ม */
+            --glass-border: rgba(255, 140, 0, 0.15); /* ขอบส้มจางๆ */
+            --text: #2c1a0b; /* น้ำตาลเข้มเกือบดำ (อ่านง่ายบนพื้นส้ม) */
+            --text-muted: #6b4e3d; /* น้ำตาลเทา */
+            --primary: #ea580c; /* ส้มอิฐเข้มๆ */
+            /* พื้นหลังสีส้มไล่เฉด */
+            --bg-mesh: linear-gradient(135deg, #fff1eb 0%, #ace0f9 0%, #fff1eb 0%, #ffd194 100%); 
+            --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0, transparent 50%), 
+                       radial-gradient(at 100% 0%, #ffedd5 0, transparent 50%), 
+                       radial-gradient(at 50% 100%, #fed7aa 0, transparent 50%);
+            --bg-color: #fff7ed;
+            --input-bg: #ffffff; 
+            --input-border: #fed7aa; /* ขอบส้มอ่อน */
+            --card-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.15), 0 8px 10px -6px rgba(234, 88, 12, 0.1);
+            --table-border: #fed7aa;
+            --ticker-bg: #fee2e2;
+            --ticker-text: #dc2626;
         }
 
         body {
             font-family: var(--font-main);
-            background-color: #000d21;
+            background-color: var(--bg-color);
             background-image: var(--bg-mesh);
             background-attachment: fixed;
             background-size: cover;
             margin: 0; padding: 10px;
             color: var(--text);
             min-height: 100vh;
-            transition: 0.3s;
+            transition: 0.3s ease;
             -webkit-font-smoothing: antialiased;
         }
 
         .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-        .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--card-shadow); }
 
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
-        .header h2 { margin: 0; font-size: 22px; color: var(--primary); font-weight: 800; white-space: nowrap; letter-spacing: -0.5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+        .header h2 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 800; white-space: nowrap; letter-spacing: -0.5px; }
 
-        .action-bar { display: flex; align-items: center; gap: 8px; }
+        .action-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; color: var(--text); font-weight: 800; transition: 0.2s; flex-shrink: 0; }
-        .icon-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
-        
-        .search-container { display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 20px; border: 1px solid var(--glass-border); overflow: hidden; width: 0; transition: width 0.3s ease; }
-        .search-container.expanded { width: 140px; padding: 0 10px; }
-        .search-container input { border: none; background: transparent; padding: 8px; color: #fff; outline: none; width: 100%; font-family: var(--font-main); font-size: 14px; }
+        .icon-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .top-section { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        /* Control Bar (Inline Middle) */
+        .control-bar-inline { 
+            display: flex; gap: 10px; align-items: flex-end; padding: 15px; flex-wrap: wrap;
+            background: var(--glass); border-radius: 16px; border: 1px solid var(--glass-border);
+            margin-top: 10px; 
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 120px; }
+        .filter-label { font-size: 11px; font-weight: 600; opacity: 0.8; margin-left: 2px; color: var(--text); }
+        .filter-select {
+            background: var(--input-bg); border: 1px solid var(--input-border); 
+            color: var(--text); padding: 6px 10px; border-radius: 10px; 
+            font-family: var(--font-main); outline: none; cursor: pointer;
+            height: 36px; width: 100%; font-size: 13px; box-sizing: border-box;
+            transition: 0.2s;
+        }
+        .filter-select option { background: var(--input-bg); color: var(--text); }
+
+        .toggle-wrapper { 
+            display: flex; align-items: center; gap: 8px; 
+            background: var(--input-bg); padding: 0 12px; border-radius: 10px; border: 1px solid var(--input-border); 
+            cursor: pointer; height: 36px; box-sizing: border-box; flex: 0 0 auto;
+        }
+        .toggle-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+        .toggle-text { font-size: 12px; font-weight: 600; color: var(--text); user-select: none; }
+
+        .btn-reset { background: rgba(100, 100, 100, 0.1); border: 1px solid var(--glass-border); color: var(--text); border-radius:10px; padding: 0 15px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:5px; flex: 0 0 auto; }
+        .btn-reset:hover { background: rgba(100, 100, 100, 0.2); }
+        .btn-export { background: #27ae60; color:#fff; border:none; border-radius:10px; padding: 0 15px; height:36px; cursor:pointer; font-size:13px; font-weight:700; display:flex; align-items:center; gap:5px; flex: 0 0 auto; }
+
+        .search-container { display: flex; align-items: center; background: var(--input-bg); border-radius: 20px; border: 1px solid var(--glass-border); overflow: hidden; width: 0; transition: width 0.3s ease; }
+        .search-container.expanded { width: 140px; padding: 0 10px; }
+        .search-container input { border: none; background: transparent; padding: 8px; color: var(--text); outline: none; width: 100%; font-family: var(--font-main); font-size: 14px; }
+
+        .top-section { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 5px; }
         @media (min-width: 1100px) { .top-section { grid-template-columns: 1.8fr 1.2fr; } }
 
-        /* 🟢 Leaderboard & Performance */
         .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px; }
-        @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(5, 1fr); } }
         
-        .person-card { padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; color: white; cursor: pointer; border: 2px solid transparent; transition: 0.3s; min-height: 80px; }
-        .person-card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .person-card.active-filter { border-color: #fff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .person-card { padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 16px; color: white; cursor: pointer; border: 2px solid transparent; transition: 0.3s; min-height: 80px; position: relative; overflow: hidden; }
+        .person-card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; z-index: 2; }
+        .person-card:active { transform: scale(0.98); }
         
+        .card-all { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
         .card-best { background: linear-gradient(135deg, #d63031, #ff4757); } 
         .card-friend { background: linear-gradient(135deg, #0984e3, #2e86de); } 
         .card-ball { background: linear-gradient(135deg, #e67e22, #f39c12); } 
         .card-ohm { background: linear-gradient(135deg, #f1c40f, #ff9f43); color: #000; }
 
-        .perf-bar-bg { width: 100%; height: 4px; background: rgba(0,0,0,0.2); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+        .perf-bar-bg { width: 100%; height: 4px; background: rgba(0,0,0,0.2); border-radius: 4px; margin-top: 8px; overflow: hidden; z-index: 2; position: relative; }
         .perf-bar-fill { height: 100%; background: #fff; border-radius: 4px; transition: width 0.5s ease; opacity: 0.9; }
-        .perf-text { font-size: 10px; margin-top: 4px; opacity: 0.8; font-weight: 600; text-align: right; }
+        .perf-text { font-size: 10px; margin-top: 4px; opacity: 0.8; font-weight: 600; text-align: right; z-index: 2; position: relative; }
 
-        /* 🚨 Urgent Ticker Styles */
+        /* 🟢 URGENT TICKER FIXED */
         .urgent-ticker-container { 
             width: 100%; overflow: hidden; white-space: nowrap; 
-            background: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.4); 
-            border-radius: 12px; margin-bottom: 10px; display: none; /* Hide if empty */
-            position: relative; height: 36px; display: flex; align-items: center;
+            background: var(--ticker-bg); border: 1px solid var(--ticker-text); 
+            border-radius: 12px; margin-bottom: 10px; 
+            display: none; /* JS will change to Flex */
+            position: relative; height: 36px; align-items: center;
+            z-index: 10; /* Make sure it stays on top */
         }
-        .urgent-ticker-content {
-            display: inline-block; padding-left: 100%;
-            animation: ticker 25s linear infinite;
-            font-size: 13px; font-weight: 700; color: #ff6b6b; font-family: 'Kanit';
+        .urgent-ticker-content { 
+            display: inline-block; padding-left: 100%; 
+            animation: ticker 25s linear infinite; 
+            font-size: 13px; font-weight: 700; 
+            color: var(--ticker-text); font-family: 'Kanit'; 
         }
         @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
-
+        
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         @media (min-width: 600px) { .stats-grid { grid-template-columns: repeat(5, 1fr); } }
         
-        .stat-card { padding: 12px 5px; text-align: center; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 16px; }
-        .stat-card.active-status { background: rgba(255, 140, 0, 0.15); border-color: var(--primary); }
-        .stat-card h3 { font-size: 10px; font-weight: 700; margin: 0; opacity: 0.8; text-transform: uppercase; }
+        .stat-card { padding: 12px 5px; text-align: center; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 16px; background: var(--glass); }
+        .stat-card h3 { font-size: 10px; font-weight: 700; margin: 0; opacity: 0.8; text-transform: uppercase; color: var(--text); }
         .stat-card .value { font-size: 24px; font-weight: 800; color: var(--primary); margin-top: 2px; }
 
         .table-wrap { padding: 15px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 1300px; border-collapse: collapse; } 
         @media (min-width: 1300px) { table { width: 100%; table-layout: fixed; } }
         th { padding: 12px 10px; text-align: left; font-size: 13px; border-bottom: 2px solid var(--glass-border); color: var(--primary); font-weight: 800; }
-        td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; font-size: 14px; }
+        td { padding: 12px 10px; border-bottom: 1px solid var(--table-border); vertical-align: top; font-size: 14px; color: var(--text); }
+        td b { color: var(--text); }
+        td small { color: var(--text-muted); }
 
         .customer-name { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: underline dotted; }
-        [data-theme="light"] .customer-name { color: #0055ff; }
-
+        
         .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: #fff; display: inline-block; white-space: nowrap; }
         .u-vhigh { background: #ff3b30; } .u-medium { background: #ff9500; } .u-low { background: #007aff; }
         .status-closed { background: #34c759; } .status-process { background: #f1c40f; color: #000; } .status-pending { background: #8e8e93; }
@@ -112,29 +169,26 @@
         .refresh-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: -8px; border-radius: 10px; overflow: hidden; }
         #refreshIndicator { height: 100%; background: var(--primary); width: 0%; transition: width 1s linear; }
 
-        .copy-toast {
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 20px;
-            border-radius: 20px; font-weight: 700; display: none; z-index: 10000;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Kanit', sans-serif; font-size: 14px; white-space: nowrap;
-        }
-
+        .copy-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 700; display: none; z-index: 10000; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Kanit', sans-serif; font-size: 14px; white-space: nowrap; }
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 9999; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        .modal-content { background: rgba(0, 15, 40, 0.95); border: 1px solid var(--glass-border); margin: auto; padding: 25px; width: 100%; max-width: 550px; border-radius: 25px; color: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-        .field-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: #fff; font-family: var(--font-main); box-sizing: border-box; font-size: 16px; }
-        .field-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: var(--primary); }
-
+        .modal-content { background: var(--bg-color); border: 1px solid var(--glass-border); margin: auto; padding: 25px; width: 100%; max-width: 550px; border-radius: 25px; color: var(--text); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .field-input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); font-family: var(--font-main); box-sizing: border-box; font-size: 16px; outline: none; }
+        
         @media (max-width: 768px) {
             .header { flex-direction: column; align-items: flex-start; gap: 12px; }
             .header h2 { font-size: 20px; width: 100%; margin-bottom: 5px; }
             .action-bar { width: 100%; justify-content: space-between; margin-top: 0; }
-            .search-container.expanded { width: 100%; position: absolute; left: 15px; right: 15px; top: 60px; z-index: 100; background: #0f1015; border: 1px solid var(--primary); }
+            .search-container.expanded { width: 100%; position: absolute; left: 15px; right: 15px; top: 100px; z-index: 100; background: var(--bg-color); border: 1px solid var(--primary); }
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
             #stat-process, #stat-closed { grid-column: span 1; } 
             .top-section { grid-template-columns: 1fr; }
             #chart_div { height: 200px; }
             .modal-content { padding: 20px; margin-top: 20px; margin-bottom: 50px; }
+            .leaderboard-grid .card-all { grid-column: span 2; }
+            .control-bar-inline { flex-direction: row; align-items: flex-end; gap: 8px; }
+            .filter-group { width: 48%; min-width: auto; }
+            .toggle-wrapper { width: 100%; justify-content: center; margin-top: 5px; }
+            .btn-reset, .btn-export { width: 48%; justify-content: center; }
         }
     </style>
 </head>
@@ -142,43 +196,71 @@
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.1.3 Beta</span></h2>
+        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.2.9 Beta</span></h2>
         <div class="action-bar">
-            <div id="countdown" style="font-size:11px; font-weight:800; font-variant-numeric: tabular-nums; opacity:0.7;">05:00</div>
-            
-            <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="renderTable(allTickets)"></div>
+            <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="renderTable()"></div>
             <div class="icon-btn" onclick="toggleSearch()">🔍</div>
-            
             <div class="icon-btn" id="btnLine" onclick="toggleChannelFilter('Line OA', this)">L</div>
             <div class="icon-btn" id="btnFb" onclick="toggleChannelFilter('Facebook', this)">f</div>
-            
-            <button style="background:var(--primary); color:#000; border:none; padding:8px 15px; border-radius:12px; font-weight:800; cursor:pointer; font-family:var(--font-main); font-size:13px;" onclick="openAddModal()">+ เพิ่ม</button>
+            <button style="background:var(--primary); color:#fff; border:none; padding:8px 15px; border-radius:12px; font-weight:800; cursor:pointer; font-family:var(--font-main); font-size:13px;" onclick="openAddModal()">+ เพิ่ม</button>
             <button onclick="toggleTheme()" class="icon-btn" id="themeBtn">☀</button>
         </div>
     </div>
 
     <div class="refresh-bar"><div id="refreshIndicator"></div></div>
 
-    <div id="urgentTicker" class="urgent-ticker-container" style="display:none;">
+    <div id="urgentTicker" class="urgent-ticker-container">
         <div class="urgent-ticker-content" id="tickerContent"></div>
     </div>
 
     <div class="top-section">
-        <div>
-            <div class="leaderboard-grid" id="csLeaderboard"></div>
+        <div> <div class="leaderboard-grid" id="csLeaderboard"></div>
             <div class="stats-grid">
-                <div class="glass-panel stat-card" id="stat-total-all" onclick="setQuickFilter('total-all')"><h3>ทั้งหมด</h3><div class="value" id="grandTotalCases">0</div></div>
-                <div class="glass-panel stat-card" id="stat-all" onclick="setQuickFilter('all')"><h3>งานค้าง</h3><div class="value" id="totalTickets">0</div></div>
-                <div class="glass-panel stat-card" id="stat-pending" onclick="setQuickFilter('รอดำเนินการ')"><h3>รอ</h3><div class="value" id="pendingTickets">0</div></div>
-                <div class="glass-panel stat-card" id="stat-process" onclick="setQuickFilter('กำลังทำ')"><h3>ทำ</h3><div class="value" id="processTickets">0</div></div>
-                <div class="glass-panel stat-card" id="stat-closed" onclick="setQuickFilter('ปิดเคส')"><h3>ปิด</h3><div class="value" id="closedTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="shortcutFilter('total-all')"><h3>ทั้งหมด</h3><div class="value" id="grandTotalCases">0</div></div>
+                <div class="glass-panel stat-card" onclick="shortcutFilter('all')"><h3>งานค้าง</h3><div class="value" id="totalTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="shortcutFilter('รอดำเนินการ')"><h3>รอ</h3><div class="value" id="pendingTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="shortcutFilter('กำลังดำเนินการ')"><h3>ทำ</h3><div class="value" id="processTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="shortcutFilter('ปิดเคส')"><h3>ปิด</h3><div class="value" id="closedTickets">0</div></div>
             </div>
+
+            <div class="glass-panel control-bar-inline">
+                <div class="filter-group">
+                    <span class="filter-label">📆 วันที่ / เดือน</span>
+                    <input type="date" id="dateFilter" class="filter-select" onchange="renderTable()">
+                </div>
+                <div class="toggle-wrapper" onclick="toggleWholeMonth()">
+                    <input type="checkbox" id="wholeMonthToggle" class="toggle-checkbox">
+                    <span class="toggle-text">ดูเหมาทั้งเดือน</span>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">⚡ สถานะงาน</span>
+                    <select id="statusFilter" class="filter-select" onchange="renderTable()">
+                        <option value="total-all">ทั้งหมด (Total)</option>
+                        <option value="all" selected>งานค้าง (Active)</option>
+                        <option value="รอดำเนินการ">รอดำเนินการ (Pending)</option>
+                        <option value="กำลังดำเนินการ">กำลังดำเนินการ (Doing)</option>
+                        <option value="ปิดเคส">ปิดเคส (Closed)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">👤 ทีมงาน</span>
+                    <select id="csFilter" class="filter-select" onchange="renderTable()">
+                        <option value="all">ทีมรวม (All Team)</option>
+                        <option value="Best">Best</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Ball">Ball</option>
+                        <option value="Ohm">Ohm</option>
+                    </select>
+                </div>
+                <button class="btn-reset" onclick="resetFilters()">↺ รีเซ็ต</button>
+                <button class="btn-export" onclick="exportToCSV()">📥 Export</button>
+            </div>
+            
         </div>
-        <div class="glass-panel" style="padding:10px;"><div id="chart_div" style="height:250px;"></div></div>
-    </div>
+        <div class="glass-panel" style="padding:10px;"><div id="chart_div" style="height:250px;"></div></div> </div>
 
     <div class="glass-panel table-wrap">
-        <table>
+        <table id="mainTable">
             <thead><tr><th>#</th><th>รหัส</th><th>วันที่</th><th>ลูกค้า</th><th>รุ่น / ประเภท</th><th>ปัญหา</th><th>วิธีแก้</th><th>CS</th><th>ด่วน</th><th>สถานะ</th><th>ผู้รับช่วง</th></tr></thead>
             <tbody id="tableBody"></tbody>
         </table>
@@ -206,8 +288,8 @@
             <label class="field-label">ปัญหาที่พบ</label><textarea name="issue" class="field-input" rows="2" placeholder="ระบุอาการเสีย..."></textarea>
             <label class="field-label">วิธีแก้ปัญหา</label><textarea name="solution" class="field-input" rows="2" placeholder="ระบุวิธีจัดการ..."></textarea>
             
-            <button type="submit" id="submitBtn" style="width:100%; background:var(--primary); color:#000; border:none; padding:16px; border-radius:15px; font-weight:800; cursor:pointer;">💾 บันทึกข้อมูล</button>
-            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; background:none; border:none; color:#fff; margin-top:10px; opacity:0.5; cursor:pointer;">ยกเลิก</button>
+            <button type="submit" id="submitBtn" style="width:100%; background:var(--primary); color:#fff; border:none; padding:16px; border-radius:15px; font-weight:800; cursor:pointer;">💾 บันทึกข้อมูล</button>
+            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; background:none; border:none; color:var(--text); margin-top:10px; opacity:0.5; cursor:pointer;">ยกเลิก</button>
         </form>
     </div>
 </div>
@@ -217,7 +299,8 @@
 <script>
     google.charts.load('current', {'packages':['corechart']});
     const SHEET_ID = '1yP4soDSWwjomPVP3_udd2m3SZlm5j5XVo32tbKGvwdA', SHEET_GID = '816388223';
-    let countdown = 300, allTickets = [], currentQuickFilter = 'all', currentOwnerFilter = null, currentChannelFilter = 'all';
+    let countdown = 300, allTickets = [], currentChannelFilter = 'all';
+    let filteredExportData = []; 
 
     const savedTheme = localStorage.getItem('cs_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -226,7 +309,7 @@
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('cs_theme', next);
-        renderTable(allTickets);
+        drawChart(filteredExportData); // Redraw chart for new colors
     }
 
     function toggleSearch() {
@@ -239,12 +322,40 @@
         currentChannelFilter = (currentChannelFilter === channel) ? 'all' : channel;
         document.getElementById('btnLine').classList.toggle('active', currentChannelFilter === 'Line OA');
         document.getElementById('btnFb').classList.toggle('active', currentChannelFilter === 'Facebook');
-        renderTable(allTickets);
+        renderTable(); 
+    }
+
+    function shortcutFilter(status) {
+        document.getElementById('statusFilter').value = status;
+        renderTable();
+    }
+    
+    function shortcutOwner(owner) {
+        document.getElementById('csFilter').value = owner === null ? 'all' : owner;
+        renderTable();
+    }
+
+    function toggleWholeMonth() {
+        const cb = document.getElementById('wholeMonthToggle');
+        cb.checked = !cb.checked;
+        renderTable();
+    }
+
+    function resetFilters() {
+        document.getElementById('dateFilter').value = '';
+        document.getElementById('wholeMonthToggle').checked = false;
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('csFilter').value = 'all';
+        renderTable();
     }
 
     window.handleGoogleResponse = (json) => {
         allTickets = json.table.rows.map(row => {
-            const getV = i => (row.c[i] && (row.c[i].f || row.c[i].v)) ? (row.c[i].f || row.c[i].v) : "-";
+            const getV = i => {
+                const cell = row.c[i];
+                if (!cell) return "-";
+                return cell.f || cell.v || "-";
+            };
             return { ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), status: getV(4), assignee: getV(5), channel: getV(6), customer: getV(11), solution: getV(13), type: getV(14), model: getV(15), issue: getV(20) };
         }).filter(it => it.ticketId !== "-" && it.ticketId !== "Ticket ID");
         
@@ -254,7 +365,10 @@
             if (uM[a.urgent] !== uM[b.urgent]) return (uM[a.urgent] || 99) - (uM[b.urgent] || 99);
             return (sM[a.status] || 99) - (sM[b.status] || 99);
         });
-        renderTable(allTickets);
+
+        renderDashboardOverview(allTickets); 
+        renderTable(); 
+
         setInterval(() => {
             if(countdown > 0) {
                 countdown--;
@@ -266,109 +380,207 @@
         }, 1000);
     };
 
-    function renderTable(data) {
-        const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        let stats = { g: data.length, t:0, p:0, pr:0, c:0 };
-        // 🟢 Object เก็บสถิติรายบุคคล (t=total, c=closed)
+    function parseDateObject(rawDate) {
+        if (!rawDate || rawDate === "-") return null;
+        let d, m, y;
+        let str = rawDate.toString().trim();
+
+        if (str.includes("Date")) {
+            let parts = str.match(/\d+/g);
+            if (parts && parts.length >= 3) {
+                y = parseInt(parts[0]);
+                m = parseInt(parts[1]) + 1; 
+                d = parseInt(parts[2]);
+            }
+        } else {
+            let parts = str.split(/[\/\-\.\s]+/); 
+            if (parts.length < 3) return null; 
+            let p1 = parseInt(parts[0]); let p2 = parseInt(parts[1]); let p3 = parseInt(parts[2]);
+            if (p1 > 1000) { y = p1; m = p2; d = p3; }
+            else if (p3 > 1000) { d = p1; m = p2; y = p3; }
+            else { d = p1; m = p2; y = 2000 + p3; }
+        }
+
+        if (y > 2400) y -= 543;
+        
+        const mm = String(m).padStart(2, '0');
+        const dd = String(d).padStart(2, '0');
+        
+        return {
+            full: `${y}-${mm}-${dd}`,
+            month: `${y}-${mm}`,
+            rawObj: {y, m, d}
+        };
+    }
+
+    function renderDashboardOverview(data) {
+        let stats = { g: 0, t:0, p:0, pr:0, c:0 };
         let csStats = { "Best":{t:0,c:0}, "Friend":{t:0,c:0}, "Ball":{t:0,c:0}, "Ohm":{t:0,c:0} };
-        
-        // 🚨 ตัวแปรเก็บข้อความ Ticker งานด่วน
+        let teamTotal = { t:0, c:0 };
         let urgentText = "";
-        
-        allTickets.forEach(r => {
+
+        data.forEach(r => {
             const isClosed = r.status.includes("ปิด");
-            
-            // Stats รวม
-            if(r.status.includes("รอ")) stats.p++; else if(r.status.includes("ดำ")) stats.pr++; else if(isClosed) stats.c++;
+            stats.g++;
+            if(r.status.includes("รอ")) stats.p++; 
+            else if(r.status.includes("ดำ") || r.status.includes("มอบ")) stats.pr++; 
+            else if(isClosed) stats.c++;
             if(!isClosed) stats.t++; 
             
-            // Stats รายบุคคล (นับงานทั้งหมดที่มอบหมายให้คนนั้น)
             if(csStats.hasOwnProperty(r.owner)) {
                 csStats[r.owner].t++;
                 if(isClosed) csStats[r.owner].c++;
             }
+            teamTotal.t++;
+            if(isClosed) teamTotal.c++;
 
-            // 🚨 สร้าง Ticker (เฉพาะงาน "1.ด่วนมาก" ที่ยังไม่ "ปิดเคส")
+            // 🟢 Urgent Check
             if (r.urgent.includes("1") && !isClosed) {
                 urgentText += `🔥 ${r.ticketId} ${r.customer} : ${r.issue} &nbsp;&nbsp;&nbsp;&nbsp; `;
             }
         });
 
-        // 🚨 อัปเดต Ticker UI
         const tickerContainer = document.getElementById('urgentTicker');
         const tickerContent = document.getElementById('tickerContent');
-        if (urgentText !== "") {
-            tickerContainer.style.display = 'flex';
-            tickerContent.innerHTML = urgentText;
-        } else {
-            tickerContainer.style.display = 'none';
-        }
+        if (urgentText !== "") { tickerContainer.style.display = 'flex'; tickerContent.innerHTML = urgentText; } 
+        else { tickerContainer.style.display = 'none'; }
 
-        // 🏆 อัปเดต Leaderboard พร้อม Progress Bar
-        document.getElementById('csLeaderboard').innerHTML = Object.entries(csStats).map(([n, s]) => {
+        const allTeamPercent = teamTotal.t === 0 ? 0 : Math.round((teamTotal.c / teamTotal.t) * 100);
+        const allTeamCard = `
+            <div class="person-card card-all" onclick="shortcutOwner(null)">
+                <div class="person-card-top"><span style="font-weight:800">ALL TEAM</span><span style="font-size:24px; font-weight:800">${teamTotal.t}</span></div>
+                <div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${allTeamPercent}%"></div></div><div class="perf-text">ปิดงาน ${allTeamPercent}% (${teamTotal.c}/${teamTotal.t})</div></div>
+            </div>`;
+
+        const individualCards = Object.entries(csStats).map(([n, s]) => {
             const percent = s.t === 0 ? 0 : Math.round((s.c / s.t) * 100);
             return `
-            <div class="person-card card-${n.toLowerCase()} ${currentOwnerFilter === n ? 'active-filter' : ''}" onclick="currentOwnerFilter = (currentOwnerFilter === '${n}') ? null : '${n}'; renderTable(allTickets)">
-                <div class="person-card-top">
-                    <span style="font-weight:800">${n}</span>
-                    <span style="font-size:24px; font-weight:800">${s.t}</span>
-                </div>
-                <div>
-                    <div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${percent}%"></div></div>
-                    <div class="perf-text">ปิดงาน ${percent}% (${s.c}/${s.t})</div>
-                </div>
+            <div class="person-card card-${n.toLowerCase()}" onclick="shortcutOwner('${n}')">
+                <div class="person-card-top"><span style="font-weight:800">${n}</span><span style="font-size:24px; font-weight:800">${s.t}</span></div>
+                <div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${percent}%"></div></div><div class="perf-text">ปิดงาน ${percent}% (${s.c}/${s.t})</div></div>
             </div>`;
         }).join('');
+        document.getElementById('csLeaderboard').innerHTML = allTeamCard + individualCards;
 
-        data.filter(r => {
-            const matchStatus = currentQuickFilter==='total-all' ? true : currentQuickFilter==='all' ? !r.status.includes("ปิด") : r.status.includes(currentQuickFilter);
-            const matchOwner = currentOwnerFilter ? r.owner === currentOwnerFilter : true;
+        document.getElementById("grandTotalCases").innerText = stats.g; 
+        document.getElementById("totalTickets").innerText = stats.t;
+        document.getElementById("pendingTickets").innerText = stats.p; 
+        document.getElementById("processTickets").innerText = stats.pr; 
+        document.getElementById("closedTickets").innerText = stats.c;
+
+        drawChart(data);
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
+        
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        
+        const dateInput = document.getElementById('dateFilter').value;
+        const isWholeMonth = document.getElementById('wholeMonthToggle').checked;
+
+        const statusFilter = document.getElementById('statusFilter').value;
+        const csFilter = document.getElementById('csFilter').value; 
+        
+        const filteredData = allTickets.filter(r => {
+            const dateObj = parseDateObject(r.date);
+            
+            let matchDate = true;
+            if (dateInput) {
+                if (isWholeMonth) {
+                     const inputMonth = dateInput.substring(0, 7); 
+                     if (!dateObj || dateObj.month !== inputMonth) matchDate = false;
+                } else {
+                     if (!dateObj || dateObj.full !== dateInput) matchDate = false;
+                }
+            }
+
+            let matchStatus = true;
+            if (statusFilter === 'total-all') matchStatus = true;
+            else if (statusFilter === 'all') matchStatus = !r.status.includes("ปิด");
+            else if (statusFilter === 'กำลังดำเนินการ') matchStatus = r.status.includes("กำลัง") || r.status.includes("มอบหมาย");
+            else matchStatus = r.status.includes(statusFilter);
+
+            const matchOwner = csFilter === 'all' ? true : r.owner === csFilter;
             const matchChannel = currentChannelFilter === 'all' ? true : r.channel.includes(currentChannelFilter);
             const matchSearch = search==="" || r.customer.toLowerCase().includes(search) || r.model.toLowerCase().includes(search) || r.issue.toLowerCase().includes(search);
-            return matchStatus && matchOwner && matchChannel && matchSearch;
-        }).forEach((r, i) => {
+            
+            return matchDate && matchStatus && matchOwner && matchChannel && matchSearch;
+        });
+        
+        filteredExportData = filteredData;
+
+        if (filteredData.length === 0) {
+            let filterText = dateInput ? (isWholeMonth ? `ทั้งเดือนของ ${dateInput}` : `วันที่ ${dateInput}`) : 'ทั้งหมด';
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.6;">❌ ไม่พบข้อมูล (${filterText})</td></tr>`;
+            return;
+        }
+
+        filteredData.forEach((r, i) => {
             let uC = r.urgent.includes("1") ? "u-vhigh" : r.urgent.includes("2") ? "u-medium" : "u-low";
             let sC = r.status.includes("ปิด") ? "status-closed" : r.status.includes("ดำ") ? "status-process" : "status-pending";
             tbody.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:700; color:var(--primary)">${r.ticketId}</td><td>${r.date}</td><td><span class="customer-name" onclick="copyCustomerName('${r.customer}')">${r.customer}</span></td><td><b>${r.model}</b><br><small style="opacity:0.6; font-size:11px;">${r.type}</small></td><td>${r.issue}</td><td>${r.solution}</td><td>${r.owner}</td><td><span class="badge ${uC}">${r.urgent}</span></td><td><span class="badge ${sC}">${r.status}</span></td><td>${r.assignee}</td></tr>`;
         });
-        
-        document.getElementById("grandTotalCases").innerText = stats.g; document.getElementById("totalTickets").innerText = stats.t;
-        document.getElementById("pendingTickets").innerText = stats.p; document.getElementById("processTickets").innerText = stats.pr; document.getElementById("closedTickets").innerText = stats.c;
-        drawChart(allTickets);
     }
 
     function drawChart(data) {
         const mC = {}; data.forEach(r => { if(r.model !== "-") mC[r.model] = (mC[r.model] || 0) + 1; });
         const sM = Object.entries(mC).sort((a,b) => b[1]-a[1]).slice(0,10);
-        const textCol = document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#000';
+        // Fix: Detect theme color for chart text
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const textCol = isDark ? '#fff' : '#000';
         
         const chartData = google.visualization.arrayToDataTable([['Model', 'Count'], ...sM]);
         const options = { 
-            title: '10 อันดับสินค้าที่แจ้งปัญหา', 
-            pieHole: 0.5, 
-            backgroundColor: 'transparent', 
+            title: '10 อันดับสินค้า (ภาพรวม)', 
+            pieHole: 0.5, backgroundColor: 'transparent', 
             legend: { textStyle: { color: textCol, fontName: 'Kanit', fontSize: 11 } }, 
             titleTextStyle: { color: textCol, fontSize: 14, fontName: 'Kanit', bold: true },
-            pieSliceText: 'percentage',
-            pieSliceTextStyle: { fontSize: 10, fontName: 'Inter' },
-            sliceVisibilityThreshold: 0.05,
-            chartArea: { width: '90%', height: '80%' }
+            pieSliceText: 'percentage', pieSliceTextStyle: { fontSize: 10, fontName: 'Inter' },
+            sliceVisibilityThreshold: 0.05, chartArea: { width: '90%', height: '80%' }
         };
         const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(chartData, options);
     }
 
+    function exportToCSV() {
+        if (filteredExportData.length === 0) { alert("ไม่มีข้อมูลให้ Export"); return; }
+        
+        const dateInput = document.getElementById('dateFilter').value;
+        const isWholeMonth = document.getElementById('wholeMonthToggle').checked;
+        
+        let suffix = "All_List";
+        if (dateInput) {
+            suffix = isWholeMonth ? `Month_${dateInput.substring(0,7)}` : `Date_${dateInput}`;
+        }
+
+        let csvContent = "\uFEFFTicket ID,วันที่,ลูกค้า,รุ่นสินค้า,ประเภท,อาการเสีย,วิธีแก้,CS,ความด่วน,สถานะ,ผู้รับช่วง\n";
+        filteredExportData.forEach(r => {
+            let row = [
+                `"${r.ticketId}"`, `"${r.date}"`, `"${r.customer}"`, `"${r.model}"`, 
+                `"${r.type}"`, `"${r.issue}"`, `"${r.solution}"`, `"${r.owner}"`, 
+                `"${r.urgent}"`, `"${r.status}"`, `"${r.assignee}"`
+            ];
+            csvContent += row.join(",") + "\n";
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `ULKA_CS_Report_${suffix}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     function copyCustomerName(name) {
         navigator.clipboard.writeText(name).then(() => {
             const toast = document.getElementById('copyToast');
-            toast.style.display = 'block';
-            toast.innerText = `คัดลอก "${name}" แล้ว! 📋`;
+            toast.style.display = 'block'; toast.innerText = `คัดลอก "${name}" แล้ว! 📋`;
             setTimeout(() => { toast.style.display = 'none'; }, 2000);
         });
     }
 
-    function setQuickFilter(s) { currentQuickFilter = s; renderTable(allTickets); }
     function openAddModal() { document.getElementById('addModal').style.display='block'; }
     const script = document.createElement('script'); script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleResponse&gid=${SHEET_GID}`; document.body.appendChild(script);
 
