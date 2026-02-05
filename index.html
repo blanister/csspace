@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.0.4.9</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.0.5.7</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
@@ -46,12 +46,25 @@
         .refresh-bar-container { width: 100%; height: 4px; background: rgba(0,0,0,0.1); margin-bottom: 15px; border-radius: 10px; overflow: hidden; }
         #refreshBar { width: 0%; height: 100%; background: var(--primary); transition: width 1s linear; }
 
-        .leaderboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-        .person-card { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .person-name { font-weight: 600; font-size: 12px; opacity: 0.8; }
-        .person-count { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media (min-width: 1000px) { .main-grid { grid-template-columns: 2fr 1.2fr; } }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        /* 🎨 Solid Colorful Leaderboard */
+        .leaderboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        @media (min-width: 600px) { .leaderboard-grid { grid-template-columns: repeat(4, 1fr); } }
+        
+        .person-card { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; border: none; transition: 0.3s; color: white; }
+        
+        .card-best { background: #d63031; box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3); }
+        .card-friend { background: #0984e3; box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3); }
+        .card-ball { background: #e67e22; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3); }
+        .card-ohm { background: #f1c40f; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); color: #000; }
+        
+        .person-name { font-weight: 800; font-size: 16px; text-transform: uppercase; }
+        .person-count { font-size: 28px; font-weight: 900; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        @media (min-width: 1000px) { .stats-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 15px; } }
         .stat-card { padding: 15px; text-align: center; cursor: pointer; }
         .stat-card h3 { font-size: 12px; margin: 0; opacity: 0.7; }
         .stat-card .value { font-size: 28px; font-weight: 600; margin-top: 5px; color: var(--text); }
@@ -75,11 +88,12 @@
 
         .btn-add { background: var(--primary); color: #000; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; cursor: pointer; }
         
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 9999; }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 9999; overflow-y: auto; }
         .modal-content { background: var(--glass); margin: 20px auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 25px; border: 1px solid var(--glass-border); }
-        input, select, textarea { width:100%; padding:10px; border-radius:10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; font-size: 16px; box-sizing: border-box; }
+        input, select, textarea { width:100%; padding:10px; border-radius:10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.2); color: var(--text); font-family: 'Sarabun'; font-size: 16px; box-sizing: border-box; margin-top: 5px; }
 
-        /* Column Widths (No Edit Column) */
+        #chart_div { width: 100%; height: 220px; }
+
         @media (min-width: 1200px) {
             th:nth-child(1), td:nth-child(1) { width: 35px; } th:nth-child(2), td:nth-child(2) { width: 65px; }
             th:nth-child(3), td:nth-child(3) { width: 75px; } th:nth-child(4), td:nth-child(4) { width: 75px; }
@@ -94,7 +108,7 @@
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.4.9</span></h2>
+        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.0.5.7</span></h2>
         <div style="display: flex; gap: 10px; align-items: center;">
             <div id="countdownText" style="font-size: 12px; font-weight: 600;">05:00</div>
             <button class="btn-add" onclick="openAddModal()">+ เพิ่มเคส</button>
@@ -103,13 +117,20 @@
     </div>
     
     <div class="refresh-bar-container"><div id="refreshBar"></div></div>
-    <div class="leaderboard-grid" id="csLeaderboard"></div>
 
-    <div class="stats-grid">
-        <div class="glass-panel stat-card" onclick="setQuickFilter('all')"><h3>งานค้าง</h3><div class="value" id="totalTickets">0</div></div>
-        <div class="glass-panel stat-card" onclick="setQuickFilter('รอดำเนินการ')"><h3>🔴 รอ</h3><div class="value" id="pendingTickets">0</div></div>
-        <div class="glass-panel stat-card" onclick="setQuickFilter('กำลังดำเนินการ')"><h3>🟡 ทำ</h3><div class="value" id="processTickets">0</div></div>
-        <div class="glass-panel stat-card" onclick="setQuickFilter('ปิดเคส')"><h3>🟢 ปิด</h3><div class="value" id="closedTickets">0</div></div>
+    <div class="main-grid">
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="leaderboard-grid" id="csLeaderboard"></div>
+            <div class="stats-grid">
+                <div class="glass-panel stat-card" onclick="setQuickFilter('all')"><h3>งานค้าง</h3><div class="value" id="totalTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="setQuickFilter('รอดำเนินการ')"><h3>🔴 รอ</h3><div class="value" id="pendingTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="setQuickFilter('กำลังดำเนินการ')"><h3>🟡 ทำ</h3><div class="value" id="processTickets">0</div></div>
+                <div class="glass-panel stat-card" onclick="setQuickFilter('ปิดเคส')"><h3>🟢 ปิด</h3><div class="value" id="closedTickets">0</div></div>
+            </div>
+        </div>
+        <div class="glass-panel" style="padding: 10px;">
+            <div id="chart_div"></div>
+        </div>
     </div>
 
     <div class="controls">
@@ -130,7 +151,7 @@
     <div class="modal-content glass-panel">
         <h2 style="margin:0 0 20px 0; color:var(--primary); font-size: 18px;">📂 บันทึกเคสใหม่</h2>
         <form id="ticketForm">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div style="grid-column: span 2;"><label>ผู้รับผิดชอบ</label>
                     <select name="owner" id="ownerSelect" required onchange="savePreferredOwner()">
                         <option value="">-- เลือก --</option>
@@ -139,21 +160,38 @@
                 </div>
                 <div><label>ความด่วน</label><select name="urgency"><option value="1.ด่วนมาก">1.ด่วนมาก</option><option value="2.ปานกลาง">2.ปานกลาง</option><option value="3.ไม่รีบ" selected>3.ไม่รีบ</option></select></div>
                 <div><label>ช่องทาง</label><select name="channel" required><option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option></select></div>
-                <div style="grid-column: span 2;"><label>ชื่อลูกค้า</label><input name="customerName" required></div>
-                <div><label>ประเภท</label><select name="type" required><option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="ตู้แช่นม">ตู้แช่นม</option></select></div>
-                <div><label>รุ่น</label><select name="model" required>
-                    <option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option><option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option><option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option><option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option><option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option><option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option><option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option><option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option><option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
-                </select></div>
-                <div style="grid-column: span 2;"><label>ปัญหา</label><textarea name="issue" rows="2"></textarea></div>
-                <div style="grid-column: span 2;"><label>วิธีแก้</label><textarea name="solution" rows="2"></textarea></div>
+                <div style="grid-column: span 2;"><label>ชื่อลูกค้า</label><input name="customerName" required placeholder="ระบุชื่อลูกค้า"></div>
+                
+                <div><label>ประเภทสินค้า</label>
+                    <select name="type" required>
+                        <option value="ICE">ICE</option>
+                        <option value="COFFEE">COFFEE</option>
+                        <option value="FUME">FUME</option>
+                        <option value="BLENDER">BLENDER</option>
+                        <option value="SODA">SODA</option>
+                        <option value="เครื่องกรองน้ำ">เครื่องกรองน้ำ</option>
+                        <option value="ปั๊มดูดน้ำจากถัง">ปั๊มดูดน้ำจากถัง</option>
+                        <option value="ตู้แช่นม">ตู้แช่นม</option>
+                    </select>
+                </div>
+                <div><label>รุ่นสินค้า</label>
+                    <select name="model" required>
+                        <option value="">-- เลือก --</option>
+                        <option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option><option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option><option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option><option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option><option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option><option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option><option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option><option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option><option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
+                    </select>
+                </div>
+
+                <div style="grid-column: span 2;"><label>ปัญหาที่แจ้ง</label><textarea name="issue" rows="2" placeholder="อาการเบื้องต้น"></textarea></div>
+                <div style="grid-column: span 2;"><label>วิธีแก้ไข</label><textarea name="solution" rows="2" placeholder="การดำเนินการล่าสุด"></textarea></div>
             </div>
-            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:15px; padding:12px; color:#fff;">💾 บันทึกข้อมูล</button>
-            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; margin-top:10px; opacity:0.5; border:none; background:none; cursor:pointer; color:inherit;">ยกเลิก</button>
+            <button type="submit" id="submitBtn" class="btn-add" style="width:100%; margin-top:20px; padding:15px; color:#fff;">💾 บันทึกข้อมูลเข้าชีต</button>
+            <button type="button" onclick="document.getElementById('addModal').style.display='none'" style="width:100%; margin-top:10px; opacity:0.5; border:none; background:none; cursor:pointer; color:inherit;">✖ ยกเลิก</button>
         </form>
     </div>
 </div>
 
 <script>
+    google.charts.load('current', {'packages':['corechart']});
     const REFRESH_TIME = 300; let countdown = REFRESH_TIME;
     const SHEET_ID = '1yP4soDSWwjomPVP3_udd2m3SZlm5j5XVo32tbKGvwdA';
     const SHEET_GID = '816388223'; 
@@ -168,6 +206,7 @@
         document.body.setAttribute('data-theme', t);
         document.getElementById('themeBtn').innerText = t === 'dark' ? '☾' : '☀';
         localStorage.setItem('theme', t);
+        renderTable(allTickets); 
     }
 
     function openAddModal() {
@@ -210,6 +249,26 @@
         startCountdown();
     };
 
+    function drawChart(data) {
+        const modelCounts = {};
+        data.forEach(r => { if(r.model !== "-" && r.model !== "") modelCounts[r.model] = (modelCounts[r.model] || 0) + 1; });
+        const sortedModels = Object.entries(modelCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        const chartData = [['Model', 'Count']];
+        sortedModels.forEach(([m, c]) => chartData.push([m, c]));
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const options = {
+            title: '10 อันดับสินค้าที่ลูกค้าทักมาบ่อย',
+            pieHole: 0.4,
+            backgroundColor: 'transparent',
+            legend: { textStyle: { color: isDark ? '#fff' : '#000', fontSize: 10 } },
+            titleTextStyle: { color: isDark ? '#fff' : '#000', fontSize: 13, bold: true },
+            chartArea: { width: '90%', height: '80%' },
+            colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC926', '#1982C4', '#6A4C93', '#FF595E']
+        };
+        const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(google.visualization.arrayToDataTable(chartData), options);
+    }
+
     function renderTable(data) {
         const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
         let stats = { t:0, p:0, pr:0, c:0 };
@@ -221,10 +280,17 @@
             if(!isClosed) { stats.t++; if(csStats.hasOwnProperty(r.owner)) csStats[r.owner]++; }
         });
 
+        const nameClassMap = { "Best": "card-best", "Friend": "card-friend", "Ball": "card-ball", "Ohm": "card-ohm" };
+
         document.getElementById('csLeaderboard').innerHTML = Object.entries(csStats).map(([name, count]) => `
-            <div class="glass-panel person-card"><span class="person-name">${name}</span><span class="person-count">${count}</span></div>
+            <div class="person-card ${nameClassMap[name] || ''}">
+                <span class="person-name">${name}</span>
+                <span class="person-count">${count}</span>
+            </div>
         `).join('');
         
+        drawChart(allTickets);
+
         let display = data.filter(r => {
             const matchChannel = (currentChannelFilter==='all') ? true : r.channel.includes(currentChannelFilter);
             const matchSearch = Object.values(r).some(v => String(v).toLowerCase().includes(document.getElementById("searchInput").value.toLowerCase()));
