@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="tabTitle">ULKA : CS Dashboard v.0.2.9 Beta</title>
+    <title id="tabTitle">ULKA : CS Dashboard v.0.3.5 Beta</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -32,19 +32,17 @@
 
         [data-theme="light"] {
             /* 🟠 Light Mode (Orange Theme) */
-            --glass: rgba(255, 255, 255, 0.92); /* ขาวเกือบทึบเพื่อให้ลอยจากพื้นส้ม */
-            --glass-border: rgba(255, 140, 0, 0.15); /* ขอบส้มจางๆ */
-            --text: #2c1a0b; /* น้ำตาลเข้มเกือบดำ (อ่านง่ายบนพื้นส้ม) */
-            --text-muted: #6b4e3d; /* น้ำตาลเทา */
-            --primary: #ea580c; /* ส้มอิฐเข้มๆ */
-            /* พื้นหลังสีส้มไล่เฉด */
-            --bg-mesh: linear-gradient(135deg, #fff1eb 0%, #ace0f9 0%, #fff1eb 0%, #ffd194 100%); 
+            --glass: rgba(255, 255, 255, 0.92); 
+            --glass-border: rgba(255, 140, 0, 0.15); 
+            --text: #2c1a0b; 
+            --text-muted: #6b4e3d; 
+            --primary: #ea580c; 
             --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0, transparent 50%), 
                        radial-gradient(at 100% 0%, #ffedd5 0, transparent 50%), 
                        radial-gradient(at 50% 100%, #fed7aa 0, transparent 50%);
             --bg-color: #fff7ed;
             --input-bg: #ffffff; 
-            --input-border: #fed7aa; /* ขอบส้มอ่อน */
+            --input-border: #fed7aa; 
             --card-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.15), 0 8px 10px -6px rgba(234, 88, 12, 0.1);
             --table-border: #fed7aa;
             --ticker-bg: #fee2e2;
@@ -73,6 +71,10 @@
         .action-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; color: var(--text); font-weight: 800; transition: 0.2s; flex-shrink: 0; }
         .icon-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* 🟢 REFRESH BAR */
+        .refresh-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: -8px; border-radius: 10px; overflow: hidden; }
+        #refreshIndicator { height: 100%; background: var(--primary); width: 0%; transition: width 1s linear; }
 
         /* Control Bar (Inline Middle) */
         .control-bar-inline { 
@@ -128,14 +130,12 @@
         .perf-bar-fill { height: 100%; background: #fff; border-radius: 4px; transition: width 0.5s ease; opacity: 0.9; }
         .perf-text { font-size: 10px; margin-top: 4px; opacity: 0.8; font-weight: 600; text-align: right; z-index: 2; position: relative; }
 
-        /* 🟢 URGENT TICKER FIXED */
         .urgent-ticker-container { 
             width: 100%; overflow: hidden; white-space: nowrap; 
             background: var(--ticker-bg); border: 1px solid var(--ticker-text); 
             border-radius: 12px; margin-bottom: 10px; 
-            display: none; /* JS will change to Flex */
-            position: relative; height: 36px; align-items: center;
-            z-index: 10; /* Make sure it stays on top */
+            display: none; position: relative; height: 36px; align-items: center;
+            z-index: 10;
         }
         .urgent-ticker-content { 
             display: inline-block; padding-left: 100%; 
@@ -166,9 +166,6 @@
         .u-vhigh { background: #ff3b30; } .u-medium { background: #ff9500; } .u-low { background: #007aff; }
         .status-closed { background: #34c759; } .status-process { background: #f1c40f; color: #000; } .status-pending { background: #8e8e93; }
 
-        .refresh-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: -8px; border-radius: 10px; overflow: hidden; }
-        #refreshIndicator { height: 100%; background: var(--primary); width: 0%; transition: width 1s linear; }
-
         .copy-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 700; display: none; z-index: 10000; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Kanit', sans-serif; font-size: 14px; white-space: nowrap; }
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 9999; padding: 20px; box-sizing: border-box; overflow-y: auto; }
         .modal-content { background: var(--bg-color); border: 1px solid var(--glass-border); margin: auto; padding: 25px; width: 100%; max-width: 550px; border-radius: 25px; color: var(--text); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
@@ -196,7 +193,7 @@
 
 <div class="container">
     <div class="glass-panel header">
-        <h2>📊 ULKA : CS Dashboard <span style="font-size:10px; opacity:0.5;">v.0.2.9 Beta</span></h2>
+        <h2>ULKA : CS Dashboard <span id="countdown" style="font-size:10px; opacity:0.5;">v.0.3.5 Beta | 05:00</span></h2>
         <div class="action-bar">
             <div class="search-container" id="searchWrap"><input type="text" id="searchInput" placeholder="ค้นหา..." onkeyup="renderTable()"></div>
             <div class="icon-btn" onclick="toggleSearch()">🔍</div>
@@ -309,7 +306,7 @@
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('cs_theme', next);
-        drawChart(filteredExportData); // Redraw chart for new colors
+        drawChart(allTickets); 
     }
 
     function toggleSearch() {
@@ -349,6 +346,20 @@
         renderTable();
     }
 
+    // 🟢 REFRESH TIMER LOGIC (5 Minutes)
+    setInterval(() => {
+        if(countdown > 0) {
+            countdown--;
+            let mins = Math.floor(countdown/60).toString().padStart(2,'0');
+            let secs = (countdown%60).toString().padStart(2,'0');
+            // 🟢 Text updated with Beta
+            document.getElementById('countdown').innerText = `v.0.3.5 Beta | ${mins}:${secs}`;
+            document.getElementById('refreshIndicator').style.width = ((300-countdown)/300)*100 + "%";
+        } else {
+            location.reload();
+        }
+    }, 1000);
+
     window.handleGoogleResponse = (json) => {
         allTickets = json.table.rows.map(row => {
             const getV = i => {
@@ -356,9 +367,15 @@
                 if (!cell) return "-";
                 return cell.f || cell.v || "-";
             };
-            return { ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), status: getV(4), assignee: getV(5), channel: getV(6), customer: getV(11), solution: getV(13), type: getV(14), model: getV(15), issue: getV(20) };
+            return { 
+                ticketId: getV(0), date: getV(1), owner: getV(2), urgent: getV(3), 
+                status: getV(4), assignee: getV(5), channel: getV(6), 
+                customer: getV(11), solution: getV(13), type: getV(14), 
+                model: getV(15), issue: getV(20) 
+            };
         }).filter(it => it.ticketId !== "-" && it.ticketId !== "Ticket ID");
         
+        // Sorting (Priority First)
         allTickets.sort((a, b) => {
             const uM = { "1.ด่วนมาก": 1, "2.ปานกลาง": 2, "3.ไม่รีบ": 3 };
             const sM = { "กำลังดำเนินการ": 1, "มอบหมาย": 2, "รอดำเนินการ": 3, "ปิดเคส": 4 };
@@ -368,23 +385,12 @@
 
         renderDashboardOverview(allTickets); 
         renderTable(); 
-
-        setInterval(() => {
-            if(countdown > 0) {
-                countdown--;
-                document.getElementById('countdown').innerText = `${Math.floor(countdown/60).toString().padStart(2,'0')}:${(countdown%60).toString().padStart(2,'0')}`;
-                document.getElementById('refreshIndicator').style.width = ((300-countdown)/300)*100 + "%";
-            } else {
-                location.reload();
-            }
-        }, 1000);
     };
 
     function parseDateObject(rawDate) {
         if (!rawDate || rawDate === "-") return null;
         let d, m, y;
         let str = rawDate.toString().trim();
-
         if (str.includes("Date")) {
             let parts = str.match(/\d+/g);
             if (parts && parts.length >= 3) {
@@ -400,17 +406,10 @@
             else if (p3 > 1000) { d = p1; m = p2; y = p3; }
             else { d = p1; m = p2; y = 2000 + p3; }
         }
-
         if (y > 2400) y -= 543;
-        
         const mm = String(m).padStart(2, '0');
         const dd = String(d).padStart(2, '0');
-        
-        return {
-            full: `${y}-${mm}-${dd}`,
-            month: `${y}-${mm}`,
-            rawObj: {y, m, d}
-        };
+        return { full: `${y}-${mm}-${dd}`, month: `${y}-${mm}` };
     }
 
     function renderDashboardOverview(data) {
@@ -434,7 +433,6 @@
             teamTotal.t++;
             if(isClosed) teamTotal.c++;
 
-            // 🟢 Urgent Check
             if (r.urgent.includes("1") && !isClosed) {
                 urgentText += `🔥 ${r.ticketId} ${r.customer} : ${r.issue} &nbsp;&nbsp;&nbsp;&nbsp; `;
             }
@@ -445,11 +443,12 @@
         if (urgentText !== "") { tickerContainer.style.display = 'flex'; tickerContent.innerHTML = urgentText; } 
         else { tickerContainer.style.display = 'none'; }
 
-        const allTeamPercent = teamTotal.t === 0 ? 0 : Math.round((teamTotal.c / teamTotal.t) * 100);
-        const allTeamCard = `
+        const allPercent = teamTotal.t === 0 ? 0 : Math.round((teamTotal.c / teamTotal.t) * 100);
+        // 🟢 Text changed from ALL TEAM to ALL
+        const allCard = `
             <div class="person-card card-all" onclick="shortcutOwner(null)">
-                <div class="person-card-top"><span style="font-weight:800">ALL TEAM</span><span style="font-size:24px; font-weight:800">${teamTotal.t}</span></div>
-                <div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${allTeamPercent}%"></div></div><div class="perf-text">ปิดงาน ${allTeamPercent}% (${teamTotal.c}/${teamTotal.t})</div></div>
+                <div class="person-card-top"><span style="font-weight:800">ALL</span><span style="font-size:24px; font-weight:800">${teamTotal.t}</span></div>
+                <div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${allPercent}%"></div></div><div class="perf-text">ปิดงาน ${allPercent}% (${teamTotal.c}/${teamTotal.t})</div></div>
             </div>`;
 
         const individualCards = Object.entries(csStats).map(([n, s]) => {
@@ -460,7 +459,7 @@
                 <div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${percent}%"></div></div><div class="perf-text">ปิดงาน ${percent}% (${s.c}/${s.t})</div></div>
             </div>`;
         }).join('');
-        document.getElementById('csLeaderboard').innerHTML = allTeamCard + individualCards;
+        document.getElementById('csLeaderboard').innerHTML = allCard + individualCards;
 
         document.getElementById("grandTotalCases").innerText = stats.g; 
         document.getElementById("totalTickets").innerText = stats.t;
@@ -473,18 +472,14 @@
 
     function renderTable() {
         const tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
-        
         const search = document.getElementById("searchInput").value.toLowerCase();
-        
         const dateInput = document.getElementById('dateFilter').value;
         const isWholeMonth = document.getElementById('wholeMonthToggle').checked;
-
         const statusFilter = document.getElementById('statusFilter').value;
         const csFilter = document.getElementById('csFilter').value; 
         
         const filteredData = allTickets.filter(r => {
             const dateObj = parseDateObject(r.date);
-            
             let matchDate = true;
             if (dateInput) {
                 if (isWholeMonth) {
@@ -494,7 +489,6 @@
                      if (!dateObj || dateObj.full !== dateInput) matchDate = false;
                 }
             }
-
             let matchStatus = true;
             if (statusFilter === 'total-all') matchStatus = true;
             else if (statusFilter === 'all') matchStatus = !r.status.includes("ปิด");
@@ -504,15 +498,12 @@
             const matchOwner = csFilter === 'all' ? true : r.owner === csFilter;
             const matchChannel = currentChannelFilter === 'all' ? true : r.channel.includes(currentChannelFilter);
             const matchSearch = search==="" || r.customer.toLowerCase().includes(search) || r.model.toLowerCase().includes(search) || r.issue.toLowerCase().includes(search);
-            
             return matchDate && matchStatus && matchOwner && matchChannel && matchSearch;
         });
         
         filteredExportData = filteredData;
-
         if (filteredData.length === 0) {
-            let filterText = dateInput ? (isWholeMonth ? `ทั้งเดือนของ ${dateInput}` : `วันที่ ${dateInput}`) : 'ทั้งหมด';
-            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.6;">❌ ไม่พบข้อมูล (${filterText})</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.6;">❌ ไม่พบข้อมูล</td></tr>`;
             return;
         }
 
@@ -526,10 +517,8 @@
     function drawChart(data) {
         const mC = {}; data.forEach(r => { if(r.model !== "-") mC[r.model] = (mC[r.model] || 0) + 1; });
         const sM = Object.entries(mC).sort((a,b) => b[1]-a[1]).slice(0,10);
-        // Fix: Detect theme color for chart text
         const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
         const textCol = isDark ? '#fff' : '#000';
-        
         const chartData = google.visualization.arrayToDataTable([['Model', 'Count'], ...sM]);
         const options = { 
             title: '10 อันดับสินค้า (ภาพรวม)', 
@@ -539,45 +528,23 @@
             pieSliceText: 'percentage', pieSliceTextStyle: { fontSize: 10, fontName: 'Inter' },
             sliceVisibilityThreshold: 0.05, chartArea: { width: '90%', height: '80%' }
         };
-        const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(chartData, options);
+        new google.visualization.PieChart(document.getElementById('chart_div')).draw(chartData, options);
     }
 
     function exportToCSV() {
         if (filteredExportData.length === 0) { alert("ไม่มีข้อมูลให้ Export"); return; }
-        
-        const dateInput = document.getElementById('dateFilter').value;
-        const isWholeMonth = document.getElementById('wholeMonthToggle').checked;
-        
-        let suffix = "All_List";
-        if (dateInput) {
-            suffix = isWholeMonth ? `Month_${dateInput.substring(0,7)}` : `Date_${dateInput}`;
-        }
-
         let csvContent = "\uFEFFTicket ID,วันที่,ลูกค้า,รุ่นสินค้า,ประเภท,อาการเสีย,วิธีแก้,CS,ความด่วน,สถานะ,ผู้รับช่วง\n";
         filteredExportData.forEach(r => {
-            let row = [
-                `"${r.ticketId}"`, `"${r.date}"`, `"${r.customer}"`, `"${r.model}"`, 
-                `"${r.type}"`, `"${r.issue}"`, `"${r.solution}"`, `"${r.owner}"`, 
-                `"${r.urgent}"`, `"${r.status}"`, `"${r.assignee}"`
-            ];
-            csvContent += row.join(",") + "\n";
+            csvContent += `"${r.ticketId}","${r.date}","${r.customer}","${r.model}","${r.type}","${r.issue}","${r.solution}","${r.owner}","${r.urgent}","${r.status}","${r.assignee}"\n`;
         });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `ULKA_CS_Report_${suffix}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const url = URL.createObjectURL(new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }));
+        const link = document.createElement("a"); link.href = url; link.download = `ULKA_CS_Report.csv`; link.click();
     }
 
     function copyCustomerName(name) {
         navigator.clipboard.writeText(name).then(() => {
             const toast = document.getElementById('copyToast');
-            toast.style.display = 'block'; toast.innerText = `คัดลอก "${name}" แล้ว! 📋`;
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000);
         });
     }
 
