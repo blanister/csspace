@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.16</title>
+    <title>CS Space : Dashboard v.0.5.17</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -13,7 +13,7 @@
         :root {
             --bg-body: #0f172a; 
             --bg-mesh: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.10) 0px, transparent 50%), 
-                       radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.10) 0px, transparent 50%);
+                        radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.10) 0px, transparent 50%);
             
             --sidebar-fixed: #1e293b; 
             
@@ -39,7 +39,7 @@
         [data-theme="light"] {
             --bg-body: #f8fafc;
             --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0px, transparent 50%), 
-                       radial-gradient(at 100% 0%, #ffedd5 0px, transparent 50%);
+                        radial-gradient(at 100% 0%, #ffedd5 0px, transparent 50%);
             
             --card-bg: rgba(255, 255, 255, 0.85);
             --card-border: #e2e8f0;
@@ -60,7 +60,7 @@
             margin: 0; padding: 0;
             color: var(--text-main);
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden; /* Desktop keeps hidden overflow */
             transition: background-color 0.3s;
         }
 
@@ -278,7 +278,15 @@
 
         /* 📱 MOBILE RESPONSIVE UPDATES */
         @media (max-width: 1024px) {
+            /* 🔴 FIX: ปลดล็อคการเลื่อนหน้าจอบนมือถือ */
+            body {
+                overflow: auto !important;
+                height: auto !important;
+            }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
+            .main-content { overflow: visible; height: auto; }
+            .content-scroll { overflow: visible; height: auto; }
+            
             .sidebar { 
                 height: auto; 
                 flex-wrap: wrap; 
@@ -326,7 +334,7 @@
         </div>
         
         <div class="nav-group" style="gap:10px;">
-            <span id="countdown" class="version-text">v.0.5.16 • Loading...</span>
+            <span id="countdown" class="version-text">v.0.5.17 • Loading...</span>
             
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">
@@ -429,7 +437,7 @@
                             <div id="chart_csat_div" class="chart-body"></div>
                         </div>
                         <div class="chart-card" style="grid-column: span 1;">
-                            <div class="chart-title">⏱️ Response Time</div>
+                            <div class="chart-title">⏱️ Avg Response Time (นาทีเฉลี่ย/คน)</div>
                             <div id="chart_resp_div" class="chart-body"></div>
                         </div>
                     </div>
@@ -520,7 +528,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.16 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.17 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
@@ -699,8 +707,29 @@
         const sData = [['Rating','Count', { role: 'style' }]]; Object.entries(sCounts).sort().forEach(([k,v]) => sData.push([k, v, '#10b981']));
         new google.visualization.BarChart(document.getElementById('chart_csat_div')).draw(google.visualization.arrayToDataTable(sData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
 
-        const rCounts = {}; data.forEach(t => { const r = t.responseTime || 'N/A'; rCounts[r] = (rCounts[r]||0)+1; });
-        const rData = [['Response','Count', { role: 'style' }]]; Object.entries(rCounts).forEach(([k,v]) => rData.push([k, v, '#3b82f6']));
+        // --- UPDATED LOGIC: Average Response Time per CS ---
+        const csResp = {}; 
+        data.forEach(t => { 
+            // Convert time to number, check if it is valid
+            const val = parseFloat(t.responseTime);
+            const owner = t.owner;
+            if(!isNaN(val) && owner && owner !== '-') {
+               if(!csResp[owner]) csResp[owner] = { sum:0, count:0 };
+               csResp[owner].sum += val;
+               csResp[owner].count++;
+            }
+        });
+        
+        const rData = [['CS Name','Avg Minutes', { role: 'style' }]]; 
+        Object.entries(csResp).forEach(([k,v]) => {
+            const avg = v.count ? (v.sum / v.count) : 0;
+            // Round to 2 decimal places
+            rData.push([k, parseFloat(avg.toFixed(2)), '#3b82f6']);
+        });
+
+        // If no data, push an empty placeholder to prevent error
+        if (rData.length === 1) rData.push(['No Data', 0, '#3b82f6']);
+
         new google.visualization.ColumnChart(document.getElementById('chart_resp_div')).draw(google.visualization.arrayToDataTable(rData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
     }
 
