@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ULKA : CS Dashboard v.0.4.3</title>
+    <title>ULKA : CS Dashboard v.0.4.7</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -11,25 +11,26 @@
     <style>
         /* 🎨 THEME VARIABLES SYSTEM */
         :root {
-            /* 🌑 Dark Mode (Default) */
-            --bg-body: #0f172a;
-            --bg-mesh: radial-gradient(at 0% 0%, #1e3a8a 0px, transparent 50%), 
-                       radial-gradient(at 100% 0%, #1e1b4b 0px, transparent 50%), 
-                       radial-gradient(at 100% 100%, #172554 0px, transparent 50%);
+            /* 🌑 Dark Mode (Default) - SOLID DEEP BLUE */
+            --bg-body: #020617; /* Deep Dark Blue */
+            --bg-mesh: none;
             
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.6);
             --card-border: rgba(255, 255, 255, 0.1);
             --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             
             --text-main: #f8fafc;
             --text-secondary: #94a3b8;
-            --primary-color: #f97316; /* Orange-500 */
+            --primary-color: #f97316;
             --primary-glow: rgba(249, 115, 22, 0.4);
 
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #3b82f6; /* Blue for Assigned */
+            --info: #3b82f6;
+
+            /* 🔵 Customer Name Color (Dark Mode) */
+            --link-color: #38bdf8; /* Sky-400 */
 
             --font-main: 'Inter', 'Kanit', sans-serif;
             --radius-md: 16px;
@@ -38,18 +39,21 @@
 
         [data-theme="light"] {
             /* ☀️ Light Mode */
-            --bg-body: #f8fafc; /* Slate-50 */
+            --bg-body: #f8fafc;
             --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0px, transparent 50%), 
                        radial-gradient(at 100% 0%, #ffedd5 0px, transparent 50%);
             
             --card-bg: #ffffff;
             --card-border: #e2e8f0;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             
-            --text-main: #1e293b; /* Slate-800 */
-            --text-secondary: #64748b; /* Slate-500 */
-            --primary-color: #ea580c; /* Orange-600 */
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --primary-color: #ea580c;
             --primary-glow: rgba(234, 88, 12, 0.2);
+
+            /* 🔵 Customer Name Color (Light Mode) */
+            --link-color: #0284c7; /* Sky-600 */
         }
 
         * { box-sizing: border-box; }
@@ -68,71 +72,52 @@
             font-size: 14px;
         }
 
-        /* 📱 Container & Layout */
-        .container { 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 20px; 
-        }
+        .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-        /* 💎 Glass Card Style */
+        /* 💎 Glass Card */
         .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--card-shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border); border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow); transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        /* 🔝 Header Section */
+        /* 🔝 Header (Simplified) */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            gap: 15px;
-            flex-wrap: wrap;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 24px; gap: 15px; flex-wrap: wrap;
         }
-        
         .header-title { display: flex; flex-direction: column; }
         .header h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; }
         .header-meta { font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; }
 
-        /* 🛠 Action Buttons */
-        .action-group { display: flex; gap: 10px; align-items: center; }
-        .btn-icon {
-            width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--card-border);
-            background: var(--card-bg); color: var(--text-main); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; font-size: 18px;
-        }
-        .btn-icon:hover { background: var(--card-border); transform: translateY(-2px); }
-        .btn-icon.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .action-group { display: flex; gap: 15px; align-items: center; }
 
+        /* ✨ PLAIN BUTTONS */
+        .btn-plain {
+            background: none; border: none; font-size: 20px; cursor: pointer;
+            color: var(--text-secondary); padding: 5px; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-plain:hover { color: var(--text-main); transform: scale(1.1); }
+
+        /* 🔍 PLAIN SEARCH BAR */
+        .search-box-plain {
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid var(--card-border);
+            padding: 0 5px 5px 5px; transition: 0.3s;
+        }
+        .search-box-plain:focus-within { border-bottom-color: var(--primary-color); }
+        .search-box-plain input {
+            background: transparent; border: none; color: var(--text-main);
+            font-family: var(--font-main); outline: none; width: 150px; font-size: 14px;
+        }
+        .search-box-plain input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+        
         .btn-primary {
             background: var(--primary-color); color: white; border: none; padding: 0 20px; height: 42px;
             border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px var(--primary-glow);
             transition: all 0.2s; display: flex; align-items: center; gap: 8px; font-family: var(--font-main);
         }
         .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        /* 🔍 Search Bar */
-        .search-box {
-            position: relative; height: 42px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 42px; overflow: hidden; border-radius: 21px; background: var(--card-bg); border: 1px solid var(--card-border);
-        }
-        .search-box.expanded { width: 200px; }
-        .search-box input {
-            width: 100%; height: 100%; background: transparent; border: none; padding: 0 15px 0 45px;
-            color: var(--text-main); font-family: var(--font-main); outline: none;
-        }
-        .search-icon-toggle {
-            position: absolute; left: 0; top: 0; width: 42px; height: 42px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2;
-        }
 
         /* 📊 Dashboard Grid */
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
@@ -187,6 +172,20 @@
         }
         .btn-outline:hover { color: var(--text-main); background: var(--card-border); }
 
+        /* Channel Toggle Buttons */
+        .btn-channel {
+            height: 40px; padding: 0 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; border: 1px solid transparent;
+            transition: 0.2s; opacity: 0.7;
+        }
+        .btn-channel:hover { opacity: 1; transform: translateY(-1px); }
+        .btn-channel.active { opacity: 1; border-color: currentColor; background: rgba(255,255,255,0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        [data-theme="light"] .btn-channel.active { background: rgba(0,0,0,0.05); }
+
+        .btn-line { color: #06c755; background: rgba(6, 199, 85, 0.1); }
+        .btn-fb { color: #1877f2; background: rgba(24, 119, 242, 0.1); }
+
+
         .chart-container { width: 100%; height: 100%; min-height: 300px; position: relative; }
         .table-container { overflow-x: auto; border-radius: var(--radius-lg); }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
@@ -202,33 +201,20 @@
         tr:hover td { background: rgba(255,255,255,0.02); }
         [data-theme="light"] tr:hover td { background: rgba(0,0,0,0.02); }
 
-        /* 🌈 Status Badges (Updated) */
-        .status-badge {
-            padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; 
-            display: inline-flex; align-items: center; gap: 4px;
-        }
-        
-        /* Green */
-        .status-closed { 
-            background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); 
-        }
-        /* Orange/Yellow */
-        .status-doing { 
-            background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); 
-        }
-        /* Grey */
-        .status-pending { 
-            background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); 
-        }
-        /* Blue (New!) */
-        .status-assigned { 
-            background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); 
-        }
-
+        /* Status Badges */
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        .status-closed { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-doing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .status-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+        .status-assigned { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
         .urgent-badge { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
 
-        .click-to-copy { cursor: pointer; text-decoration: underline dotted; transition: color 0.2s; }
-        .click-to-copy:hover { color: var(--primary-color); }
+        /* 🔵 Customer Name (New Color) */
+        .click-to-copy { 
+            cursor: pointer; text-decoration: none; transition: color 0.2s;
+            color: var(--link-color); font-weight: 600;
+        }
+        .click-to-copy:hover { text-decoration: underline; filter: brightness(1.2); }
         .click-to-copy:active { transform: scale(0.98); }
 
         .copy-toast { 
@@ -252,7 +238,6 @@
         }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .leaderboard-row, .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -260,13 +245,13 @@
         @media (max-width: 768px) {
             .header { flex-direction: column; align-items: flex-start; }
             .action-group { width: 100%; justify-content: space-between; margin-top: 10px; }
-            .search-box.expanded { width: 100%; position: absolute; left: 0; right: 0; top: 70px; z-index: 10; padding: 0 10px; }
+            .search-box-plain input { width: 100%; }
             .leaderboard-row { grid-template-columns: 1fr 1fr; }
             .card-all { grid-column: span 2; }
             .stats-row { grid-template-columns: repeat(3, 1fr); }
             .chart-container { min-height: 250px; }
             .controls-area { flex-direction: column; align-items: stretch; }
-            .btn-outline, .btn-primary { width: 100%; justify-content: center; }
+            .btn-outline, .btn-primary, .btn-channel { width: 100%; justify-content: center; }
         }
 
         .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--primary-color); width: 0%; z-index: 9999; transition: width 0.5s linear; }
@@ -293,18 +278,15 @@
     <header class="glass-card header">
         <div class="header-title">
             <h1>CS Dashboard</h1>
-            <span class="header-meta" id="countdown">v.0.4.3 • Updated just now</span>
+            <span class="header-meta" id="countdown">v.0.4.7 • Updated just now</span>
         </div>
         
         <div class="action-group">
-            <div class="search-box" id="searchBox">
-                <div class="search-icon-toggle" onclick="toggleSearch()">🔍</div>
-                <input type="text" id="searchInput" placeholder="ค้นหาลูกค้า, รุ่นสินค้า..." onkeyup="renderTable()">
+            <div class="search-box-plain">
+                <span style="font-size:16px; opacity:0.5;">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search..." onkeyup="renderTable()">
             </div>
-            
-            <button class="btn-icon" id="btnLine" onclick="toggleChannel('Line OA', this)">L</button>
-            <button class="btn-icon" id="btnFb" onclick="toggleChannel('Facebook', this)">F</button>
-            <button class="btn-icon" onclick="toggleTheme()">🌓</button>
+            <button class="btn-plain" onclick="toggleTheme()" title="เปลี่ยนธีม">🌓</button>
             <button class="btn-primary" onclick="openModal()"><span>+ เคสใหม่</span></button>
         </div>
     </header>
@@ -315,7 +297,6 @@
 
     <div class="dashboard-grid">
         <div style="display: flex; flex-direction: column; gap: 20px;">
-            
             <div class="leaderboard-row" id="leaderboard"></div>
 
             <div class="stats-row">
@@ -357,6 +338,10 @@
                         <option value="Ohm">Ohm</option>
                     </select>
                 </div>
+
+                <button class="btn-channel btn-line" id="btnLine" onclick="toggleChannel('Line OA', this)">Line OA</button>
+                <button class="btn-channel btn-fb" id="btnFb" onclick="toggleChannel('Facebook', this)">Facebook</button>
+
                 <button class="btn-outline" onclick="resetFilters()">↺ รีเซ็ต</button>
                 <button class="btn-outline" onclick="exportCSV()">📥 Export</button>
             </div>
@@ -373,7 +358,7 @@
             <thead>
                 <tr>
                     <th>#</th><th>Ticket</th><th>Date</th><th>Customer</th><th>Model / Type</th>
-                    <th>Issue</th><th>Solution</th><th>Owner</th><th>Urgency</th><th>Status</th>
+                    <th>Issue</th><th>Solution</th><th>Owner</th><th>Urgency</th><th>Status</th><th>Assignee</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -424,23 +409,26 @@
         document.documentElement.setAttribute('data-theme', next); localStorage.setItem('cs_theme', next);
         drawChart(allTickets);
     }
-    function toggleSearch() { document.getElementById('searchBox').classList.toggle('expanded'); document.getElementById('searchInput').focus(); }
+    
     function toggleChannel(ch, btn) {
         currentChannel = currentChannel === ch ? 'all' : ch;
-        document.querySelectorAll('.btn-icon').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
         if(currentChannel !== 'all') btn.classList.add('active');
         renderTable();
     }
+
     function openModal() { document.getElementById('addModal').classList.add('open'); }
     function closeModal() { document.getElementById('addModal').classList.remove('open'); }
     function filterStatus(s) { document.getElementById('statusFilter').value = s; renderTable(); }
     function filterOwner(o) { document.getElementById('csFilter').value = o || 'all'; renderTable(); }
+    
     function resetFilters() {
         document.getElementById('dateFilter').value = ''; document.getElementById('monthToggle').checked = false;
         document.getElementById('statusFilter').value = 'all'; document.getElementById('csFilter').value = 'all';
-        currentChannel = 'all'; document.querySelectorAll('.btn-icon').forEach(b => b.classList.remove('active'));
+        currentChannel = 'all'; document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
         renderTable();
     }
+    
     function copyCustomerName(name) {
         navigator.clipboard.writeText(name).then(() => {
             const t = document.getElementById('copyToast'); t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000);
@@ -451,7 +439,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.4.3 • Auto Refresh in ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.4.7 • Auto Refresh in ${m}:${s}`;
             document.getElementById('refreshBar').style.width = ((300-countdownSec)/300)*100 + "%";
         } else location.reload();
     }, 1000);
@@ -544,24 +532,23 @@
                 if(sFilter === 'ปิดเคส' && !t.status.includes('ปิด')) return false;
             }
             if(cFilter !== 'all' && t.owner !== cFilter) return false;
-            if(currentChannel !== 'all' && !t.channel.includes(currentChannel)) return false;
+            if(currentChannel !== 'all' && t.channel && !t.channel.includes(currentChannel)) return false;
             if(search && !JSON.stringify(t).toLowerCase().includes(search)) return false;
             return true;
         });
 
         filteredExport = filtered;
-        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; opacity:0.5;">ไม่พบข้อมูล</td></tr>`; return; }
+        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.5;">ไม่พบข้อมูล</td></tr>`; return; }
 
         filtered.forEach((t, i) => {
             const uCol = t.urgent.includes('1') ? '#ef4444' : (t.urgent.includes('2') ? '#f59e0b' : '#3b82f6');
-            
-            // 🎨 NEW COLOR LOGIC
-            let sClass = 'status-pending'; // Default Grey
-            if(t.status.includes('ปิด')) sClass = 'status-closed'; // Green
-            else if(t.status.includes('กำลัง')) sClass = 'status-doing'; // Orange
-            else if(t.status.includes('มอบ') || t.status.includes('ส่งต่อ')) sClass = 'status-assigned'; // Blue (New!)
+            let sClass = 'status-pending'; 
+            if(t.status.includes('ปิด')) sClass = 'status-closed'; 
+            else if(t.status.includes('กำลัง')) sClass = 'status-doing'; 
+            else if(t.status.includes('มอบ') || t.status.includes('ส่งต่อ')) sClass = 'status-assigned';
 
-            tbody.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:600; color:var(--primary-color)">${t.id}</td><td>${t.date}</td><td style="font-weight:600;"><span class="click-to-copy" onclick="copyCustomerName(this.innerText)" title="คลิกเพื่อคัดลอก">${t.customer}</span></td><td><div style="font-weight:600;">${t.model}</div><small style="opacity:0.6">${t.type}</small></td><td style="max-width:200px;">${t.issue}</td><td style="max-width:200px;">${t.solution}</td><td>${t.owner}</td><td><span class="urgent-badge" style="background:${uCol}"></span>${t.urgent.split('.')[1]||t.urgent}</td><td><span class="status-badge ${sClass}">${t.status}</span></td></tr>`;
+            // Assignee moved to last column
+            tbody.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:600; color:var(--primary-color)">${t.id}</td><td>${t.date}</td><td style="font-weight:600;"><span class="click-to-copy" onclick="copyCustomerName(this.innerText)" title="คลิกเพื่อคัดลอก">${t.customer}</span></td><td><div style="font-weight:600;">${t.model}</div><small style="opacity:0.6">${t.type}</small></td><td style="max-width:200px;">${t.issue}</td><td style="max-width:200px;">${t.solution}</td><td>${t.owner}</td><td><span class="urgent-badge" style="background:${uCol}"></span>${t.urgent.split('.')[1]||t.urgent}</td><td><span class="status-badge ${sClass}">${t.status}</span></td><td>${t.assignee}</td></tr>`;
         });
     }
 
@@ -584,8 +571,9 @@
     }
 
     function exportCSV() {
-        let csv = "ID,Date,Customer,Model,Issue,Solution,Owner,Status\n";
-        filteredExport.forEach(r => csv += `"${r.id}","${r.date}","${r.customer}","${r.model}","${r.issue}","${r.solution}","${r.owner}","${r.status}"\n`);
+        // Adjusted CSV columns to match table
+        let csv = "ID,Date,Customer,Model,Issue,Solution,Owner,Urgency,Status,Assignee\n";
+        filteredExport.forEach(r => csv += `"${r.id}","${r.date}","${r.customer}","${r.model}","${r.issue}","${r.solution}","${r.owner}","${r.urgent}","${r.status}","${r.assignee}"\n`);
         const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); link.download = "CS_Report.csv"; link.click();
     }
 
