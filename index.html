@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.41 (Floating Dock Fix)</title>
+    <title>CS Space : Dashboard v.0.5.42 (Orange Dock)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -276,7 +276,7 @@
             .brand-area { width: auto; font-size: 18px; }
             .version-text { display: none; } 
             
-            /* 🔥🔥🔥 FLOATING DOCK MOBILE FIX (NOW WORKS CORRECTLY) 🔥🔥🔥 */
+            /* 🔥🔥🔥 FLOATING DOCK MOBILE FIX (ORANGE) 🔥🔥🔥 */
             .nav-center { 
                 position: fixed; 
                 bottom: 20px; /* Float at bottom */
@@ -285,7 +285,10 @@
                 transform: translateX(-50%); /* Cancel Desktop Y-axis center */
                 width: 90%; 
                 max-width: 400px;
-                background: var(--nav-bg-mobile); 
+                
+                /* 🔥 UPDATED TO ORANGE BACKGROUND */
+                background: var(--primary-color); 
+                
                 backdrop-filter: blur(16px);
                 border: 1px solid var(--card-border);
                 padding: 6px 6px; 
@@ -306,10 +309,16 @@
                 padding: 8px 4px;
                 font-size: 11px;
                 border-radius: 12px;
+                
+                /* 🔥 UPDATED TEXT COLOR FOR ORANGE BG */
+                color: rgba(255,255,255,0.9);
             }
+            
             .nav-btn.active { 
-                background: var(--primary-color); 
-                box-shadow: 0 4px 12px var(--primary-glow);
+                /* 🔥 UPDATED ACTIVE STATE FOR ORANGE BG */
+                background: #ffffff; 
+                color: var(--primary-color);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             }
             
             .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
@@ -348,7 +357,7 @@
         </div>
         
         <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:0;">
-            <span id="countdown" class="version-text">v.0.5.41 • Loading...</span>
+            <span id="countdown" class="version-text">v.0.5.42 • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
@@ -609,7 +618,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.41 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.42 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
