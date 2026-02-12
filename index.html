@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.40 (Bottom Nav)</title>
+    <title>CS Space : Dashboard v.0.5.41 (Floating Dock Fix)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -29,7 +29,7 @@
             --font-main: 'Inter', 'Kanit', sans-serif;
             --radius-md: 12px; 
             --radius-lg: 16px;
-            --nav-bg-mobile: rgba(30, 41, 59, 0.85); /* Special var for mobile nav */
+            --nav-bg-mobile: rgba(30, 41, 59, 0.85);
         }
 
         [data-theme="light"] {
@@ -60,7 +60,7 @@
             transition: background-color 0.3s;
         }
 
-        .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+        .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; position: relative; }
 
         .sidebar {
             margin: 16px 24px 0 24px; 
@@ -77,10 +77,19 @@
         .brand-area { font-size: 20px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; white-space: nowrap; }
         .nav-group { display: flex; gap: 8px; align-items: center; }
 
-        /* Default Desktop Nav */
+        /* 🔥 FIX: Nav Center (Desktop) */
+        /* ย้ายออกมาอยู่นอก Sidebar แล้วใช้ Absolute Position แทน เพื่อแก้บั๊ก Mobile */
         .nav-center {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.05);
+            position: absolute; 
+            top: 50px; /* (16px Margin top + 34px Half Height) */
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            display: flex; gap: 6px; 
+            background: rgba(0,0,0,0.2); 
+            padding: 4px; 
+            border-radius: 99px; 
+            border: 1px solid rgba(255,255,255,0.05);
+            z-index: 1000; /* อยู่บน Sidebar */
         }
 
         .nav-btn {
@@ -168,14 +177,13 @@
             table-layout: fixed; 
         }
 
-        /* 🔥 FIX: Header single line, Data wraps nicely */
         th { 
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: nowrap; /* Header ไม่ตัดคำ */
+            white-space: nowrap; 
             overflow: hidden;
-            text-overflow: ellipsis; /* ถ้าล้นให้เป็น ... */
+            text-overflow: ellipsis;
             vertical-align: middle;
         }
 
@@ -183,7 +191,7 @@
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: normal; /* Data ตัดคำลงบรรทัดใหม่ได้ */
+            white-space: normal; 
             word-wrap: break-word;
             overflow-wrap: break-word;
             vertical-align: top;
@@ -202,8 +210,7 @@
         #mainTable th:nth-child(10) { width: 110px; } /* Status */
         #mainTable th:nth-child(11) { width: 100px; } /* Assignee */
 
-
-        /* 🔧 CRM201 COLUMN WIDTHS - UPDATED for Sequence Number & Fix Overlap */
+        /* 🔧 CRM201 COLUMN WIDTHS */
         #crmTable th:nth-child(1) { width: 40px; text-align: center; } /* # */
         #crmTable th:nth-child(2) { width: 80px; } /* Buy Date */
         #crmTable th:nth-child(3) { width: 100px; } /* Call Date */
@@ -213,7 +220,6 @@
         #crmTable th:nth-child(7) { width: 14%; } /* Products */
         #crmTable th:nth-child(8) { width: 70px; text-align:right; } /* Total */
         #crmTable th:nth-child(9) { width: 80px; } /* Province */
-
 
         th { color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; background: rgba(0,0,0,0.02); }
         tr:hover td { background: rgba(255,255,255,0.02); }
@@ -270,20 +276,21 @@
             .brand-area { width: auto; font-size: 18px; }
             .version-text { display: none; } 
             
-            /* 🔥🔥🔥 MOVED NAV TO BOTTOM (FLOATING DOCK) 🔥🔥🔥 */
+            /* 🔥🔥🔥 FLOATING DOCK MOBILE FIX (NOW WORKS CORRECTLY) 🔥🔥🔥 */
             .nav-center { 
                 position: fixed; 
-                bottom: 20px; /* Float above bottom */
+                bottom: 20px; /* Float at bottom */
+                top: auto; /* Cancel Desktop 'top' */
                 left: 50%; 
-                transform: translateX(-50%); 
+                transform: translateX(-50%); /* Cancel Desktop Y-axis center */
                 width: 90%; 
                 max-width: 400px;
-                background: var(--nav-bg-mobile); /* Adaptive Background */
+                background: var(--nav-bg-mobile); 
                 backdrop-filter: blur(16px);
                 border: 1px solid var(--card-border);
                 padding: 6px 6px; 
                 border-radius: 16px; 
-                justify-content: space-between; /* Distribute items */
+                justify-content: space-between; 
                 order: 99; 
                 margin-top: 0; 
                 overflow-x: visible; 
@@ -292,7 +299,6 @@
                 box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             }
             
-            /* Adjust Buttons for Bottom Dock */
             .nav-btn { 
                 flex: 1; 
                 justify-content: center;
@@ -341,19 +347,19 @@
             <span style="color:var(--primary-color)">CS</span> Space
         </div>
         
-        <div class="nav-group nav-center">
-            <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
-            <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
-            <button class="nav-btn" onclick="switchPage('tec', this)">TEC301</button>
-            <button class="nav-btn" onclick="switchPage('summary', this)">CS Summary</button>
-        </div>
-        
         <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:0;">
-            <span id="countdown" class="version-text">v.0.5.40 • Loading...</span>
+            <span id="countdown" class="version-text">v.0.5.41 • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
     </nav>
+
+    <div class="nav-group nav-center">
+        <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
+        <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
+        <button class="nav-btn" onclick="switchPage('tec', this)">TEC301</button>
+        <button class="nav-btn" onclick="switchPage('summary', this)">CS Summary</button>
+    </div>
 
     <main class="main-content">
         <div class="content-scroll">
@@ -603,7 +609,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.40 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.41 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
