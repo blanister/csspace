@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.39 (Mobile Fix)</title>
+    <title>CS Space : Dashboard v.0.5.40 (Bottom Nav)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -29,6 +29,7 @@
             --font-main: 'Inter', 'Kanit', sans-serif;
             --radius-md: 12px; 
             --radius-lg: 16px;
+            --nav-bg-mobile: rgba(30, 41, 59, 0.85); /* Special var for mobile nav */
         }
 
         [data-theme="light"] {
@@ -41,6 +42,7 @@
             --text-secondary: #64748b;
             --primary-color: #ea580c;
             --link-color: #0284c7; 
+            --nav-bg-mobile: rgba(255, 255, 255, 0.9);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -75,6 +77,7 @@
         .brand-area { font-size: 20px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; white-space: nowrap; }
         .nav-group { display: flex; gap: 8px; align-items: center; }
 
+        /* Default Desktop Nav */
         .nav-center {
             position: absolute; left: 50%; transform: translateX(-50%);
             display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.05);
@@ -249,43 +252,59 @@
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
-            .content-scroll { overflow: visible; height: auto; padding: 15px; }
             
-            /* Sidebar Optimization */
+            /* 🔥 Space for Bottom Nav */
+            .content-scroll { overflow: visible; height: auto; padding: 15px 15px 100px 15px; } 
+            
+            /* Sidebar Top Optimization */
             .sidebar { 
-                height: auto; 
-                flex-wrap: wrap; 
+                height: 60px; 
+                flex-wrap: nowrap; 
                 padding: 12px 16px; 
                 gap: 8px; 
                 justify-content: space-between; 
-                margin: 10px; 
-                border-radius: 20px; 
+                margin: 0;
+                border-radius: 0 0 20px 20px;
+                position: sticky; top:0;
             }
-            .brand-area { margin-bottom: 5px; width: 100%; justify-content: center; }
-            .nav-center { 
-                position: static; 
-                transform: none; 
-                background: transparent; 
-                border: none; 
-                padding: 0; 
-                width: 100%; 
-                justify-content: flex-start; /* Align left */
-                order: 3; 
-                margin-top: 5px; 
-                overflow-x: auto; /* Horizontal Scroll */
-                white-space: nowrap; /* Prevent Wrap */
-                padding-bottom: 5px;
-            }
-            .nav-center::-webkit-scrollbar { height: 4px; }
-            .nav-center::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-            .nav-btn { 
-                width: auto; 
-                flex-shrink: 0; /* Prevent shrink */
-                background: rgba(255,255,255,0.05); 
-                padding: 6px 12px;
-                font-size: 12px;
-            }
+            .brand-area { width: auto; font-size: 18px; }
             .version-text { display: none; } 
+            
+            /* 🔥🔥🔥 MOVED NAV TO BOTTOM (FLOATING DOCK) 🔥🔥🔥 */
+            .nav-center { 
+                position: fixed; 
+                bottom: 20px; /* Float above bottom */
+                left: 50%; 
+                transform: translateX(-50%); 
+                width: 90%; 
+                max-width: 400px;
+                background: var(--nav-bg-mobile); /* Adaptive Background */
+                backdrop-filter: blur(16px);
+                border: 1px solid var(--card-border);
+                padding: 6px 6px; 
+                border-radius: 16px; 
+                justify-content: space-between; /* Distribute items */
+                order: 99; 
+                margin-top: 0; 
+                overflow-x: visible; 
+                white-space: nowrap; 
+                z-index: 1000;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            }
+            
+            /* Adjust Buttons for Bottom Dock */
+            .nav-btn { 
+                flex: 1; 
+                justify-content: center;
+                background: transparent; 
+                padding: 8px 4px;
+                font-size: 11px;
+                border-radius: 12px;
+            }
+            .nav-btn.active { 
+                background: var(--primary-color); 
+                box-shadow: 0 4px 12px var(--primary-glow);
+            }
             
             .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
             .summary-grid { grid-template-columns: 1fr; }
@@ -298,7 +317,7 @@
             .lb-card, .stat-item { padding: 10px; }
             .stat-item .val { font-size: 18px; }
             
-            /* Mobile Table Optimization - FIX: Force wide table to prevent text squashing */
+            /* Mobile Table Optimization */
             .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
             table { min-width: 1250px; font-size: 11px; } 
             
@@ -329,8 +348,8 @@
             <button class="nav-btn" onclick="switchPage('summary', this)">CS Summary</button>
         </div>
         
-        <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
-            <span id="countdown" class="version-text">v.0.5.39 • Loading...</span>
+        <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:0;">
+            <span id="countdown" class="version-text">v.0.5.40 • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
@@ -584,7 +603,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.39 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.40 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
