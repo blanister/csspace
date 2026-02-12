@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.38 (Mobile Optimized)</title>
+    <title>CS Space : Dashboard v.0.5.39 (Mobile Fix)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -298,10 +298,9 @@
             .lb-card, .stat-item { padding: 10px; }
             .stat-item .val { font-size: 18px; }
             
-            /* Mobile Table Optimization */
+            /* Mobile Table Optimization - FIX: Force wide table to prevent text squashing */
             .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            table { min-width: 600px; font-size: 11px; } 
-            th, td { padding: 8px 4px; }
+            table { min-width: 1250px; font-size: 11px; } 
             
             .chart-card { height: 300px; padding: 10px; }
             .chart-body { height: 100%; }
@@ -331,7 +330,7 @@
         </div>
         
         <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
-            <span id="countdown" class="version-text">v.0.5.38 • Loading...</span>
+            <span id="countdown" class="version-text">v.0.5.39 • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
@@ -585,7 +584,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.38 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.39 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
