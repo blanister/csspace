@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CS Space : Dashboard v.0.5.42 (Orange Dock)</title>
+    <title>CS Space : Dashboard v.0.5.40 (Add Tar)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -29,7 +29,6 @@
             --font-main: 'Inter', 'Kanit', sans-serif;
             --radius-md: 12px; 
             --radius-lg: 16px;
-            --nav-bg-mobile: rgba(30, 41, 59, 0.85);
         }
 
         [data-theme="light"] {
@@ -42,7 +41,6 @@
             --text-secondary: #64748b;
             --primary-color: #ea580c;
             --link-color: #0284c7; 
-            --nav-bg-mobile: rgba(255, 255, 255, 0.9);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -60,7 +58,7 @@
             transition: background-color 0.3s;
         }
 
-        .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; position: relative; }
+        .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
         .sidebar {
             margin: 16px 24px 0 24px; 
@@ -77,19 +75,9 @@
         .brand-area { font-size: 20px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; white-space: nowrap; }
         .nav-group { display: flex; gap: 8px; align-items: center; }
 
-        /* 🔥 FIX: Nav Center (Desktop) */
-        /* ย้ายออกมาอยู่นอก Sidebar แล้วใช้ Absolute Position แทน เพื่อแก้บั๊ก Mobile */
         .nav-center {
-            position: absolute; 
-            top: 50px; /* (16px Margin top + 34px Half Height) */
-            left: 50%; 
-            transform: translate(-50%, -50%);
-            display: flex; gap: 6px; 
-            background: rgba(0,0,0,0.2); 
-            padding: 4px; 
-            border-radius: 99px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            z-index: 1000; /* อยู่บน Sidebar */
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.05);
         }
 
         .nav-btn {
@@ -134,7 +122,8 @@
         .crm-filter-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
         .crm-filter-btn.active { background: var(--info); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
 
-        .leaderboard-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        /* ปรับให้รองรับ 5 คน */
+        .leaderboard-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
         .lb-card { padding: 15px; border-radius: var(--radius-md); color: white; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); }
         .lb-card h3 { margin: 0 0 5px 0; font-size: 14px; }
         .lb-card .count { font-size: 24px; font-weight: 700; line-height: 1; }
@@ -144,6 +133,7 @@
         .bg-gradient-2 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
         .bg-gradient-3 { background: linear-gradient(135deg, #ea580c, #c2410c); }
         .bg-gradient-4 { background: linear-gradient(135deg, #ca8a04, #a16207); color: #fff; }
+        .bg-gradient-5 { background: linear-gradient(135deg, #eab308, #ca8a04); color: #fff; } /* สีเหลืองสำหรับ Tar */
         
         .progress-track { background: rgba(0,0,0,0.2); height: 4px; width: 100%; border-radius: 4px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: rgba(255,255,255,0.9); height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -177,13 +167,14 @@
             table-layout: fixed; 
         }
 
+        /* 🔥 FIX: Header single line, Data wraps nicely */
         th { 
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: nowrap; 
+            white-space: nowrap; /* Header ไม่ตัดคำ */
             overflow: hidden;
-            text-overflow: ellipsis;
+            text-overflow: ellipsis; /* ถ้าล้นให้เป็น ... */
             vertical-align: middle;
         }
 
@@ -191,7 +182,7 @@
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: normal; 
+            white-space: normal; /* Data ตัดคำลงบรรทัดใหม่ได้ */
             word-wrap: break-word;
             overflow-wrap: break-word;
             vertical-align: top;
@@ -210,7 +201,8 @@
         #mainTable th:nth-child(10) { width: 110px; } /* Status */
         #mainTable th:nth-child(11) { width: 100px; } /* Assignee */
 
-        /* 🔧 CRM201 COLUMN WIDTHS */
+
+        /* 🔧 CRM201 COLUMN WIDTHS - UPDATED for Sequence Number & Fix Overlap */
         #crmTable th:nth-child(1) { width: 40px; text-align: center; } /* # */
         #crmTable th:nth-child(2) { width: 80px; } /* Buy Date */
         #crmTable th:nth-child(3) { width: 100px; } /* Call Date */
@@ -220,6 +212,7 @@
         #crmTable th:nth-child(7) { width: 14%; } /* Products */
         #crmTable th:nth-child(8) { width: 70px; text-align:right; } /* Total */
         #crmTable th:nth-child(9) { width: 80px; } /* Province */
+
 
         th { color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; background: rgba(0,0,0,0.02); }
         tr:hover td { background: rgba(255,255,255,0.02); }
@@ -258,68 +251,43 @@
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
+            .content-scroll { overflow: visible; height: auto; padding: 15px; }
             
-            /* 🔥 Space for Bottom Nav */
-            .content-scroll { overflow: visible; height: auto; padding: 15px 15px 100px 15px; } 
-            
-            /* Sidebar Top Optimization */
+            /* Sidebar Optimization */
             .sidebar { 
-                height: 60px; 
-                flex-wrap: nowrap; 
+                height: auto; 
+                flex-wrap: wrap; 
                 padding: 12px 16px; 
                 gap: 8px; 
                 justify-content: space-between; 
-                margin: 0;
-                border-radius: 0 0 20px 20px;
-                position: sticky; top:0;
+                margin: 10px; 
+                border-radius: 20px; 
             }
-            .brand-area { width: auto; font-size: 18px; }
-            .version-text { display: none; } 
-            
-            /* 🔥🔥🔥 FLOATING DOCK MOBILE FIX (ORANGE) 🔥🔥🔥 */
+            .brand-area { margin-bottom: 5px; width: 100%; justify-content: center; }
             .nav-center { 
-                position: fixed; 
-                bottom: 20px; /* Float at bottom */
-                top: auto; /* Cancel Desktop 'top' */
-                left: 50%; 
-                transform: translateX(-50%); /* Cancel Desktop Y-axis center */
-                width: 90%; 
-                max-width: 400px;
-                
-                /* 🔥 UPDATED TO ORANGE BACKGROUND */
-                background: var(--primary-color); 
-                
-                backdrop-filter: blur(16px);
-                border: 1px solid var(--card-border);
-                padding: 6px 6px; 
-                border-radius: 16px; 
-                justify-content: space-between; 
-                order: 99; 
-                margin-top: 0; 
-                overflow-x: visible; 
-                white-space: nowrap; 
-                z-index: 1000;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            }
-            
-            .nav-btn { 
-                flex: 1; 
-                justify-content: center;
+                position: static; 
+                transform: none; 
                 background: transparent; 
-                padding: 8px 4px;
-                font-size: 11px;
-                border-radius: 12px;
-                
-                /* 🔥 UPDATED TEXT COLOR FOR ORANGE BG */
-                color: rgba(255,255,255,0.9);
+                border: none; 
+                padding: 0; 
+                width: 100%; 
+                justify-content: flex-start; /* Align left */
+                order: 3; 
+                margin-top: 5px; 
+                overflow-x: auto; /* Horizontal Scroll */
+                white-space: nowrap; /* Prevent Wrap */
+                padding-bottom: 5px;
             }
-            
-            .nav-btn.active { 
-                /* 🔥 UPDATED ACTIVE STATE FOR ORANGE BG */
-                background: #ffffff; 
-                color: var(--primary-color);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            .nav-center::-webkit-scrollbar { height: 4px; }
+            .nav-center::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+            .nav-btn { 
+                width: auto; 
+                flex-shrink: 0; /* Prevent shrink */
+                background: rgba(255,255,255,0.05); 
+                padding: 6px 12px;
+                font-size: 12px;
             }
+            .version-text { display: none; } 
             
             .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
             .summary-grid { grid-template-columns: 1fr; }
@@ -332,7 +300,7 @@
             .lb-card, .stat-item { padding: 10px; }
             .stat-item .val { font-size: 18px; }
             
-            /* Mobile Table Optimization */
+            /* Mobile Table Optimization - FIX: Force wide table to prevent text squashing */
             .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
             table { min-width: 1250px; font-size: 11px; } 
             
@@ -356,19 +324,19 @@
             <span style="color:var(--primary-color)">CS</span> Space
         </div>
         
-        <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:0;">
-            <span id="countdown" class="version-text">v.0.5.42 • Loading...</span>
+        <div class="nav-group nav-center">
+            <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
+            <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
+            <button class="nav-btn" onclick="switchPage('tec', this)">TEC301</button>
+            <button class="nav-btn" onclick="switchPage('summary', this)">CS Summary</button>
+        </div>
+        
+        <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
+            <span id="countdown" class="version-text">v.0.5.40 • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
     </nav>
-
-    <div class="nav-group nav-center">
-        <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
-        <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
-        <button class="nav-btn" onclick="switchPage('tec', this)">TEC301</button>
-        <button class="nav-btn" onclick="switchPage('summary', this)">CS Summary</button>
-    </div>
 
     <main class="main-content">
         <div class="content-scroll">
@@ -407,6 +375,7 @@
                                 <option value="Friend">Friend</option>
                                 <option value="Ball">Ball</option>
                                 <option value="Ohm">Ohm</option>
+                                <option value="Tar">Tar</option>
                             </select>
                         </div>
                         <button class="btn-outline" onclick="resetFilters()" title="รีเซ็ต" style="width:36px;">↺</button>
@@ -450,6 +419,7 @@
                                 <option value="Friend">Friend</option>
                                 <option value="Ball">Ball</option>
                                 <option value="Ohm">Ohm</option>
+                                <option value="Tar">Tar</option>
                             </select>
                         </div>
                         <div style="flex:0 0 150px;">
@@ -506,7 +476,13 @@
         <h2 style="margin-top:0;">📂 เปิดเคสใหม่</h2>
         <form id="ticketForm" style="display:flex; flex-direction:column; gap:12px;">
             <div><label class="input-label">CS Name (ผู้รับผิดชอบ)</label>
-            <select name="owner" class="form-select" required><option value="Best">Best</option><option value="Friend">Friend</option><option value="Ball">Ball</option><option value="Ohm">Ohm</option></select></div>
+            <select name="owner" class="form-select" required>
+                <option value="Best">Best</option>
+                <option value="Friend">Friend</option>
+                <option value="Ball">Ball</option>
+                <option value="Ohm">Ohm</option>
+                <option value="Tar">Tar</option>
+            </select></div>
             <div><label class="input-label">ลูกค้า</label><input name="customerName" class="form-input" required placeholder="ชื่อลูกค้า..."></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div><label class="input-label">ประเภท</label><select name="type" class="form-select"><option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="FUME">FUME</option><option value="BLENDER">BLENDER</option><option value="SODA">SODA</option><option value="เครื่องกรองน้ำ">เครื่องกรองน้ำ</option><option value="ปั๊มดูดน้ำจากถัง">ปั๊มดูดน้ำจากถัง</option><option value="ตู้แช่นม">ตู้แช่นม</option></select></div>
@@ -618,7 +594,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.42 • Refresh ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.5.40 • Refresh ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
@@ -832,7 +808,8 @@
 
     function updateDashboard() {
         const stats = { total:0, active:0, pending:0, doing:0, closed:0 };
-        const team = { 'Best':{t:0,c:0}, 'Friend':{t:0,c:0}, 'Ball':{t:0,c:0}, 'Ohm':{t:0,c:0} };
+        // 🔥 เพิ่ม Tar เข้าไปในตัวแปรสำหรับเก็บสถิติ
+        const team = { 'Best':{t:0,c:0}, 'Friend':{t:0,c:0}, 'Ball':{t:0,c:0}, 'Ohm':{t:0,c:0}, 'Tar':{t:0,c:0} };
         let tickerText = "";
         
         allTickets.forEach(t => {
@@ -957,10 +934,14 @@
         const sData = [['Rating','Count', { role: 'style' }]]; Object.entries(sCounts).sort().forEach(([k,v]) => sData.push([k, v, '#10b981']));
         new google.visualization.BarChart(document.getElementById('chart_csat_div')).draw(google.visualization.arrayToDataTable(sData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
 
-        const csResp = {}; 
+        // 🔥 สร้างค่าเริ่มต้นให้ครบทุกคน เพื่อให้กราฟแสดงชื่อครบแม้ยังไม่มีข้อมูลก็ตาม 🔥
+        const csResp = { 'Best': {sum:0, count:0}, 'Friend': {sum:0, count:0}, 'Ball': {sum:0, count:0}, 'Ohm': {sum:0, count:0}, 'Tar': {sum:0, count:0} }; 
         data.forEach(t => { 
             const val = parseFloat(t.responseTime); const owner = t.owner;
-            if(!isNaN(val) && owner && owner !== '-') { if(!csResp[owner]) csResp[owner] = { sum:0, count:0 }; csResp[owner].sum += val; csResp[owner].count++; }
+            if(!isNaN(val) && owner && owner !== '-') { 
+                if(!csResp[owner]) csResp[owner] = { sum:0, count:0 }; 
+                csResp[owner].sum += val; csResp[owner].count++; 
+            }
         });
         const rData = [['CS Name','Avg Minutes', { role: 'style' }]]; 
         Object.entries(csResp).forEach(([k,v]) => { rData.push([k, parseFloat((v.count?v.sum/v.count:0).toFixed(2)), '#3b82f6']); });
