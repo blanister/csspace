@@ -247,23 +247,40 @@
         .ticker-content { white-space: nowrap; padding-left: 100%; display: inline-block; animation: ticker 30s linear infinite; color: var(--danger); font-weight: 600; font-size: 12px; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
+        /* 🔽 CSS เสริมสำหรับการจัดเรียงและปุ่ม Toggle บน Mobile 🔽 */
+        .mobile-search-row { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
+        .mobile-toggle-btn { display: none; white-space: nowrap; font-size: 12px; font-weight: 600; padding: 0 12px; }
+        .filter-panel { display: flex; transition: all 0.3s ease; }
+        .action-btn { width: 36px; flex-shrink: 0; }
+
         @media (max-width: 1024px) {
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
             .content-scroll { overflow: visible; height: auto; padding: 15px; }
             
-            /* Sidebar Optimization */
+            /* Sidebar Optimization (แก้ไขตำแหน่งให้แสดงผลตามสั่ง) */
             .sidebar { 
                 height: auto; 
                 flex-wrap: wrap; 
                 padding: 12px 16px; 
                 gap: 8px; 
                 justify-content: space-between; 
+                align-items: center;
                 margin: 10px; 
                 border-radius: 20px; 
             }
-            .brand-area { margin-bottom: 5px; width: 100%; justify-content: center; }
+            .brand-area { 
+                margin-bottom: 0; 
+                width: auto; 
+                justify-content: flex-start; 
+                order: 1; 
+            }
+            .sidebar > .nav-group:last-child {
+                width: auto !important;
+                margin-top: 0 !important;
+                order: 2;
+            }
             .nav-center { 
                 position: static; 
                 transform: none; 
@@ -271,18 +288,16 @@
                 border: none; 
                 padding: 0; 
                 width: 100%; 
-                justify-content: flex-start; /* Align left */
+                justify-content: center; /* ตรงกลาง */
                 order: 3; 
                 margin-top: 5px; 
-                overflow-x: auto; /* Horizontal Scroll */
-                white-space: nowrap; /* Prevent Wrap */
+                overflow-x: visible;
+                white-space: nowrap; 
                 padding-bottom: 5px;
             }
-            .nav-center::-webkit-scrollbar { height: 4px; }
-            .nav-center::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
             .nav-btn { 
                 width: auto; 
-                flex-shrink: 0; /* Prevent shrink */
+                flex-shrink: 0; 
                 background: rgba(255,255,255,0.05); 
                 padding: 6px 12px;
                 font-size: 12px;
@@ -291,16 +306,44 @@
             
             .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
             .summary-grid { grid-template-columns: 1fr; }
-            .leaderboard-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .dashboard-controls { flex-direction: column; align-items: stretch; gap: 10px; }
             .crm-filter-group { flex-wrap: wrap; }
             .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 8px 10px; font-size: 11px;}
             
-            .lb-card, .stat-item { padding: 10px; }
+            /* 📱 ปรับบล็อครายชื่อ Best, Friend, Ball, Ohm, Tar ให้เล็กลงเรียง 5 อัน */
+            .leaderboard-row { 
+                grid-template-columns: repeat(5, 1fr) !important; 
+                gap: 4px !important; 
+                margin-bottom: 15px;
+            }
+            .lb-card { padding: 8px 4px; text-align: center; }
+            .lb-card h3 { font-size: 10px; margin-bottom: 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+            .lb-card .count { font-size: 15px; }
+            .progress-label { font-size: 8px; margin-top: 3px; display: block; }
+            .progress-track { margin-top: 4px; height: 3px; }
+
+            .stat-item { padding: 10px; }
             .stat-item .val { font-size: 18px; }
+
+            /* 📱 ระบบซ่อน/แสดง Export & Filter บน Mobile */
+            .mobile-toggle-btn { display: flex; align-items: center; justify-content: center; }
+            .filter-panel { 
+                display: none; 
+                flex-direction: column; 
+                align-items: stretch; 
+                gap: 8px; 
+                margin-top: -5px; 
+            }
+            .filter-panel.show { 
+                display: flex; 
+                animation: slideDownFilter 0.3s ease-out forwards; 
+            }
+            .action-btn { width: 100% !important; justify-content: center; margin-top: 5px; }
             
-            /* Mobile Table Optimization - FIX: Force wide table to prevent text squashing */
+            .dashboard-controls { padding: 12px 10px; flex-direction: column; gap: 8px; }
+            .dashboard-controls > div { width: 100%; min-width: unset; }
+
+            /* Mobile Table Optimization */
             .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
             table { min-width: 1250px; font-size: 11px; } 
             
@@ -308,11 +351,16 @@
             .chart-body { height: 100%; }
         }
 
+        @keyframes slideDownFilter {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
         .modal-box { background: var(--bg-body); border: 1px solid var(--card-border); width: 90%; max-width: 500px; border-radius: var(--radius-lg); padding: 20px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        /* 🔽 Dropdown Menu for CS+ 🔽 */
+        /* Dropdown Menu for CS+ */
         .dropdown { position: relative; display: inline-flex; }
         .dropdown-content {
             display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
@@ -329,17 +377,14 @@
         
         .dropdown-content .nav-btn { width: 100%; justify-content: center; border-radius: 8px; }
         
-        /* ให้ CS+ ยังคง active เป็นสีส้มอยู่เมื่อเมนูย่อยอันใดอันหนึ่งข้างในถูกเลือก */
         .dropdown:has(.dropdown-content .nav-btn.active) .dropdown-trigger {
             background: var(--primary-color); color: white; box-shadow: 0 2px 10px var(--primary-glow); font-weight: 600;
         }
 
         @media (max-width: 1024px) {
-            .nav-center { overflow: visible !important; }
             .dropdown-content { left: 0; transform: none; top: 100%; }
             .dropdown:hover .dropdown-content { animation: none; }
         }
-        /* 🔼 END Dropdown Menu 🔼 */
     </style>
 </head>
 <body>
@@ -367,7 +412,7 @@
         </div>
         <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
             <span id="countdown" class="version-text">v.0.5.40 Beta • Loading...</span>
-            <button class="btn-primary" onclick="openModal()">+ เพิ่มเคส</button>
+            <button class="btn-primary" onclick="openModal()">+</button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
         </div>
     </nav>
@@ -389,10 +434,13 @@
                         <div class="stat-item" onclick="filterStatus('ปิดเคส')"><h4>ปิดเคส</h4><div class="val" id="val-closed" style="color:var(--success)">0</div></div>
                         <div class="stat-item" onclick="filterStatus('พิเศษ')"><h4>พิเศษ</h4><div class="val" id="val-special" style="color:var(--danger)">0</div></div>
                     </div>
-                    <div class="dashboard-controls">
-                        <div style="flex:2; min-width:200px;">
-                            <input type="text" id="searchInput" class="form-input" placeholder="🔍 ค้นหา Ticket, ชื่อลูกค้า..." onkeyup="renderTable()">
-                        </div>
+                    
+                    <div class="mobile-search-row">
+                        <input type="text" id="searchInput" class="form-input" placeholder="🔍 ค้นหา Ticket, ชื่อลูกค้า..." onkeyup="renderTable()" style="flex:1;">
+                        <button class="btn-outline mobile-toggle-btn" onclick="document.getElementById('opsFilterPanel').classList.toggle('show')">⚙️</button>
+                    </div>
+                    
+                    <div class="dashboard-controls filter-panel" id="opsFilterPanel">
                         <div style="flex:1; min-width:130px;"><input type="date" id="dateFilter" class="form-input" onchange="renderTable()"></div>
                         <div style="flex:1; min-width:130px;">
                             <select id="statusFilter" class="form-select" onchange="renderTable()">
@@ -414,10 +462,10 @@
                                 <option value="Tar">Tar</option>
                             </select>
                         </div>
-                        <button class="btn-outline" onclick="resetFilters()" title="รีเซ็ต" style="width:36px;">↺</button>
-                        <button class="btn-outline" onclick="exportCSV()" title="Export CSV" style="width:36px;">📥</button>
+                        <button class="btn-outline action-btn" onclick="resetFilters()" title="รีเซ็ต">↺</button>
+                        <button class="btn-outline action-btn" onclick="exportCSV()" title="Export CSV">📥</button>
                     </div>
-                </div>
+                    </div>
                 <div class="table-wrapper-center">
                     <div class="table-container">
                         <table id="mainTable">
@@ -444,10 +492,12 @@
                         <button class="crm-filter-btn" onclick="setCRMFilter('all', this)">รายชื่อทั้งหมด</button>
                     </div>
 
-                    <div class="dashboard-controls">
-                        <div style="flex:1;">
-                            <input type="text" id="crmSearch" class="form-input" placeholder="🔍 ค้นหาชื่อลูกค้า, เบอร์โทร..." onkeyup="resetCRMAndRender()">
-                        </div>
+                    <div class="mobile-search-row">
+                        <input type="text" id="crmSearch" class="form-input" placeholder="🔍 ค้นหาชื่อลูกค้า, เบอร์โทร..." onkeyup="resetCRMAndRender()" style="flex:1;">
+                        <button class="btn-outline mobile-toggle-btn" onclick="document.getElementById('crmFilterPanel').classList.toggle('show')">⚙️ Filter ▾</button>
+                    </div>
+                    
+                    <div class="dashboard-controls filter-panel" id="crmFilterPanel">
                         <div style="flex:1; min-width:130px;">
                             <select id="crmOwnerFilter" class="form-select" onchange="resetCRMAndRender()">
                                 <option value="all">ดูแลโดย: ทั้งหมด</option>
