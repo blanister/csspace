@@ -362,10 +362,11 @@
                         <div style="flex:1; min-width:130px;">
                             <select id="statusFilter" class="form-select" onchange="renderTable()">
                                 <option value="total-all">สถานะ: ทั้งหมด</option>
-                                <option value="all" selected>งานในระบบ (Active)</option>
+                                <option value="all" selected>งานในระบบ</option>
                                 <option value="รอดำเนินการ">รอดำเนินการ</option>
                                 <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
                                 <option value="ปิดเคส">ปิดเคส</option>
+                                <option value="พิเศษ">พิเศษ</option>
                             </select>
                         </div>
                         <div style="flex:1; min-width:130px;">
@@ -621,9 +622,15 @@
         }).filter(x => x.id !== 'Ticket ID' && x.id !== '-');
 
         allTickets.sort((a,b) => {
-            const pMap = {'1.ด่วนมาก':1, '2.ปานกลาง':2, '3.ไม่รีบ':3};
+            const getU = (val) => {
+                let v = String(val || "");
+                if (v.includes("1")) return 1;
+                if (v.includes("2") || v.includes("พิเศษ")) return 2;
+                if (v.includes("3")) return 3;
+                return 99;
+            };
             const sMap = {'กำลังดำเนินการ':1, 'มอบหมาย':2, 'รอดำเนินการ':3, 'ปิดเคส':4};
-            if(pMap[a.urgent] !== pMap[b.urgent]) return (pMap[a.urgent]||99) - (pMap[b.urgent]||99);
+            if(getU(a.urgent) !== getU(b.urgent)) return getU(a.urgent) - getU(b.urgent);
             return (sMap[a.status]||99) - (sMap[b.status]||99);
         });
         updateDashboard(); renderTable();
@@ -886,6 +893,7 @@
                 if(sFilter === 'รอดำเนินการ' && !t.status.includes('รอ')) return false;
                 if(sFilter === 'กำลังดำเนินการ' && !t.status.includes('กำลัง') && !t.status.includes('มอบ')) return false;
                 if(sFilter === 'ปิดเคส' && !t.status.includes('ปิด')) return false;
+                if(sFilter === 'พิเศษ' && !t.status.includes('พิเศษ')) return false;
             }
             if(cFilter !== 'all' && t.owner !== cFilter) return false;
             if(search && !JSON.stringify(t).toLowerCase().includes(search)) return false;
@@ -895,7 +903,7 @@
         if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.5;">ไม่พบข้อมูล</td></tr>`; return; }
 
         filtered.forEach((t, i) => {
-            const uCol = t.urgent.includes('1') ? '#ef4444' : (t.urgent.includes('2') ? '#f59e0b' : '#3b82f6');
+            const uCol = t.urgent.includes('1') ? '#ef4444' : ((t.urgent.includes('2') || t.urgent.includes('พิเศษ')) ? '#f59e0b' : '#3b82f6');
             let sClass = 'status-pending'; 
             if(t.status.includes('ปิด')) sClass = 'status-closed'; 
             else if(t.status.includes('กำลัง')) sClass = 'status-doing'; 
