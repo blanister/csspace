@@ -138,7 +138,7 @@
         .progress-track { background: rgba(0,0,0,0.2); height: 4px; width: 100%; border-radius: 4px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: rgba(255,255,255,0.9); height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
         .stat-item { background: var(--card-bg); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: 0.2s; backdrop-filter: blur(10px); }
         .stat-item:hover { border-color: var(--primary-color); transform: translateY(-2px); }
         .stat-item h4 { margin: 0; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
@@ -353,6 +353,7 @@
                         <div class="stat-item" onclick="filterStatus('รอดำเนินการ')"><h4>รอดำเนินการ</h4><div class="val" id="val-pending">0</div></div>
                         <div class="stat-item" onclick="filterStatus('กำลังดำเนินการ')"><h4>กำลังดำเนินการ</h4><div class="val" id="val-doing">0</div></div>
                         <div class="stat-item" onclick="filterStatus('ปิดเคส')"><h4>ปิดเคส</h4><div class="val" id="val-closed" style="color:var(--success)">0</div></div>
+                        <div class="stat-item" onclick="filterStatus('พิเศษ')"><h4>พิเศษ</h4><div class="val" id="val-special" style="color:var(--danger)">0</div></div>
                     </div>
                     <div class="dashboard-controls">
                         <div style="flex:2; min-width:200px;">
@@ -814,7 +815,7 @@
     }
 
     function updateDashboard() {
-        const stats = { total:0, active:0, pending:0, doing:0, closed:0 };
+        const stats = { total:0, active:0, pending:0, doing:0, closed:0, special:0 };
         // 🔥 เพิ่ม Tar เข้าไปในตัวแปรสำหรับเก็บสถิติ
         const team = { 'Best':{t:0,c:0}, 'Friend':{t:0,c:0}, 'Ball':{t:0,c:0}, 'Ohm':{t:0,c:0}, 'Tar':{t:0,c:0} };
         let tickerText = "";
@@ -827,6 +828,8 @@
                 stats.active++;
                 if(t.status.includes('รอ')) stats.pending++; else stats.doing++;
             }
+            if(t.status.includes('พิเศษ')) stats.special++;
+
             if(team[t.owner]) { team[t.owner].t++; if(isClosed) team[t.owner].c++; }
             if(t.urgent.includes('1') && !isClosed) tickerText += `🔥 [${t.id}] ${t.customer} (${t.issue}) &nbsp;&nbsp;&nbsp; `;
         });
@@ -836,6 +839,7 @@
         document.getElementById('val-pending').innerText = stats.pending;
         document.getElementById('val-doing').innerText = stats.doing;
         document.getElementById('val-closed').innerText = stats.closed;
+        document.getElementById('val-special').innerText = stats.special;
 
         if(tickerText) { 
             document.getElementById('urgentTicker').style.display = 'flex'; 
