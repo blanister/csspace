@@ -11,11 +11,11 @@
     <style>
         /* 🎨 THEME VARIABLES SYSTEM */
         :root {
-            --bg-body: #0f172a; 
+            --bg-body: #18181b; 
             --bg-mesh: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.10) 0px, transparent 50%), 
                         radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.10) 0px, transparent 50%);
-            --sidebar-fixed: #1e293b; 
-            --card-bg: rgba(30, 41, 59, 0.65);
+            --sidebar-fixed: #27272a; 
+            --card-bg: rgba(39, 39, 42, 0.65);
             --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-secondary: #94a3b8;
@@ -32,7 +32,7 @@
         }
 
         [data-theme="light"] {
-            --bg-body: #f8fafc;
+            --bg-body: #fdfaf6;
             --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0px, transparent 50%), 
                         radial-gradient(at 100% 0%, #ffedd5 0px, transparent 50%);
             --card-bg: rgba(255, 255, 255, 0.85);
@@ -101,7 +101,7 @@
         .content-scroll { flex: 1; overflow-y: auto; padding: 20px; }
         .compact-wrapper { max-width: 1250px; margin: 0 auto; width: 100%; }
 
-        .page-header { margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }
+        .page-header { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
         .page-header h2 { font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.5px; opacity: 0.9; }
 
         .page-view { display: none; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -253,113 +253,6 @@
         .filter-panel { display: flex; transition: all 0.3s ease; }
         .action-btn { width: 36px; flex-shrink: 0; }
 
-        @media (max-width: 1024px) {
-            body { overflow: auto !important; height: auto !important; }
-            .app-container { flex-direction: column; height: auto; min-height: 100vh; }
-            .main-content { overflow: visible; height: auto; }
-            .content-scroll { overflow: visible; height: auto; padding: 15px; }
-            
-            /* Sidebar Optimization (แก้ไขตำแหน่งให้แสดงผลตามสั่ง) */
-            .sidebar { 
-                height: auto; 
-                flex-wrap: wrap; 
-                padding: 12px 16px; 
-                gap: 8px; 
-                justify-content: space-between; 
-                align-items: center;
-                margin: 10px; 
-                border-radius: 20px; 
-            }
-            .brand-area { 
-                margin-bottom: 0; 
-                width: auto; 
-                justify-content: flex-start; 
-                order: 1; 
-            }
-            .sidebar > .nav-group:last-child {
-                width: auto !important;
-                margin-top: 0 !important;
-                order: 2;
-            }
-            .nav-center { 
-                position: static; 
-                transform: none; 
-                background: transparent; 
-                border: none; 
-                padding: 0; 
-                width: 100%; 
-                justify-content: center; /* ตรงกลาง */
-                order: 3; 
-                margin-top: 5px; 
-                overflow-x: visible;
-                white-space: nowrap; 
-                padding-bottom: 5px;
-            }
-            .nav-btn { 
-                width: auto; 
-                flex-shrink: 0; 
-                background: rgba(255,255,255,0.05); 
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            .version-text { display: none; } 
-            
-            .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
-            .summary-grid { grid-template-columns: 1fr; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .crm-filter-group { flex-wrap: wrap; }
-            .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 8px 10px; font-size: 11px;}
-            
-            /* 📱 ปรับบล็อครายชื่อ Best, Friend, Ball, Ohm, Tar ให้เล็กลงเรียง 5 อัน */
-            .leaderboard-row { 
-                grid-template-columns: repeat(5, 1fr) !important; 
-                gap: 4px !important; 
-                margin-bottom: 15px;
-            }
-            .lb-card { padding: 8px 4px; text-align: center; }
-            .lb-card h3 { font-size: 10px; margin-bottom: 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-            .lb-card .count { font-size: 15px; }
-            .progress-label { font-size: 8px; margin-top: 3px; display: block; }
-            .progress-track { margin-top: 4px; height: 3px; }
-
-            .stat-item { padding: 10px; }
-            .stat-item .val { font-size: 18px; }
-
-            /* 📱 ระบบซ่อน/แสดง Export & Filter บน Mobile */
-            .mobile-toggle-btn { display: flex; align-items: center; justify-content: center; }
-            .filter-panel { 
-                display: none; 
-                flex-direction: column; 
-                align-items: stretch; 
-                gap: 8px; 
-                margin-top: -5px; 
-            }
-            .filter-panel.show { 
-                display: flex; 
-                animation: slideDownFilter 0.3s ease-out forwards; 
-            }
-            .action-btn { width: 100% !important; justify-content: center; margin-top: 5px; }
-            
-            .dashboard-controls { padding: 12px 10px; flex-direction: column; gap: 8px; }
-            .dashboard-controls > div { width: 100%; min-width: unset; }
-
-            /* Mobile Table Optimization */
-            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            table { min-width: 1250px; font-size: 11px; } 
-            
-            .chart-card { height: 300px; padding: 10px; }
-            .chart-body { height: 100%; }
-        }
-
-        @keyframes slideDownFilter {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .modal-overlay.open { display: flex; }
-        .modal-box { background: var(--bg-body); border: 1px solid var(--card-border); width: 90%; max-width: 500px; border-radius: var(--radius-lg); padding: 20px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-
         /* Dropdown Menu for CS+ */
         .dropdown { position: relative; display: inline-flex; }
         .dropdown-content {
@@ -382,9 +275,140 @@
         }
 
         @media (max-width: 1024px) {
-            .dropdown-content { left: 0; transform: none; top: 100%; }
-            .dropdown:hover .dropdown-content { animation: none; }
+            body { overflow: auto !important; height: auto !important; }
+            .app-container { flex-direction: column; height: auto; min-height: 100vh; }
+            .main-content { overflow: visible; height: auto; }
+            /* ป้องกันเนื้อหาโดนบังด้วย Bottom Bar */
+            .content-scroll { overflow: visible; height: auto; padding: 15px; padding-bottom: 90px; } 
+            
+            /* Sidebar Optimization (เหลือแค่โลโก้ กับปุ่มแอคชั่นด้านบน) */
+            .sidebar { 
+                height: auto; 
+                flex-wrap: wrap; 
+                padding: 12px 16px; 
+                gap: 8px; 
+                justify-content: space-between; 
+                align-items: center;
+                margin: 10px; 
+                border-radius: 20px; 
+            }
+            .brand-area { 
+                margin-bottom: 0; 
+                width: auto; 
+                justify-content: flex-start; 
+                order: 1; 
+            }
+            .sidebar > .nav-group:last-child {
+                width: auto !important;
+                margin-top: 0 !important;
+                order: 2;
+            }
+            
+            /* 📱 BOTTOM HUB BAR (เฉพาะ Mobile) */
+            .nav-center { 
+                position: fixed; 
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: var(--sidebar-fixed);
+                border: none;
+                border-top: 1px solid var(--card-border);
+                border-radius: 0;
+                padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
+                margin: 0;
+                justify-content: space-around; 
+                align-items: center;
+                z-index: 9999;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+                transform: none;
+                flex-wrap: nowrap;
+                flex-direction: row;
+            }
+            
+            .nav-btn { 
+                width: auto; 
+                flex: 1;
+                background: transparent; 
+                padding: 12px 4px;
+                font-size: 13px;
+                border-radius: 12px;
+                justify-content: center;
+                margin: 0 4px;
+            }
+
+            /* แก้ Dropdown ให้เด้งขึ้นบนสำหรับ Bottom Bar */
+            .dropdown { flex: 1; display: flex; justify-content: center; position: static; margin: 0 4px; }
+            .dropdown .dropdown-trigger { width: 100%; margin: 0; }
+            .dropdown-content { 
+                top: auto; 
+                bottom: calc(100% + 15px); /* ให้เด้งเหนือ Bottom bar */
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 30px);
+                max-width: 320px;
+                border-radius: var(--radius-lg);
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+                padding: 10px;
+            }
+            .dropdown:hover .dropdown-content { 
+                animation: popUpMobile 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+                display: flex; 
+            }
+
+            .version-text { display: none; } 
+            
+            .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .crm-filter-group { flex-wrap: wrap; }
+            /* ขยายปุ่มให้กดง่ายขึ้น */
+            .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 10px 12px; font-size: 13px;}
+            
+            /* ปรับ UI อ่านง่ายขึ้น */
+            .leaderboard-row { grid-template-columns: repeat(5, 1fr) !important; gap: 4px !important; margin-bottom: 15px;}
+            .lb-card { padding: 8px 4px; text-align: center; }
+            .lb-card h3 { font-size: 12px; margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+            .lb-card .count { font-size: 18px; }
+            .progress-label { font-size: 9px; margin-top: 4px; display: block; }
+            .progress-track { margin-top: 4px; height: 3px; }
+
+            .stat-item { padding: 12px; }
+            .stat-item h4 { font-size: 11px; }
+            .stat-item .val { font-size: 20px; }
+
+            /* ป้องกัน iOS Zoom ด้วย font-size: 16px สำหรับ input/select มือถือ และขยายขนาดให้กดง่าย */
+            .form-input, .form-select { font-size: 14px; height: 40px; }
+
+            .mobile-toggle-btn { display: flex; align-items: center; justify-content: center; height: 40px;}
+            .filter-panel { display: none; flex-direction: column; align-items: stretch; gap: 8px; margin-top: -5px; }
+            .filter-panel.show { display: flex; animation: slideDownFilter 0.3s ease-out forwards; }
+            .action-btn { width: 100% !important; justify-content: center; margin-top: 5px; height: 40px;}
+            
+            .dashboard-controls { padding: 12px 10px; flex-direction: column; gap: 8px; }
+            .dashboard-controls > div { width: 100%; min-width: unset; }
+
+            /* Mobile Table Optimization */
+            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            table { min-width: 1000px; font-size: 12px; } /* ปรับ font-size ขึ้นและลด min-width ให้อ่านง่าย */
+            
+            .chart-card { height: 300px; padding: 10px; }
+            .chart-body { height: 100%; }
         }
+
+        @keyframes slideDownFilter {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animation สำหรับ Dropdown มือถือ */
+        @keyframes popUpMobile {
+            from { opacity: 0; transform: translate(-50%, 15px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: var(--bg-body); border: 1px solid var(--card-border); width: 90%; max-width: 500px; border-radius: var(--radius-lg); padding: 20px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -395,12 +419,13 @@
     
     <nav class="sidebar">
         <div class="brand-area">
-            <span style="color:var(--primary-color)">CS</span> Space
+            <span style="color:var(--primary-color)">CS</span> Space <span id="brandPageTitle" style="font-size: 16px; color: var(--text-secondary); font-weight: 500; margin-left: 4px;">| OPS101</span>
         </div>
         
         <div class="nav-group nav-center">
+            <button class="nav-btn" onclick="switchPage('home', this)">Home</button>
             <div class="dropdown">
-                <button class="nav-btn dropdown-trigger active" onclick="void(0)" style="cursor: default;">CS+ ▾</button>
+                <button class="nav-btn dropdown-trigger active" onclick="void(0)" style="cursor: default;">CS+</button>
                 <div class="dropdown-content">
                     <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
                     <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
@@ -411,9 +436,9 @@
             <button class="nav-btn" onclick="switchPage('installq', this)">Install Q+</button>
         </div>
         <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
-            <span id="countdown" class="version-text">v.0.5.40 Beta • Loading...</span>
+            <span id="countdown" class="version-text">v.0.7.10 Beta • Loading...</span>
             <button class="btn-primary" onclick="openModal()">+</button>
-            <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">🌓</button>
+            <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">✹</button>
         </div>
     </nav>
 
@@ -423,6 +448,47 @@
                 <div class="ticker-content" id="tickerContent"></div>
             </div>
 
+            <div id="view-home" class="page-view">
+                <div class="page-header" style="justify-content: flex-start;">
+                    
+                </div>
+                
+                <div class="compact-wrapper">
+                    <div class="leaderboard-row" id="home-kpis" style="grid-template-columns: repeat(5, 1fr);"></div>
+
+                    <div class="summary-grid" style="margin-top: 20px;">
+                        <div class="chart-card">
+                            <div class="chart-title">🚨 ปัญหาที่พบเจอมากที่สุด (Top Issues)</div>
+                            <div id="chart_home_issue_div" class="chart-body"></div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-title">📈 ความเร็วในการตอบกลับเฉลี่ยรายวัน (นาที)</div>
+                            <div id="chart_home_resp_div" class="chart-body"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
+                            <h3 style="font-size: 16px; margin:0; color: var(--danger);">🔥 เคสด่วนมาก และ ปานกลางที่ยังค้างอยู่</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px;">Ticket</th>
+                                        <th style="width: 20%;">Customer</th>
+                                        <th style="width: 30%;">Issue</th>
+                                        <th style="width: 100px;">Urgency</th>
+                                        <th style="width: 80px;">Owner</th>
+                                        <th style="width: 110px;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="homeUrgentBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="view-dashboard" class="page-view active">
                 <div class="compact-wrapper">
                     <div class="leaderboard-row" id="leaderboard"></div>
@@ -437,7 +503,7 @@
                     
                     <div class="mobile-search-row">
                         <input type="text" id="searchInput" class="form-input" placeholder="🔍 ค้นหา Ticket, ชื่อลูกค้า..." onkeyup="renderTable()" style="flex:1;">
-                        <button class="btn-outline mobile-toggle-btn" onclick="document.getElementById('opsFilterPanel').classList.toggle('show')">⚙️</button>
+                        <button class="btn-outline mobile-toggle-btn" onclick="document.getElementById('opsFilterPanel').classList.toggle('show')">⚙️ Filter ▾</button>
                     </div>
                     
                     <div class="dashboard-controls filter-panel" id="opsFilterPanel">
@@ -636,16 +702,20 @@
         localStorage.setItem('cs_last_page', pageId);
         
         const titles = {
+            'home': 'Home',
             'dashboard': 'OPS101', 
             'crm': 'CRM201', 
             'tec': 'TEC301', 
             'installq': 'Install Q+',
-            'summary': 'Analytics Summary'
+            'summary': 'CS Summary'
         };
-        const titleEl = document.getElementById('pageTitle');
-        if(titleEl) titleEl.innerText = titles[pageId];
+        
+        // 🔥 เปลี่ยนข้อความต่อท้ายแบรนด์โลโก้ให้เป็นวิชาที่กำลังเปิดอยู่ 🔥
+        const titleEl = document.getElementById('brandPageTitle');
+        if(titleEl) titleEl.innerText = `| ${titles[pageId]}`;
 
-        if(pageId === 'summary') setTimeout(() => drawChart(allTickets), 100); 
+        // โหลดกราฟทันทีหากเปิดหน้า Summary หรือ Home
+        if(pageId === 'summary' || pageId === 'home') setTimeout(() => drawChart(allTickets), 100); 
     }
 
     function openModal() { document.getElementById('addModal').classList.add('open'); }
@@ -691,7 +761,7 @@
         if(countdownSec > 0) {
             countdownSec--;
             let m = Math.floor(countdownSec/60).toString().padStart(2,'0'), s = (countdownSec%60).toString().padStart(2,'0');
-            document.getElementById('countdown').innerText = `v.0.5.40 Beta • ${m}:${s}`;
+            document.getElementById('countdown').innerText = `v.0.7.10 Beta • ${m}:${s}`;
         } else location.reload();
     }, 1000);
 
@@ -729,7 +799,9 @@
             if(getU(a.urgent) !== getU(b.urgent)) return getU(a.urgent) - getU(b.urgent);
             return (sMap[a.status]||99) - (sMap[b.status]||99);
         });
-        updateDashboard(); renderTable();
+        updateDashboard(); 
+        updateHome(); // 🔥 ทำการอัปเดตหน้า Home 
+        renderTable();
     };
 
     // Callback for CRM201
@@ -909,9 +981,103 @@
         });
     }
 
+    // 🏠 ฟังก์ชันคำนวณและแสดงผลข้อมูลหน้า Home โดยเฉพาะ
+    function updateHome() {
+        const todayObj = new Date();
+        const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}-${String(todayObj.getDate()).padStart(2,'0')}`;
+        const currentMonthStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}`;
+
+        // เตรียมตัวแปรสำหรับเก็บข้อมูลรายบุคคล
+        const team = { 
+            'Best':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
+            'Friend': { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
+            'Ball':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
+            'Ohm':    { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
+            'Tar':    { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 } 
+        };
+
+        let urgentHtml = "";
+
+        allTickets.forEach(t => {
+            const owner = t.owner;
+            const dateStr = parseDate(t.date);
+            const isClosed = t.status.includes('ปิด');
+            const isUrgent = t.urgent.includes('1') || t.urgent.includes('2') || t.urgent.includes('พิเศษ');
+
+            // 1. ตรวจสอบข้อมูล KPI
+            if (team[owner]) {
+                // นับเคสของเดือนนี้
+                if (dateStr.startsWith(currentMonthStr)) {
+                    team[owner].monthCases++;
+                }
+                
+                // นับจำนวนเคสค้างทั้งหมดในระบบ
+                if (!isClosed) {
+                    team[owner].activeCases++;
+                }
+
+                // นับเคสเฉพาะวันนี้ เพื่อหา % การปิดเคส
+                if (dateStr === todayStr) {
+                    team[owner].todayTotal++;
+                    if (isClosed) {
+                        team[owner].todayClosed++;
+                    }
+                }
+            }
+
+            // 2. ดึงเคสด่วนมาก และปานกลาง ที่ยังค้างอยู่ (ไม่นับอันที่ปิดแล้ว) มาแสดงด้านล่าง
+            if (!isClosed && isUrgent) {
+                const uCol = t.urgent.includes('1') ? '#ef4444' : '#f59e0b';
+                let sClass = t.status.includes('กำลัง') ? 'status-doing' : (t.status.includes('มอบ') ? 'status-assigned' : 'status-pending');
+
+                // เวลากดให้เด้งไปหน้า Dashboard แล้วค้นหา Ticket ID นั้นทันที
+                // * ปรับแก้สไตล์ให้สีตัวหนังสือปรับตามโหมด Light/Dark ได้อัตโนมัติ
+                urgentHtml += `<tr style="cursor:pointer;" onclick="switchPage('dashboard', document.querySelector('.dropdown-trigger')); document.getElementById('searchInput').value='${t.id}'; renderTable();">
+                    <td style="font-weight:600; color:var(--primary-color)">${t.id}</td>
+                    <td style="font-weight:500; color:var(--text-main);">${t.customer}</td>
+                    <td style="color:var(--text-main);">${t.issue}</td>
+                    <td><span class="urgent-badge" style="background:${uCol}"></span><span style="color:var(--text-main);">${t.urgent.split('.')[1]||t.urgent}</span></td>
+                    <td><span class="status-badge" style="border: 1px solid var(--card-border); color:var(--text-main); background: transparent;">${t.owner}</span></td>
+                    <td><span class="status-badge ${sClass}">${t.status}</span></td>
+                </tr>`;
+            }
+        });
+
+        // นำข้อมูลลงไปแสดงบน KPI Card 5 คน
+        const kpiContainer = document.getElementById('home-kpis');
+        kpiContainer.innerHTML = '';
+        
+        // ชุดสีสำหรับแต่ละคน เพื่อให้ชื่อดูโดดเด่นและชัดเจน
+        const themeColors = ['var(--danger)', 'var(--info)', 'var(--primary-color)', 'var(--success)', 'var(--warning)'];
+        let colorIndex = 0;
+
+        for(const [name, s] of Object.entries(team)) {
+            const todayPct = s.todayTotal ? Math.round((s.todayClosed / s.todayTotal) * 100) : 0;
+            const nameColor = themeColors[colorIndex % 5];
+            
+            // * นำ bg-gradient ออกเพื่อใช้ Card แบบมาตรฐานที่ปรับสีตาม Light/Dark ได้เอง
+            // * ปรับขนาดชื่อ (h3) ใหญ่ขึ้นเป็น 24px และใช้สีจาก themeColors
+            kpiContainer.innerHTML += `
+            <div class="stat-item" style="text-align:left; padding:15px; display:flex; flex-direction:column; gap:8px;">
+                <h3 style="margin:0; font-size:24px; font-weight:700; color:${nameColor}; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${name}</h3>
+                <div style="font-size:12px; color:var(--text-secondary);">เดือนนี้: <strong style="font-size:16px; color:var(--text-main);">${s.monthCases}</strong> เคส</div>
+                <div style="font-size:12px; color:var(--text-secondary);">งานค้าง (Active): <strong style="font-size:16px; color:var(--text-main);">${s.activeCases}</strong></div>
+                <div style="font-size:12px; color:var(--text-secondary);">ปิดงานวันนี้: <strong style="font-size:16px; color:var(--text-main);">${todayPct}%</strong> (${s.todayClosed}/${s.todayTotal})</div>
+            </div>`;
+            colorIndex++;
+        }
+
+        // นำข้อมูลลงตาราง Urgent
+        const urgentBody = document.getElementById('homeUrgentBody');
+        if(urgentHtml === "") {
+            urgentBody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding:30px; color:var(--text-main);">🎉 ยอดเยี่ยม! ไม่มีเคสด่วนหรือปานกลางค้างอยู่เลย</td></tr>`;
+        } else {
+            urgentBody.innerHTML = urgentHtml;
+        }
+    }
+
     function updateDashboard() {
         const stats = { total:0, active:0, pending:0, doing:0, closed:0, special:0 };
-        // 🔥 เพิ่ม Tar เข้าไปในตัวแปรสำหรับเก็บสถิติ
         const team = { 'Best':{t:0,c:0}, 'Friend':{t:0,c:0}, 'Ball':{t:0,c:0}, 'Ohm':{t:0,c:0}, 'Tar':{t:0,c:0} };
         let tickerText = "";
         
@@ -956,7 +1122,6 @@
             </div>`; 
             i++;
         }
-        drawChart(allTickets);
     }
 
     function parseDate(str) {
@@ -1020,40 +1185,93 @@
     }
 
     function drawChart(data) {
-        if(!document.getElementById('view-summary').classList.contains('active')) return;
+        if(!document.getElementById('view-summary').classList.contains('active') && !document.getElementById('view-home').classList.contains('active')) return;
+        
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const textStyle = { color: isDark ? '#94a3b8' : '#64748b', fontName:'Inter', fontSize:12 };
         const baseOpt = { backgroundColor: 'transparent', legend: { position: 'right', textStyle: textStyle }, chartArea: { left:10, top:20, width:'90%', height:'80%' }, pieSliceBorderColor: 'transparent', sliceVisibilityThreshold: 0 };
 
-        const mCounts = {}; data.forEach(t => { if(t.model && t.model!=='-') mCounts[t.model] = (mCounts[t.model]||0)+1; });
-        const mData = [['Model','Count']]; Object.entries(mCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => mData.push(x));
-        new google.visualization.PieChart(document.getElementById('chart_div')).draw(google.visualization.arrayToDataTable(mData), {...baseOpt, pieHole: 0.5});
+        // ================= กราฟสำหรับหน้า CS SUMMARY =================
+        if(document.getElementById('view-summary').classList.contains('active')) {
+            const mCounts = {}; data.forEach(t => { if(t.model && t.model!=='-') mCounts[t.model] = (mCounts[t.model]||0)+1; });
+            const mData = [['Model','Count']]; Object.entries(mCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => mData.push(x));
+            new google.visualization.PieChart(document.getElementById('chart_div')).draw(google.visualization.arrayToDataTable(mData), {...baseOpt, pieHole: 0.5});
 
-        const tCounts = {}; data.forEach(t => { if(t.type && t.type!=='-') tCounts[t.type] = (tCounts[t.type]||0)+1; });
-        const tData = [['Type','Count']]; Object.entries(tCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => tData.push(x));
-        new google.visualization.PieChart(document.getElementById('chart_type_div')).draw(google.visualization.arrayToDataTable(tData), {...baseOpt, pieHole: 0.5});
+            const tCounts = {}; data.forEach(t => { if(t.type && t.type!=='-') tCounts[t.type] = (tCounts[t.type]||0)+1; });
+            const tData = [['Type','Count']]; Object.entries(tCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => tData.push(x));
+            new google.visualization.PieChart(document.getElementById('chart_type_div')).draw(google.visualization.arrayToDataTable(tData), {...baseOpt, pieHole: 0.5});
 
-        const uCounts = {}; data.forEach(t => { if(t.urgent) { const label = t.urgent.split('.')[1] || t.urgent; uCounts[label] = (uCounts[label]||0)+1; } });
-        const uData = [['Urgency','Count']]; Object.entries(uCounts).forEach(x => uData.push(x));
-        new google.visualization.PieChart(document.getElementById('chart_urgent_div')).draw(google.visualization.arrayToDataTable(uData), {...baseOpt, pieHole: 0.5, colors: ['#ef4444', '#f59e0b', '#3b82f6']});
+            const uCounts = {}; data.forEach(t => { if(t.urgent) { const label = t.urgent.split('.')[1] || t.urgent; uCounts[label] = (uCounts[label]||0)+1; } });
+            const uData = [['Urgency','Count']]; Object.entries(uCounts).forEach(x => uData.push(x));
+            new google.visualization.PieChart(document.getElementById('chart_urgent_div')).draw(google.visualization.arrayToDataTable(uData), {...baseOpt, pieHole: 0.5, colors: ['#ef4444', '#f59e0b', '#3b82f6']});
 
-        const sCounts = {}; data.forEach(t => { const s = t.satisfaction || 'N/A'; sCounts[s] = (sCounts[s]||0)+1; });
-        const sData = [['Rating','Count', { role: 'style' }]]; Object.entries(sCounts).sort().forEach(([k,v]) => sData.push([k, v, '#10b981']));
-        new google.visualization.BarChart(document.getElementById('chart_csat_div')).draw(google.visualization.arrayToDataTable(sData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
+            const sCounts = {}; data.forEach(t => { const s = t.satisfaction || 'N/A'; sCounts[s] = (sCounts[s]||0)+1; });
+            const sData = [['Rating','Count', { role: 'style' }]]; Object.entries(sCounts).sort().forEach(([k,v]) => sData.push([k, v, '#10b981']));
+            new google.visualization.BarChart(document.getElementById('chart_csat_div')).draw(google.visualization.arrayToDataTable(sData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
 
-        // 🔥 สร้างค่าเริ่มต้นให้ครบทุกคน เพื่อให้กราฟแสดงชื่อครบแม้ยังไม่มีข้อมูลก็ตาม 🔥
-        const csResp = { 'Best': {sum:0, count:0}, 'Friend': {sum:0, count:0}, 'Ball': {sum:0, count:0}, 'Ohm': {sum:0, count:0}, 'Tar': {sum:0, count:0} }; 
-        data.forEach(t => { 
-            const val = parseFloat(t.responseTime); const owner = t.owner;
-            if(!isNaN(val) && owner && owner !== '-') { 
-                if(!csResp[owner]) csResp[owner] = { sum:0, count:0 }; 
-                csResp[owner].sum += val; csResp[owner].count++; 
+            const csResp = { 'Best': {sum:0, count:0}, 'Friend': {sum:0, count:0}, 'Ball': {sum:0, count:0}, 'Ohm': {sum:0, count:0}, 'Tar': {sum:0, count:0} }; 
+            data.forEach(t => { 
+                const val = parseFloat(t.responseTime); const owner = t.owner;
+                if(!isNaN(val) && owner && owner !== '-') { 
+                    if(!csResp[owner]) csResp[owner] = { sum:0, count:0 }; 
+                    csResp[owner].sum += val; csResp[owner].count++; 
+                }
+            });
+            const rData = [['CS Name','Avg Minutes', { role: 'style' }]]; 
+            Object.entries(csResp).forEach(([k,v]) => { rData.push([k, parseFloat((v.count?v.sum/v.count:0).toFixed(2)), '#3b82f6']); });
+            if (rData.length === 1) rData.push(['No Data', 0, '#3b82f6']);
+            new google.visualization.ColumnChart(document.getElementById('chart_resp_div')).draw(google.visualization.arrayToDataTable(rData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
+        }
+
+        // ================= กราฟสำหรับหน้า HOME =================
+        if(document.getElementById('view-home').classList.contains('active')) {
+            
+            // 1. กราฟวงกลม: ปัญหาที่พบเจอมากที่สุด (Top Issues)
+            const issueCounts = {}; 
+            data.forEach(t => { 
+                if(t.issue && t.issue !== '-' && t.issue !== '') {
+                    issueCounts[t.issue] = (issueCounts[t.issue]||0)+1; 
+                }
+            });
+            const iData = [['Issue','Count']]; 
+            // เลือก Top 10 เพื่อไม่ให้กราฟแน่นเกินไป
+            Object.entries(issueCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => iData.push(x));
+            if(iData.length > 1) {
+                new google.visualization.PieChart(document.getElementById('chart_home_issue_div')).draw(google.visualization.arrayToDataTable(iData), {...baseOpt, pieHole: 0.5});
             }
-        });
-        const rData = [['CS Name','Avg Minutes', { role: 'style' }]]; 
-        Object.entries(csResp).forEach(([k,v]) => { rData.push([k, parseFloat((v.count?v.sum/v.count:0).toFixed(2)), '#3b82f6']); });
-        if (rData.length === 1) rData.push(['No Data', 0, '#3b82f6']);
-        new google.visualization.ColumnChart(document.getElementById('chart_resp_div')).draw(google.visualization.arrayToDataTable(rData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
+
+            // 2. กราฟเส้น: ความเร็วในการตอบเฉลี่ยรายวัน (Last 14 Active Days)
+            const dateResp = {};
+            data.forEach(t => {
+                const dateStr = parseDate(t.date);
+                const val = parseFloat(t.responseTime);
+                if(dateStr && !isNaN(val)) {
+                    if(!dateResp[dateStr]) dateResp[dateStr] = {sum:0, count:0};
+                    dateResp[dateStr].sum += val;
+                    dateResp[dateStr].count++;
+                }
+            });
+            const lineData = [['Date', 'Avg Minutes']];
+            // เรียงวันที่จากน้อยไปมาก และดึงแค่ 14 วันล่าสุดที่มีการตอบ
+            const sortedDates = Object.keys(dateResp).sort().slice(-14);
+            sortedDates.forEach(d => {
+                // เปลี่ยน Format วันที่ให้สั้นลงเป็น DD/MM เช่น 15/02
+                const shortDate = d.substring(8,10) + "/" + d.substring(5,7);
+                lineData.push([shortDate, parseFloat((dateResp[d].sum / dateResp[d].count).toFixed(2))]);
+            });
+            if(lineData.length > 1) {
+                new google.visualization.LineChart(document.getElementById('chart_home_resp_div')).draw(google.visualization.arrayToDataTable(lineData), {
+                    ...baseOpt, 
+                    legend: 'none', 
+                    curveType: 'function',
+                    pointSize: 6,
+                    lineWidth: 3,
+                    hAxis: {textStyle, slantedText: false}, 
+                    vAxis: {textStyle, minValue: 0},
+                    colors: ['#f97316'] // ใช้สี Primary Color
+                });
+            }
+        }
     }
 
     function exportCSV() {
