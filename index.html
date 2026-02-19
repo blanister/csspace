@@ -261,7 +261,14 @@
             border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             min-width: 160px; flex-direction: column; gap: 4px; z-index: 1000;
         }
-        .dropdown:hover .dropdown-content { display: flex; animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        /* 🔥 รองรับการ Hover บนคอม และ Focus บนมือถือเวลาจิ้มปุ่ม 🔥 */
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content { 
+            display: flex; 
+            animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
         @keyframes popDown {
             from { opacity: 0; transform: translate(-50%, 10px); }
             to { opacity: 1; transform: translate(-50%, 0); }
@@ -274,14 +281,17 @@
             background: var(--primary-color); color: white; box-shadow: 0 2px 10px var(--primary-glow); font-weight: 600;
         }
 
+        /* 🌟 MOBILE MEDIA QUERY (ทำการแก้ไขเฉพาะส่วนนี้ตามที่สั่ง) 🌟 */
         @media (max-width: 1024px) {
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
-            /* ป้องกันเนื้อหาโดนบังด้วย Bottom Bar */
+            
+            /* เว้นระยะด้านล่างสุดไม่ให้เมนูบาร์บังเนื้อหาเวลาเลื่อน */
             .content-scroll { overflow: visible; height: auto; padding: 15px; padding-bottom: 90px; } 
             
-            /* Sidebar Optimization (เหลือแค่โลโก้ กับปุ่มแอคชั่นด้านบน) */
+            /* 🚀 FIX BACKDROP-FILTER TRAP ON iOS/SAFARI 🚀 */
+            /* ปลดล็อกเอฟเฟกต์แม่ เพื่อให้ลูกที่ตั้ง position: fixed วิ่งทะลุไปเกาะขอบจอล่างได้จริง */
             .sidebar { 
                 height: auto; 
                 flex-wrap: wrap; 
@@ -291,38 +301,53 @@
                 align-items: center;
                 margin: 10px; 
                 border-radius: 20px; 
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: transparent !important;
             }
-            .brand-area { 
-                margin-bottom: 0; 
-                width: auto; 
-                justify-content: flex-start; 
-                order: 1; 
-            }
-            .sidebar > .nav-group:last-child {
-                width: auto !important;
-                margin-top: 0 !important;
-                order: 2;
-            }
-            
-            /* 📱 BOTTOM HUB BAR (เฉพาะ Mobile) */
-            .nav-center { 
-                position: fixed; 
-                bottom: 0;
-                left: 0;
-                width: 100%;
+            /* ใส่ความเบลอคืนให้ Sidebar ผ่าน ::before เพื่อไม่ให้กระทบกล่องลูก */
+            .sidebar::before {
+                content: "";
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
                 background: var(--sidebar-fixed);
-                border: none;
-                border-top: 1px solid var(--card-border);
-                border-radius: 0;
-                padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
-                margin: 0;
-                justify-content: space-around; 
-                align-items: center;
-                z-index: 9999;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-                transform: none;
-                flex-wrap: nowrap;
-                flex-direction: row;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-radius: inherit;
+                z-index: -1;
+            }
+            .brand-area { margin-bottom: 0; width: auto; justify-content: flex-start; order: 1; }
+            .sidebar > .nav-group:last-child { width: auto !important; margin-top: 0 !important; order: 2; }
+            
+            /* 📱 BOTTOM HUB BAR (ล็อกอยู่ขอบล่างของจอ 100%) */
+            .nav-center { 
+                position: fixed !important; 
+                top: auto !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                /* ✨ เอฟเฟกต์ Liquid Glass สไตล์ iOS ✨ */
+                background: rgba(39, 39, 42, 0.65) !important;
+                backdrop-filter: blur(25px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+                border: none !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 0 !important;
+                /* เว้น Safe area ของ iPhone ไว้เสมอ */
+                padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px !important; 
+                margin: 0 !important;
+                justify-content: space-around !important; 
+                align-items: center !important;
+                z-index: 9999 !important;
+                box-shadow: 0 -4px 30px rgba(0,0,0,0.3) !important;
+                transform: none !important;
+                flex-wrap: nowrap !important;
+                flex-direction: row !important;
+            }
+
+            [data-theme="light"] .nav-center {
+                background: rgba(255, 255, 255, 0.75) !important;
+                border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
             }
             
             .nav-btn { 
@@ -336,12 +361,12 @@
                 margin: 0 4px;
             }
 
-            /* แก้ Dropdown ให้เด้งขึ้นบนสำหรับ Bottom Bar */
+            /* 📱 เมนู Dropdown CS+ ให้ Pop-up ขึ้นด้านบนเสมอ */
             .dropdown { flex: 1; display: flex; justify-content: center; position: static; margin: 0 4px; }
             .dropdown .dropdown-trigger { width: 100%; margin: 0; }
             .dropdown-content { 
                 top: auto; 
-                bottom: calc(100% + 15px); /* ให้เด้งเหนือ Bottom bar */
+                bottom: calc(100% + 15px); /* ยกขึ้นไปเหนือเมนูด้านล่าง */
                 left: 50%;
                 transform: translateX(-50%);
                 width: calc(100% - 30px);
@@ -350,7 +375,9 @@
                 box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
                 padding: 10px;
             }
-            .dropdown:hover .dropdown-content { 
+            
+            .dropdown:hover .dropdown-content,
+            .dropdown:focus-within .dropdown-content { 
                 animation: popUpMobile 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
                 display: flex; 
             }
@@ -361,23 +388,30 @@
             .summary-grid { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .crm-filter-group { flex-wrap: wrap; }
-            /* ขยายปุ่มให้กดง่ายขึ้น */
             .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 10px 12px; font-size: 13px;}
             
-            /* ปรับ UI อ่านง่ายขึ้น */
-            .leaderboard-row { grid-template-columns: repeat(5, 1fr) !important; gap: 4px !important; margin-bottom: 15px;}
+            /* 📱 หน้า HOME: ปรับขนาดกล่องคนเป็น 2x2 พอดีจอมือถือ (เจาะจงเฉพาะหน้า Home) */
+            #home-kpis { 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                gap: 10px !important; 
+                margin-bottom: 15px;
+            }
+            #home-kpis .stat-item { padding: 15px; }
+
+            /* Dashboard Leaderboard (อันเก่าที่ไม่ได้สั่งแก้ ปล่อยไว้เหมือนเดิม) */
+            .leaderboard-row { 
+                grid-template-columns: repeat(5, 1fr) !important; 
+                gap: 4px !important; 
+                margin-bottom: 15px;
+            }
             .lb-card { padding: 8px 4px; text-align: center; }
-            .lb-card h3 { font-size: 12px; margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-            .lb-card .count { font-size: 18px; }
-            .progress-label { font-size: 9px; margin-top: 4px; display: block; }
+            .lb-card h3 { font-size: 10px; margin-bottom: 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+            .lb-card .count { font-size: 15px; }
+            .progress-label { font-size: 8px; margin-top: 3px; display: block; }
             .progress-track { margin-top: 4px; height: 3px; }
 
-            .stat-item { padding: 12px; }
-            .stat-item h4 { font-size: 11px; }
-            .stat-item .val { font-size: 20px; }
-
-            /* ป้องกัน iOS Zoom ด้วย font-size: 16px สำหรับ input/select มือถือ และขยายขนาดให้กดง่าย */
-            .form-input, .form-select { font-size: 14px; height: 40px; }
+            .stat-item { padding: 10px; }
+            .stat-item .val { font-size: 18px; }
 
             .mobile-toggle-btn { display: flex; align-items: center; justify-content: center; height: 40px;}
             .filter-panel { display: none; flex-direction: column; align-items: stretch; gap: 8px; margin-top: -5px; }
@@ -387,9 +421,8 @@
             .dashboard-controls { padding: 12px 10px; flex-direction: column; gap: 8px; }
             .dashboard-controls > div { width: 100%; min-width: unset; }
 
-            /* Mobile Table Optimization */
             .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            table { min-width: 1000px; font-size: 12px; } /* ปรับ font-size ขึ้นและลด min-width ให้อ่านง่าย */
+            table { min-width: 1250px; font-size: 11px; } 
             
             .chart-card { height: 300px; padding: 10px; }
             .chart-body { height: 100%; }
@@ -400,7 +433,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animation สำหรับ Dropdown มือถือ */
+        /* Animation เด้งขึ้นบนสำหรับ Dropdown มือถือ */
         @keyframes popUpMobile {
             from { opacity: 0; transform: translate(-50%, 15px); }
             to { opacity: 1; transform: translate(-50%, 0); }
@@ -425,7 +458,7 @@
         <div class="nav-group nav-center">
             <button class="nav-btn" onclick="switchPage('home', this)">Home</button>
             <div class="dropdown">
-                <button class="nav-btn dropdown-trigger active" onclick="void(0)" style="cursor: default;">CS+</button>
+                <button class="nav-btn dropdown-trigger active" onclick="void(0)" tabindex="0">CS+</button>
                 <div class="dropdown-content">
                     <button class="nav-btn active" onclick="switchPage('dashboard', this)">OPS101</button>
                     <button class="nav-btn" onclick="switchPage('crm', this)">CRM201</button>
@@ -454,7 +487,7 @@
                 </div>
                 
                 <div class="compact-wrapper">
-                    <div class="leaderboard-row" id="home-kpis" style="grid-template-columns: repeat(5, 1fr);"></div>
+                    <div class="leaderboard-row" id="home-kpis"></div>
 
                     <div class="summary-grid" style="margin-top: 20px;">
                         <div class="chart-card">
@@ -987,10 +1020,9 @@
         const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}-${String(todayObj.getDate()).padStart(2,'0')}`;
         const currentMonthStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}`;
 
-        // เตรียมตัวแปรสำหรับเก็บข้อมูลรายบุคคล
+        // เตรียมตัวแปรสำหรับเก็บข้อมูลรายบุคคล (เอา Friend ออก ตามคำสั่ง)
         const team = { 
             'Best':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
-            'Friend': { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
             'Ball':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
             'Ohm':    { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
             'Tar':    { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 } 
@@ -1043,17 +1075,17 @@
             }
         });
 
-        // นำข้อมูลลงไปแสดงบน KPI Card 5 คน
+        // นำข้อมูลลงไปแสดงบน KPI Card
         const kpiContainer = document.getElementById('home-kpis');
         kpiContainer.innerHTML = '';
         
         // ชุดสีสำหรับแต่ละคน เพื่อให้ชื่อดูโดดเด่นและชัดเจน
-        const themeColors = ['var(--danger)', 'var(--info)', 'var(--primary-color)', 'var(--success)', 'var(--warning)'];
+        const themeColors = ['var(--danger)', 'var(--info)', 'var(--success)', 'var(--warning)'];
         let colorIndex = 0;
 
         for(const [name, s] of Object.entries(team)) {
             const todayPct = s.todayTotal ? Math.round((s.todayClosed / s.todayTotal) * 100) : 0;
-            const nameColor = themeColors[colorIndex % 5];
+            const nameColor = themeColors[colorIndex % 4];
             
             // * นำ bg-gradient ออกเพื่อใช้ Card แบบมาตรฐานที่ปรับสีตาม Light/Dark ได้เอง
             // * ปรับขนาดชื่อ (h3) ใหญ่ขึ้นเป็น 24px และใช้สีจาก themeColors
