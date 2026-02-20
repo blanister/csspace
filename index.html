@@ -124,6 +124,10 @@
 
         /* ปรับให้รองรับ 5 คน */
         .leaderboard-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+        
+        /* 🔥 FIX: ให้กล่องหน้า Home ขยายพอดี 4 คนบน PC */
+        #home-kpis { grid-template-columns: repeat(4, 1fr); }
+
         .lb-card { padding: 15px; border-radius: var(--radius-md); color: white; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); }
         .lb-card h3 { margin: 0 0 5px 0; font-size: 14px; }
         .lb-card .count { font-size: 24px; font-weight: 700; line-height: 1; }
@@ -487,6 +491,10 @@
                 </div>
                 
                 <div class="compact-wrapper">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
+                        <h3 style="font-size: 16px; margin:0; color: var(--text-main);">จำนวนแเคสแก้ปัญหาประจำเดือนกุมภาพันธ์</h3>
+                    </div>
+                    
                     <div class="leaderboard-row" id="home-kpis"></div>
 
                     <div class="summary-grid" style="margin-top: 20px;">
@@ -835,6 +843,11 @@
         updateDashboard(); 
         updateHome(); // 🔥 ทำการอัปเดตหน้า Home 
         renderTable();
+        
+        // 🔥 FIX: ให้ทำการวาดกราฟทันทีที่โหลดข้อมูลเสร็จ
+        if (typeof google !== 'undefined' && google.visualization) {
+            drawChart(allTickets);
+        }
     };
 
     // Callback for CRM201
@@ -1217,6 +1230,7 @@
     }
 
     function drawChart(data) {
+        if(typeof google === 'undefined' || !google.visualization) return;
         if(!document.getElementById('view-summary').classList.contains('active') && !document.getElementById('view-home').classList.contains('active')) return;
         
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
