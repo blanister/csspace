@@ -226,7 +226,7 @@
 
         .form-select, .form-input { width: 100%; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.03); color: var(--text-main); outline: none; font-family: var(--font-main); transition: 0.2s; font-size: 12px; }
         .form-select:focus, .form-input:focus { border-color: var(--primary-color); background: rgba(255,255,255,0.08); }
-        [data-theme="light"] .form-select, [data-theme="light"] .form-input { background: #f1f5f9; border-color: #cbd5e1; }
+        [data-theme="light"] .form-select, .form-input { background: #f1f5f9; border-color: #cbd5e1; }
         
         .input-label { display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-secondary); font-weight: 600; }
         
@@ -648,15 +648,122 @@
             </div>
 
             <div id="view-installq" class="page-view">
-                <div class="page-header"><h2>Install Q+</h2></div>
-                <div class="compact-wrapper" style="display:flex; justify-content:center; align-items:center; height:300px; color:var(--text-secondary);">
-                    <div style="text-align:center;">
-                        <div style="font-size:40px; margin-bottom:10px;">🛠️</div>
-                        <div>Coming Soon</div>
+                <div class="page-header">
+                    <h2>Install Q+ <span style="font-size: 14px; font-weight: normal; color: var(--text-secondary); margin-left: 10px;">ตารางคิวงานติดตั้ง</span></h2>
+                </div>
+                <div class="compact-wrapper">
+                    
+                    <div class="dashboard-controls" style="margin-bottom: 25px;">
+                        <div style="flex:1; min-width:150px;">
+                            <label class="input-label">ค้นหาวันที่</label>
+                            <input type="date" id="installDateFilter" class="form-input" onchange="renderInstall()">
+                        </div>
+                        <div style="flex:1; min-width:150px;">
+                            <label class="input-label">ค้นหาลูกค้า/สถานที่</label>
+                            <input type="text" id="installSearch" class="form-input" placeholder="🔍 พิมพ์เพื่อค้นหา..." onkeyup="renderInstall()">
+                        </div>
+                        <div style="flex:1; min-width:150px;">
+                            <label class="input-label">ผู้ปฏิบัติงาน</label>
+                            <select id="installTeamFilter" class="form-select" onchange="renderInstall()">
+                                <option value="all">ทั้งหมด</option>
+                                <option value="Boom">Boom</option>
+                                <option value="Ohm">Ohm / Tar</option>
+                                <option value="Best">Best / Ball</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #ff4d4d; border-left: 4px solid #ff4d4d; padding-left: 8px;">กำลังดำเนินการ</h3>
+                        <div class="table-container">
+                            <table id="installRunningTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 15%;">Location</th>
+                                        <th style="width: 12%;">ประเภทงาน</th>
+                                        <th style="width: 15%;">สินค้าหลัก</th>
+                                        <th style="width: 12%;">เครื่องกรองน้ำ</th>
+                                        <th style="width: 10%;">ทีมช่าง</th>
+                                        <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
+                                        <th style="width: 100px;">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #10b981; border-left: 4px solid #10b981; padding-left: 8px;">คอนเฟิร์มแล้ว</h3>
+                        <div class="table-container">
+                            <table id="installConfirmTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 15%;">Location</th>
+                                        <th style="width: 12%;">ประเภทงาน</th>
+                                        <th style="width: 15%;">สินค้าหลัก</th>
+                                        <th style="width: 12%;">เครื่องกรองน้ำ</th>
+                                        <th style="width: 10%;">ทีมช่าง</th>
+                                        <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
+                                        <th style="width: 100px;">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #3b82f6; border-left: 4px solid #3b82f6; padding-left: 8px;">จองคิว</h3>
+                        <div class="table-container">
+                            <table id="installBookingTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 15%;">Location</th>
+                                        <th style="width: 12%;">ประเภทงาน</th>
+                                        <th style="width: 15%;">สินค้าหลัก</th>
+                                        <th style="width: 12%;">เครื่องกรองน้ำ</th>
+                                        <th style="width: 10%;">ทีมช่าง</th>
+                                        <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
+                                        <th style="width: 100px;">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #94a3b8; border-left: 4px solid #94a3b8; padding-left: 8px;">คิวว่าง</h3>
+                        <div class="table-container">
+                            <table id="installAvailableTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 15%;">Location</th>
+                                        <th style="width: 12%;">ประเภทงาน</th>
+                                        <th style="width: 15%;">สินค้าหลัก</th>
+                                        <th style="width: 12%;">เครื่องกรองน้ำ</th>
+                                        <th style="width: 10%;">ทีมช่าง</th>
+                                        <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
+                                        <th style="width: 100px;">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
+            
             <div id="view-summary" class="page-view">
                 <div class="page-header"><h2>กราฟข้อมูลของ CS:OPS101</h2></div>
                 <div class="compact-wrapper">
@@ -721,6 +828,7 @@
     let allCRM = []; // Store CRM data
     let currentCRMFilter = 7; // Default to 7 days
     let crmLimit = 10; // CRM: Limit items per load
+    let allInstalls = []; // Store Install Q+ data
 
     let countdownSec = 300;
     const savedTheme = localStorage.getItem('cs_theme') || 'dark';
@@ -816,6 +924,13 @@
     script2.src = `https://docs.google.com/spreadsheets/d/${CRM_SHEET_ID}/gviz/tq?tqx=responseHandler:handleCRM&gid=${CRM_GID}`;
     document.body.appendChild(script2);
 
+    // --- FETCH INSTALL Q+ DATA ---
+    const INSTALL_SHEET_ID = '1eQPV2iY_l7dW22DnFqFXcx3R0i9sfkua8Gxw2eC901Y';
+    const INSTALL_GID = '1567272905';
+    const scriptInstall = document.createElement('script');
+    scriptInstall.src = `https://docs.google.com/spreadsheets/d/${INSTALL_SHEET_ID}/gviz/tq?tqx=responseHandler:handleInstall&gid=${INSTALL_GID}`;
+    document.body.appendChild(scriptInstall);
+
     // Callback for OPS101
     window.handleData = (json) => {
         const rows = json.table.rows;
@@ -869,6 +984,27 @@
         }).filter(x => x.date !== 'วันที่/เวลา' && x.name !== '-');
         
         renderCRMTable();
+    };
+
+    // Callback สำหรับ Install Q+
+    window.handleInstall = (json) => {
+        const rows = json.table.rows;
+        allInstalls = rows.map(r => {
+            const v = (i) => (r.c[i] ? (r.c[i].f || r.c[i].v) : "-");
+            return {
+                date: v(0),       // คอลัมน์ A (วันที่)
+                customer: v(1),   // คอลัมน์ B (ลูกค้า/สถานที่)
+                task: v(2),       // คอลัมน์ C (งานที่ต้องทำ)
+                team: v(3),       // คอลัมน์ D (ทีมช่าง)
+                status: v(4),     // คอลัมน์ E (สถานะ)
+                operator: v(8),   // คอลัมน์ I (ผู้ปฏิบัติงาน)
+                waterFilter: v(13),// คอลัมน์ N (เครื่องกรองน้ำ)
+                mainProduct: v(15),// คอลัมน์ P (สินค้าหลัก)
+                location: v(19)   // คอลัมน์ T (Location)
+            };
+        }).filter(x => x.date !== 'วันที่' && x.date !== '-'); // ข้าม Header
+        
+        renderInstall();
     };
 
     function setCRMFilter(days, btn) {
@@ -1227,6 +1363,88 @@
                 <td><span class="status-badge ${sClass}">${t.status}</span></td><td>${t.assignee}</td>
             </tr>`;
         });
+    }
+
+    // ฟังก์ชัน Render ลงตาราง Install Q+ ทั้ง 4 กล่อง
+    function renderInstall() {
+        const runningBody = document.querySelector('#installRunningTable tbody');
+        const confirmBody = document.querySelector('#installConfirmTable tbody');
+        const bookingBody = document.querySelector('#installBookingTable tbody');
+        const availableBody = document.querySelector('#installAvailableTable tbody');
+
+        if(!runningBody) return;
+
+        runningBody.innerHTML = '';
+        confirmBody.innerHTML = '';
+        bookingBody.innerHTML = '';
+        availableBody.innerHTML = '';
+
+        const dateFilter = document.getElementById('installDateFilter').value;
+        const search = document.getElementById('installSearch').value.toLowerCase();
+        const teamFilter = document.getElementById('installTeamFilter').value;
+
+        // ฟิลเตอร์ข้อมูล
+        const filtered = allInstalls.filter(t => {
+            if (dateFilter) { 
+                const rowDate = parseDate(t.date); 
+                if (rowDate !== dateFilter) return false; 
+            }
+            if (teamFilter !== 'all' && t.team && !t.team.includes(teamFilter.split(' ')[0])) return false;
+            if (search && !JSON.stringify(t).toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        let cRunning = 0, cConfirm = 0, cBooking = 0, cAvail = 0;
+
+        filtered.forEach(t => {
+            const s = String(t.status).toLowerCase();
+            let tr = `<tr>
+                <td>${t.date}</td>
+                <td style="font-weight:600; color:var(--text-main);">${t.customer}</td>
+                <td>${formatLink(t.location)}</td> <td>${t.task}</td>
+                <td>${t.mainProduct}</td>
+                <td>${t.waterFilter}</td>
+                <td>${t.team}</td>
+                <td>${t.operator}</td>`;
+
+            // แยกสถานะลงกล่องตามเงื่อนไขเป๊ะๆ
+            if (s.includes('กำลังดำเนินการ')) {
+                tr += `<td><span class="status-badge status-doing" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.2);">${t.status}</span></td></tr>`;
+                runningBody.innerHTML += tr;
+                cRunning++;
+            } 
+            else if (s.includes('comfirm') || s.includes('confirm') || s.includes('คอนเฟิร์ม')) {
+                tr += `<td><span class="status-badge status-closed">${t.status}</span></td></tr>`;
+                confirmBody.innerHTML += tr;
+                cConfirm++;
+            } 
+            else if (s.includes('จอง')) {
+                tr += `<td><span class="status-badge status-assigned">${t.status}</span></td></tr>`;
+                bookingBody.innerHTML += tr;
+                cBooking++;
+            } 
+            else if (s.includes('ว่าง')) {
+                // คิวว่างใช้ 9 คอลัมน์ เหมือนกันเพื่อความเรียบร้อย
+                let trAvail = `<tr>
+                    <td>${t.date}</td>
+                    <td style="color:var(--text-secondary);">${t.customer !== '-' ? t.customer : 'รอใส่ข้อมูล'}</td>
+                    <td>${formatLink(t.location)}</td> <td>${t.task}</td>
+                    <td>${t.mainProduct}</td>
+                    <td>${t.waterFilter}</td>
+                    <td>${t.team}</td>
+                    <td>${t.operator}</td>
+                    <td><span class="status-badge status-pending">${t.status}</span></td></tr>`;
+                availableBody.innerHTML += trAvail;
+                cAvail++;
+            }
+        });
+
+        // หากตารางไหนไม่มีข้อมูลเลย ให้แสดงข้อความเตือน
+        const emptyRow = (colspan) => `<tr><td colspan="${colspan}" style="text-align:center; padding:20px; color:var(--text-secondary);">ไม่มีข้อมูล</td></tr>`;
+        if (cRunning === 0) runningBody.innerHTML = emptyRow(9);
+        if (cConfirm === 0) confirmBody.innerHTML = emptyRow(9);
+        if (cBooking === 0) bookingBody.innerHTML = emptyRow(9);
+        if (cAvail === 0) availableBody.innerHTML = emptyRow(9);
     }
 
     function drawChart(data) {
