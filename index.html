@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
         /* 🎨 THEME VARIABLES SYSTEM */
         :root {
@@ -122,10 +125,8 @@
         .crm-filter-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
         .crm-filter-btn.active { background: var(--info); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
 
-        /* ปรับให้รองรับ 5 คน */
         .leaderboard-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
         
-        /* 🔥 FIX: ให้กล่องหน้า Home ขยายพอดี 4 คนบน PC */
         #home-kpis { grid-template-columns: repeat(4, 1fr); }
 
         .lb-card { padding: 15px; border-radius: var(--radius-md); color: white; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); }
@@ -137,7 +138,7 @@
         .bg-gradient-2 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
         .bg-gradient-3 { background: linear-gradient(135deg, #ea580c, #c2410c); }
         .bg-gradient-4 { background: linear-gradient(135deg, #ca8a04, #a16207); color: #fff; }
-        .bg-gradient-5 { background: linear-gradient(135deg, #eab308, #ca8a04); color: #fff; } /* สีเหลืองสำหรับ Tar */
+        .bg-gradient-5 { background: linear-gradient(135deg, #eab308, #ca8a04); color: #fff; }
         
         .progress-track { background: rgba(0,0,0,0.2); height: 4px; width: 100%; border-radius: 4px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: rgba(255,255,255,0.9); height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -163,7 +164,6 @@
             backdrop-filter: blur(10px); 
         }
 
-        /* GLOBAL TABLE SETTINGS */
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -171,14 +171,13 @@
             table-layout: fixed; 
         }
 
-        /* 🔥 FIX: Header single line, Data wraps nicely */
         th { 
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: nowrap; /* Header ไม่ตัดคำ */
+            white-space: nowrap; 
             overflow: hidden;
-            text-overflow: ellipsis; /* ถ้าล้นให้เป็น ... */
+            text-overflow: ellipsis; 
             vertical-align: middle;
         }
 
@@ -186,37 +185,33 @@
             padding: 10px 8px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
-            white-space: normal; /* Data ตัดคำลงบรรทัดใหม่ได้ */
+            white-space: normal; 
             word-wrap: break-word;
             overflow-wrap: break-word;
             vertical-align: top;
         } 
         
-        /* 🔧 OPS101 (Main Dashboard) COLUMN WIDTHS */
-        #mainTable th:nth-child(1) { width: 40px; text-align: center; } /* # */
-        #mainTable th:nth-child(2) { width: 70px; } /* Ticket */
-        #mainTable th:nth-child(3) { width: 80px; } /* Date */
-        #mainTable th:nth-child(4) { width: 14%; } /* Customer */
-        #mainTable th:nth-child(5) { width: 10%; } /* Model */
-        #mainTable th:nth-child(6) { width: 18%; } /* Issue */
-        #mainTable th:nth-child(7) { width: 18%; } /* Solution */
-        #mainTable th:nth-child(8) { width: 80px; } /* Owner (Fixed: Expanded from 60px) */
-        #mainTable th:nth-child(9) { width: 80px; } /* Urgency (Fixed: Expanded from 60px) */
-        #mainTable th:nth-child(10) { width: 110px; } /* Status */
-        #mainTable th:nth-child(11) { width: 100px; } /* Assignee */
+        #mainTable th:nth-child(1) { width: 40px; text-align: center; } 
+        #mainTable th:nth-child(2) { width: 70px; } 
+        #mainTable th:nth-child(3) { width: 80px; } 
+        #mainTable th:nth-child(4) { width: 14%; } 
+        #mainTable th:nth-child(5) { width: 10%; } 
+        #mainTable th:nth-child(6) { width: 18%; } 
+        #mainTable th:nth-child(7) { width: 18%; } 
+        #mainTable th:nth-child(8) { width: 80px; } 
+        #mainTable th:nth-child(9) { width: 80px; } 
+        #mainTable th:nth-child(10) { width: 110px; } 
+        #mainTable th:nth-child(11) { width: 100px; } 
 
-
-        /* 🔧 CRM201 COLUMN WIDTHS - UPDATED for Sequence Number & Fix Overlap */
-        #crmTable th:nth-child(1) { width: 40px; text-align: center; } /* # */
-        #crmTable th:nth-child(2) { width: 80px; } /* Buy Date */
-        #crmTable th:nth-child(3) { width: 100px; } /* Call Date */
-        #crmTable th:nth-child(4) { width: 70px; text-align:center; } /* Owner */
-        #crmTable th:nth-child(5) { width: 14%; } /* Name */
-        #crmTable th:nth-child(6) { width: 90px; } /* Phone */
-        #crmTable th:nth-child(7) { width: 14%; } /* Products */
-        #crmTable th:nth-child(8) { width: 70px; text-align:right; } /* Total */
-        #crmTable th:nth-child(9) { width: 80px; } /* Province */
-
+        #crmTable th:nth-child(1) { width: 40px; text-align: center; } 
+        #crmTable th:nth-child(2) { width: 80px; } 
+        #crmTable th:nth-child(3) { width: 100px; } 
+        #crmTable th:nth-child(4) { width: 70px; text-align:center; } 
+        #crmTable th:nth-child(5) { width: 14%; } 
+        #crmTable th:nth-child(6) { width: 90px; } 
+        #crmTable th:nth-child(7) { width: 14%; } 
+        #crmTable th:nth-child(8) { width: 70px; text-align:right; } 
+        #crmTable th:nth-child(9) { width: 80px; } 
 
         th { color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; background: rgba(0,0,0,0.02); }
         tr:hover td { background: rgba(255,255,255,0.02); }
@@ -251,13 +246,11 @@
         .ticker-content { white-space: nowrap; padding-left: 100%; display: inline-block; animation: ticker 30s linear infinite; color: var(--danger); font-weight: 600; font-size: 12px; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* 🔽 CSS เสริมสำหรับการจัดเรียงและปุ่ม Toggle บน Mobile 🔽 */
         .mobile-search-row { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
         .mobile-toggle-btn { display: none; white-space: nowrap; font-size: 12px; font-weight: 600; padding: 0 12px; }
         .filter-panel { display: flex; transition: all 0.3s ease; }
         .action-btn { width: 36px; flex-shrink: 0; }
 
-        /* Dropdown Menu for CS+ */
         .dropdown { position: relative; display: inline-flex; }
         .dropdown-content {
             display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
@@ -266,7 +259,6 @@
             min-width: 160px; flex-direction: column; gap: 4px; z-index: 1000;
         }
         
-        /* 🔥 รองรับการ Hover บนคอม และ Focus บนมือถือเวลาจิ้มปุ่ม 🔥 */
         .dropdown:hover .dropdown-content,
         .dropdown:focus-within .dropdown-content { 
             display: flex; 
@@ -285,17 +277,13 @@
             background: var(--primary-color); color: white; box-shadow: 0 2px 10px var(--primary-glow); font-weight: 600;
         }
 
-        /* 🌟 MOBILE MEDIA QUERY (ทำการแก้ไขเฉพาะส่วนนี้ตามที่สั่ง) 🌟 */
         @media (max-width: 1024px) {
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
             
-            /* เว้นระยะด้านล่างสุดไม่ให้เมนูบาร์บังเนื้อหาเวลาเลื่อน */
             .content-scroll { overflow: visible; height: auto; padding: 15px; padding-bottom: 90px; } 
             
-            /* 🚀 FIX BACKDROP-FILTER TRAP ON iOS/SAFARI 🚀 */
-            /* ปลดล็อกเอฟเฟกต์แม่ เพื่อให้ลูกที่ตั้ง position: fixed วิ่งทะลุไปเกาะขอบจอล่างได้จริง */
             .sidebar { 
                 height: auto; 
                 flex-wrap: wrap; 
@@ -309,7 +297,6 @@
                 -webkit-backdrop-filter: none !important;
                 background: transparent !important;
             }
-            /* ใส่ความเบลอคืนให้ Sidebar ผ่าน ::before เพื่อไม่ให้กระทบกล่องลูก */
             .sidebar::before {
                 content: "";
                 position: absolute;
@@ -323,21 +310,18 @@
             .brand-area { margin-bottom: 0; width: auto; justify-content: flex-start; order: 1; }
             .sidebar > .nav-group:last-child { width: auto !important; margin-top: 0 !important; order: 2; }
             
-            /* 📱 BOTTOM HUB BAR (ล็อกอยู่ขอบล่างของจอ 100%) */
             .nav-center { 
                 position: fixed !important; 
                 top: auto !important;
                 bottom: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
-                /* ✨ เอฟเฟกต์ Liquid Glass สไตล์ iOS ✨ */
                 background: rgba(39, 39, 42, 0.65) !important;
                 backdrop-filter: blur(25px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
                 border: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
                 border-radius: 0 !important;
-                /* เว้น Safe area ของ iPhone ไว้เสมอ */
                 padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px !important; 
                 margin: 0 !important;
                 justify-content: space-around !important; 
@@ -365,12 +349,11 @@
                 margin: 0 4px;
             }
 
-            /* 📱 เมนู Dropdown CS+ ให้ Pop-up ขึ้นด้านบนเสมอ */
             .dropdown { flex: 1; display: flex; justify-content: center; position: static; margin: 0 4px; }
             .dropdown .dropdown-trigger { width: 100%; margin: 0; }
             .dropdown-content { 
                 top: auto; 
-                bottom: calc(100% + 15px); /* ยกขึ้นไปเหนือเมนูด้านล่าง */
+                bottom: calc(100% + 15px); 
                 left: 50%;
                 transform: translateX(-50%);
                 width: calc(100% - 30px);
@@ -394,7 +377,6 @@
             .crm-filter-group { flex-wrap: wrap; }
             .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 10px 12px; font-size: 13px;}
             
-            /* 📱 หน้า HOME: ปรับขนาดกล่องคนเป็น 2x2 พอดีจอมือถือ (เจาะจงเฉพาะหน้า Home) */
             #home-kpis { 
                 grid-template-columns: repeat(2, 1fr) !important; 
                 gap: 10px !important; 
@@ -402,7 +384,6 @@
             }
             #home-kpis .stat-item { padding: 15px; }
 
-            /* Dashboard Leaderboard (อันเก่าที่ไม่ได้สั่งแก้ ปล่อยไว้เหมือนเดิม) */
             .leaderboard-row { 
                 grid-template-columns: repeat(5, 1fr) !important; 
                 gap: 4px !important; 
@@ -437,7 +418,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animation เด้งขึ้นบนสำหรับ Dropdown มือถือ */
         @keyframes popUpMobile {
             from { opacity: 0; transform: translate(-50%, 15px); }
             to { opacity: 1; transform: translate(-50%, 0); }
@@ -673,6 +653,12 @@
                         </div>
                     </div>
 
+                    <div style="margin-bottom: 24px; position: relative;">
+                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: var(--primary-color); border-left: 4px solid var(--primary-color); padding-left: 8px;">📍 แผนที่ภาพรวมงานติดตั้ง (กำลังดำเนินการ)</h3>
+                        <div id="installMap" style="height: 350px; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--card-border); z-index: 1; background: var(--card-bg);"></div>
+                        <div id="mapWarning" style="font-size: 11px; color: var(--warning); margin-top: 8px; margin-left: 10px; display: none;">* บางหมุดอาจไม่แสดงผล หากลิงก์ Location เป็นลิงก์ย่อ (Short Link) หรือไม่มีพิกัด (Lat/Lng) ชัดเจน</div>
+                    </div>
+
                     <div style="margin-bottom: 24px;">
                         <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #ff4d4d; border-left: 4px solid #ff4d4d; padding-left: 8px;">กำลังดำเนินการ</h3>
                         <div class="table-container">
@@ -834,6 +820,10 @@
     const savedTheme = localStorage.getItem('cs_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
+    // 🗺️ ตัวแปรสำหรับแผนที่
+    let installMap = null;
+    let markersLayer = null;
+
     function toggleTheme() {
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next); localStorage.setItem('cs_theme', next);
@@ -865,6 +855,11 @@
 
         // โหลดกราฟทันทีหากเปิดหน้า Summary หรือ Home
         if(pageId === 'summary' || pageId === 'home') setTimeout(() => drawChart(allTickets), 100); 
+
+        // 🗺️ ต้องแจ้งให้ Leaflet รีเฟรชขนาดแผนที่ เมื่อเปิดหน้าต่างขึ้นมา (แก้บั๊กภาพแผนที่เทา)
+        if(pageId === 'installq' && installMap) {
+            setTimeout(() => installMap.invalidateSize(), 300);
+        }
     }
 
     function openModal() { document.getElementById('addModal').classList.add('open'); }
@@ -1006,6 +1001,76 @@
         
         renderInstall();
     };
+
+    // 🗺️ ฟังก์ชันวาดแผนที่สำหรับคิวงานกำลังดำเนินการ
+    function updateInstallMap(runningData) {
+        if (!installMap) {
+            // เซ็ตจุดศูนย์กลางเริ่มต้น (กรุงเทพฯ)
+            installMap = L.map('installMap').setView([13.7563, 100.5018], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(installMap);
+            markersLayer = L.layerGroup().addTo(installMap);
+        }
+
+        markersLayer.clearLayers();
+        let bounds = [];
+        let unmappedCount = 0;
+
+        runningData.forEach(t => {
+            let loc = String(t.location || "");
+            if (loc === '-' || loc === '') return;
+
+            // พยายามแกะ Lat/Lng จากลิงก์ Google Maps หลายๆ รูปแบบ
+            let lat = null, lng = null;
+            const regexAt = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+            const regexQ = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+            const regexLl = /ll=(-?\d+\.\d+),(-?\d+\.\d+)/;
+
+            let match = loc.match(regexAt) || loc.match(regexQ) || loc.match(regexLl);
+
+            if (match) {
+                lat = parseFloat(match[1]);
+                lng = parseFloat(match[2]);
+            } else {
+                unmappedCount++; // ถ้าหาไม่เจอ เช่นเป็น goo.gl สั้นๆ
+                return;
+            }
+
+            if (lat && lng) {
+                let marker = L.marker([lat, lng]).bindPopup(`
+                    <div style="font-family: var(--font-main); font-size: 13px;">
+                        <strong style="color:var(--primary-color)">${t.customer}</strong><br>
+                        งาน: ${t.task}<br>
+                        ช่าง: ${t.team} (${t.operator})<br>
+                        <a href="${loc}" target="_blank" style="display:inline-block; margin-top:8px; color:var(--link-color);">🗺️ เปิดเส้นทาง Google Maps</a>
+                    </div>
+                `);
+                markersLayer.addLayer(marker);
+                bounds.push([lat, lng]);
+            }
+        });
+
+        // เลื่อนมุมกล้องให้ครอบคลุมหมุดทั้งหมด
+        if (bounds.length > 0) {
+            installMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+        } else {
+            installMap.setView([13.7563, 100.5018], 10); // กลับไปจุดเริ่มต้นถ้าไม่มีหมุด
+        }
+
+        // แสดงคำเตือนถ้ามีหมุดที่ปักไม่ได้
+        const warningEl = document.getElementById('mapWarning');
+        if (warningEl) {
+            if (unmappedCount > 0) {
+                warningEl.innerText = `* มี ${unmappedCount} คิวงาน ที่ไม่สามารถปักหมุดบนแผนที่ได้ (เนื่องจากลิงก์ Location เป็นลิงก์ย่อ หรือไม่มีพิกัด X,Y)`;
+                warningEl.style.display = 'block';
+            } else {
+                warningEl.style.display = 'none';
+            }
+        }
+
+        setTimeout(() => { installMap.invalidateSize(); }, 300);
+    }
 
     function setCRMFilter(days, btn) {
         currentCRMFilter = days;
@@ -1395,6 +1460,7 @@
         });
 
         let cRunning = 0, cConfirm = 0, cBooking = 0, cAvail = 0;
+        let runningJobsForMap = []; // 🗺️ เก็บข้อมูลสำหรับส่งไปแผนที่
 
         filtered.forEach(t => {
             const s = String(t.status).toLowerCase();
@@ -1412,6 +1478,7 @@
                 tr += `<td><span class="status-badge status-doing" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.2);">${t.status}</span></td></tr>`;
                 runningBody.innerHTML += tr;
                 cRunning++;
+                runningJobsForMap.push(t); // 🗺️ เพิ่มลง Array รอส่งให้แผนที่
             } 
             else if (s.includes('comfirm') || s.includes('confirm') || s.includes('คอนเฟิร์ม')) {
                 tr += `<td><span class="status-badge status-closed">${t.status}</span></td></tr>`;
@@ -1445,6 +1512,9 @@
         if (cConfirm === 0) confirmBody.innerHTML = emptyRow(9);
         if (cBooking === 0) bookingBody.innerHTML = emptyRow(9);
         if (cAvail === 0) availableBody.innerHTML = emptyRow(9);
+
+        // 🗺️ เรียกใช้ฟังก์ชันอัปเดตแผนที่ พร้อมส่งข้อมูลคิวกำลังดำเนินการไปปักหมุด
+        updateInstallMap(runningJobsForMap);
     }
 
     function drawChart(data) {
