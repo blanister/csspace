@@ -666,7 +666,8 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 80px;">วันที่</th>
-                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 12%;">เวลา/รายละเอียด</th>
+                                        <th style="width: 12%;">รหัสงาน</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
@@ -688,7 +689,8 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 80px;">วันที่</th>
-                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 12%;">เวลา/รายละเอียด</th>
+                                        <th style="width: 12%;">รหัสงาน</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
@@ -710,7 +712,8 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 80px;">วันที่</th>
-                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 12%;">เวลา/รายละเอียด</th>
+                                        <th style="width: 12%;">รหัสงาน</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
@@ -732,7 +735,8 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 80px;">วันที่</th>
-                                        <th style="width: 15%;">รหัสงาน</th>
+                                        <th style="width: 12%;">เวลา/รายละเอียด</th>
+                                        <th style="width: 12%;">รหัสงาน</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
@@ -992,6 +996,7 @@
                 task: v(2),       // คอลัมน์ C (งานที่ต้องทำ)
                 team: v(3),       // คอลัมน์ D (ทีมช่าง)
                 status: v(4),     // คอลัมน์ E (สถานะ)
+                timeDetail: v(7), // 🔥 NEW: คอลัมน์ H (เวลา/รายละเอียด)
                 operator: v(8),   // คอลัมน์ I (ผู้ปฏิบัติงาน)
                 waterFilter: v(13),// คอลัมน์ N (เครื่องกรองน้ำ)
                 mainProduct: v(15),// คอลัมน์ P (สินค้าหลัก)
@@ -1466,6 +1471,7 @@
             const s = String(t.status).toLowerCase();
             let tr = `<tr>
                 <td>${t.date}</td>
+                <td>${t.timeDetail}</td>
                 <td style="font-weight:600; color:var(--text-main);">${t.customer}</td>
                 <td>${formatLink(t.location)}</td> <td>${t.task}</td>
                 <td>${t.mainProduct}</td>
@@ -1491,9 +1497,10 @@
                 cBooking++;
             } 
             else if (s.includes('ว่าง')) {
-                // คิวว่างใช้ 9 คอลัมน์ เหมือนกันเพื่อความเรียบร้อย
+                // คิวว่างใช้คอลัมน์เหมือนกันเพื่อความเรียบร้อย
                 let trAvail = `<tr>
                     <td>${t.date}</td>
+                    <td>${t.timeDetail}</td>
                     <td style="color:var(--text-secondary);">${t.customer !== '-' ? t.customer : 'รอใส่ข้อมูล'}</td>
                     <td>${formatLink(t.location)}</td> <td>${t.task}</td>
                     <td>${t.mainProduct}</td>
@@ -1508,10 +1515,10 @@
 
         // หากตารางไหนไม่มีข้อมูลเลย ให้แสดงข้อความเตือน
         const emptyRow = (colspan) => `<tr><td colspan="${colspan}" style="text-align:center; padding:20px; color:var(--text-secondary);">ไม่มีข้อมูล</td></tr>`;
-        if (cRunning === 0) runningBody.innerHTML = emptyRow(9);
-        if (cConfirm === 0) confirmBody.innerHTML = emptyRow(9);
-        if (cBooking === 0) bookingBody.innerHTML = emptyRow(9);
-        if (cAvail === 0) availableBody.innerHTML = emptyRow(9);
+        if (cRunning === 0) runningBody.innerHTML = emptyRow(10);
+        if (cConfirm === 0) confirmBody.innerHTML = emptyRow(10);
+        if (cBooking === 0) bookingBody.innerHTML = emptyRow(10);
+        if (cAvail === 0) availableBody.innerHTML = emptyRow(10);
 
         // 🗺️ เรียกใช้ฟังก์ชันอัปเดตแผนที่ พร้อมส่งข้อมูลคิวกำลังดำเนินการไปปักหมุด
         updateInstallMap(runningJobsForMap);
