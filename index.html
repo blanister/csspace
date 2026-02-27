@@ -15,8 +15,7 @@
         /* 🎨 THEME VARIABLES SYSTEM */
         :root {
             --bg-body: #18181b; 
-            --bg-mesh: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.10) 0px, transparent 50%), 
-                        radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.10) 0px, transparent 50%);
+            --bg-mesh: none;
             --sidebar-fixed: #27272a; 
             --card-bg: rgba(39, 39, 42, 0.65);
             --card-border: rgba(255, 255, 255, 0.08);
@@ -36,8 +35,7 @@
 
         [data-theme="light"] {
             --bg-body: #fdfaf6;
-            --bg-mesh: radial-gradient(at 0% 0%, #fff7ed 0px, transparent 50%), 
-                        radial-gradient(at 100% 0%, #ffedd5 0px, transparent 50%);
+            --bg-mesh: none;
             --card-bg: rgba(255, 255, 255, 0.85);
             --card-border: #e2e8f0;
             --text-main: #0f172a;
@@ -508,7 +506,15 @@
                             </table>
                         </div>
                     </div>
-                </div>
+
+                    <div style="margin-top: 25px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
+                            <h3 style="font-size: 16px; margin:0; color: var(--text-main);">Install Q+ QuickDash</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;" id="homeInstallSummary">
+                            </div>
+                    </div>
+                    </div>
             </div>
             <div id="view-dashboard" class="page-view active">
                 <div class="compact-wrapper">
@@ -1005,7 +1011,75 @@
         }).filter(x => x.date !== 'วันที่' && x.date !== '-'); // ข้าม Header
         
         renderInstall();
+        updateHomeInstallSummary(); // 🔥 NEW CALL สร้างสรุปหน้า Home
     };
+
+    // 🔥 NEW: ฟังก์ชันประมวลผลสรุป Install Q+ ไว้ในหน้า Home
+    function updateHomeInstallSummary() {
+        const container = document.getElementById('homeInstallSummary');
+        if (!container) return;
+
+        let runningHtml = "";
+        let confirmHtml = "";
+        let bookingHtml = "";
+        let availHtml = "";
+
+        // Template สำหรับการแสดงรายการขนาดเล็กกระชับ (ปรับดึงเวลา + ลูกค้า มาแสดงให้ชัดเจน)
+        const formatItem = (t) => {
+            const timeStr = (t.timeDetail && t.timeDetail !== '-') ? `<span style="color: var(--primary-color); font-weight: 700; margin-right: 6px;">[${t.timeDetail}]</span>` : '';
+            const customerStr = (t.customer && t.customer !== '-') ? `<span style="font-weight: 600; color: var(--link-color);">${t.customer}</span> : ` : '';
+            return `<div style="font-size:11px; padding:6px 0; border-bottom:1px solid var(--card-border); color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${t.date} ${t.timeDetail} - ${t.customer}: ${t.task}">
+                <span style="color:var(--text-secondary); margin-right:6px; font-weight: 500;">${t.date}</span>
+                ${timeStr}
+                <span style="opacity: 0.9;">${customerStr}${t.task}</span>
+            </div>`;
+        };
+
+        allInstalls.forEach(t => {
+            const s = String(t.status).toLowerCase();
+            if (s.includes('กำลังดำเนินการ')) runningHtml += formatItem(t);
+            else if (s.includes('comfirm') || s.includes('confirm') || s.includes('คอนเฟิร์ม')) confirmHtml += formatItem(t);
+            else if (s.includes('จอง')) bookingHtml += formatItem(t);
+            else if (s.includes('ว่าง')) availHtml += formatItem(t);
+        });
+
+        const emptyMsg = `<div style="font-size:11px; color:var(--text-secondary); padding:10px 0; text-align:center;">ไม่มีคิว</div>`;
+
+        container.innerHTML = `
+            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #ff4d4d; border-radius: 8px;">
+                <h4 style="margin:0 0 10px 0; color:#ff4d4d; font-size:13px; display:flex; justify-content:space-between;">
+                    กำลังดำเนินการ
+                </h4>
+                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                    ${runningHtml || emptyMsg}
+                </div>
+            </div>
+            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #10b981; border-radius: 8px;">
+                <h4 style="margin:0 0 10px 0; color:#10b981; font-size:13px; display:flex; justify-content:space-between;">
+                    คอนเฟิร์มแล้ว
+                </h4>
+                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                    ${confirmHtml || emptyMsg}
+                </div>
+            </div>
+            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #3b82f6; border-radius: 8px;">
+                <h4 style="margin:0 0 10px 0; color:#3b82f6; font-size:13px; display:flex; justify-content:space-between;">
+                    จองคิว
+                </h4>
+                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                    ${bookingHtml || emptyMsg}
+                </div>
+            </div>
+            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #94a3b8; border-radius: 8px;">
+                <h4 style="margin:0 0 10px 0; color:#94a3b8; font-size:13px; display:flex; justify-content:space-between;">
+                    คิวว่าง
+                </h4>
+                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                    ${availHtml || emptyMsg}
+                </div>
+            </div>
+        `;
+    }
 
     // 🗺️ ฟังก์ชันวาดแผนที่สำหรับคิวงานกำลังดำเนินการ
     function updateInstallMap(runningData) {
