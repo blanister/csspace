@@ -5,47 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CS Space</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        /* 🎨 THEME VARIABLES SYSTEM */
+        /* 🎨 THEME VARIABLES SYSTEM (MODERNIZED) */
         :root {
-            --bg-body: #18181b; 
-            --bg-mesh: none;
-            --sidebar-fixed: #27272a; 
-            --card-bg: rgba(39, 39, 42, 0.65);
+            /* Dark Theme (Default) */
+            --bg-body: #09090b; 
+            --bg-mesh: radial-gradient(at 0% 0%, rgba(24, 24, 27, 1) 0, transparent 50%), 
+                       radial-gradient(at 50% 0%, rgba(39, 39, 42, 0.4) 0, transparent 50%), 
+                       radial-gradient(at 100% 0%, rgba(24, 24, 27, 1) 0, transparent 50%);
+            --sidebar-fixed: rgba(24, 24, 27, 0.65); 
+            --card-bg: rgba(24, 24, 27, 0.5);
+            --card-hover: rgba(39, 39, 42, 0.7);
             --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(255, 255, 255, 0.15);
             --text-main: #f8fafc;
-            --text-secondary: #94a3b8;
+            --text-secondary: #a1a1aa;
             --primary-color: #f97316;
-            --primary-glow: rgba(249, 115, 22, 0.3);
+            --primary-hover: #ea580c;
+            --primary-glow: rgba(249, 115, 22, 0.25);
             --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
             --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.15);
             --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.15);
             --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.15);
             --link-color: #38bdf8; 
-            --font-main: 'Inter', 'Kanit', sans-serif;
-            --radius-md: 12px; 
-            --radius-lg: 16px;
+            --font-main: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 16px; 
+            --radius-lg: 24px;
+            --radius-pill: 999px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         [data-theme="light"] {
-            --bg-body: #fdfaf6;
-            --bg-mesh: none;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --card-border: #e2e8f0;
+            --bg-body: #f8fafc;
+            --bg-mesh: radial-gradient(at 0% 0%, rgba(255, 255, 255, 1) 0, transparent 50%), 
+                       radial-gradient(at 50% 0%, rgba(241, 245, 249, 0.8) 0, transparent 50%), 
+                       radial-gradient(at 100% 0%, rgba(226, 232, 240, 0.4) 0, transparent 50%);
+            --sidebar-fixed: rgba(255, 255, 255, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-hover: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.06);
+            --card-border-hover: rgba(0, 0, 0, 0.12);
             --text-main: #0f172a;
             --text-secondary: #64748b;
             --primary-color: #ea580c;
+            --primary-hover: #c2410c;
+            --primary-glow: rgba(234, 88, 12, 0.2);
             --link-color: #0284c7; 
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
+        /* 🎨 Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--card-border-hover); border-radius: var(--radius-pill); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
         body {
             font-family: var(--font-main);
             background-color: var(--bg-body);
@@ -56,81 +88,89 @@
             color: var(--text-main);
             height: 100vh;
             overflow: hidden; 
-            transition: background-color 0.3s;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .app-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
+        /* -------------------- 🌟 HEADER & NAVIGATION -------------------- */
         .sidebar {
             margin: 16px 24px 0 24px; 
-            border-radius: 24px;
-            height: 68px; 
+            border-radius: var(--radius-pill);
+            height: 64px; 
             background: var(--sidebar-fixed); 
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-            padding: 0 24px; flex-shrink: 0; z-index: 100; position: relative;
-            color: #f8fafc; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 0 24px; flex-shrink: 0; z-index: 1000; position: relative;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
         }
         
-        .brand-area { font-size: 20px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; white-space: nowrap; }
+        .brand-area { font-size: 20px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; white-space: nowrap; }
         .nav-group { display: flex; gap: 8px; align-items: center; }
 
         .nav-center {
             position: absolute; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 6px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; gap: 4px; background: var(--card-bg); padding: 6px; 
+            border-radius: var(--radius-pill); border: 1px solid var(--card-border);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
         .nav-btn {
             background: transparent; border: none; width: auto; 
-            padding: 6px 16px; border-radius: 99px; 
-            color: #94a3b8; font-family: var(--font-main); font-weight: 500; font-size: 13px; cursor: pointer;
-            display: flex; align-items: center; gap: 8px; transition: all 0.2s; text-align: center;
+            padding: 8px 18px; border-radius: var(--radius-pill); 
+            color: var(--text-secondary); font-family: var(--font-main); font-weight: 500; font-size: 13px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: var(--transition); text-align: center;
         }
-        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .nav-btn.active { background: var(--primary-color); color: white; box-shadow: 0 2px 10px var(--primary-glow); font-weight: 600; }
+        .nav-btn:hover { color: var(--text-main); background: var(--card-border); }
+        .nav-btn.active { background: var(--primary-color); color: white; box-shadow: 0 4px 14px var(--primary-glow); font-weight: 600; }
 
-        .version-text { font-size: 11px; color: #64748b; font-weight: 500; margin-right: 12px; white-space: nowrap; }
+        .version-text { font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-right: 12px; white-space: nowrap; }
 
         .icon-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%;
-            color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 15px;
+            background: var(--card-bg); border: 1px solid var(--card-border); width: 36px; height: 36px; border-radius: 50%;
+            color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 16px;
         }
-        .icon-btn:hover { background: rgba(255,255,255,0.15); color: #fff; transform: rotate(15deg); }
+        .icon-btn:hover { background: var(--card-border-hover); color: var(--text-main); transform: rotate(15deg) scale(1.05); }
 
+        /* -------------------- 🌟 MAIN CONTENT -------------------- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .content-scroll { flex: 1; overflow-y: auto; padding: 20px; }
-        .compact-wrapper { max-width: 1250px; margin: 0 auto; width: 100%; }
+        .content-scroll { flex: 1; overflow-y: auto; padding: 24px; scroll-behavior: smooth; }
+        .compact-wrapper { max-width: 1300px; margin: 0 auto; width: 100%; }
 
-        .page-header { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .page-header h2 { font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.5px; opacity: 0.9; }
+        .page-header { margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+        .page-header h2 { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
 
-        .page-view { display: none; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .page-view { display: none; animation: scaleFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .page-view.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleFadeIn { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
+        /* -------------------- 🌟 CONTROLS & CARDS -------------------- */
         .dashboard-controls {
-            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
-            background: var(--card-bg); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--card-border); align-items: center;
-            backdrop-filter: blur(20px); box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+            background: var(--card-bg); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--card-border); align-items: center;
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: var(--shadow-sm);
         }
         
-        .crm-filter-group { display: flex; gap: 8px; margin-bottom: 10px; width: 100%; justify-content: center; }
+        .crm-filter-group { display: flex; gap: 8px; margin-bottom: 16px; width: 100%; justify-content: flex-start; flex-wrap: wrap;}
         .crm-filter-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-secondary);
-            padding: 8px 20px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: 0.2s; font-size: 13px;
+            background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-secondary);
+            padding: 8px 20px; border-radius: var(--radius-pill); font-weight: 500; cursor: pointer; transition: var(--transition); font-size: 13px;
         }
-        .crm-filter-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
+        .crm-filter-btn:hover { background: var(--card-border-hover); color: var(--text-main); transform: translateY(-1px); }
         .crm-filter-btn.active { background: var(--info); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
 
-        .leaderboard-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
-        
+        .leaderboard-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
         #home-kpis { grid-template-columns: repeat(4, 1fr); }
 
-        .lb-card { padding: 15px; border-radius: var(--radius-md); color: white; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); }
-        .lb-card h3 { margin: 0 0 5px 0; font-size: 14px; }
-        .lb-card .count { font-size: 24px; font-weight: 700; line-height: 1; }
-        .lb-card:hover { transform: translateY(-3px); }
+        .lb-card { padding: 20px; border-radius: var(--radius-md); color: white; cursor: pointer; transition: var(--transition); position: relative; overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.1); }
+        .lb-card h3 { margin: 0 0 8px 0; font-size: 15px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .lb-card .count { font-size: 32px; font-weight: 700; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .lb-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-lg); }
         
         .bg-gradient-1 { background: linear-gradient(135deg, #e11d48, #be123c); }
         .bg-gradient-2 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
@@ -138,292 +178,291 @@
         .bg-gradient-4 { background: linear-gradient(135deg, #ca8a04, #a16207); color: #fff; }
         .bg-gradient-5 { background: linear-gradient(135deg, #eab308, #ca8a04); color: #fff; }
         
-        .progress-track { background: rgba(0,0,0,0.2); height: 4px; width: 100%; border-radius: 4px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: rgba(255,255,255,0.9); height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .progress-track { background: rgba(0,0,0,0.2); height: 6px; width: 100%; border-radius: var(--radius-pill); margin-top: 12px; overflow: hidden; }
+        .progress-fill { background: #fff; height: 100%; border-radius: var(--radius-pill); transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-        .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat-item { background: var(--card-bg); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: 0.2s; backdrop-filter: blur(10px); }
-        .stat-item:hover { border-color: var(--primary-color); transform: translateY(-2px); }
-        .stat-item h4 { margin: 0; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
-        .stat-item .val { font-size: 22px; font-weight: 700; color: var(--text-main); margin-top: 4px; line-height: 1.2; }
+        .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-item { background: var(--card-bg); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: var(--transition); backdrop-filter: blur(12px); box-shadow: var(--shadow-sm); }
+        .stat-item:hover { border-color: var(--primary-color); transform: translateY(-3px); background: var(--card-hover); box-shadow: var(--shadow-md); }
+        .stat-item h4 { margin: 0; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .stat-item .val { font-size: 26px; font-weight: 700; color: var(--text-main); margin-top: 6px; line-height: 1.2; }
 
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .chart-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px; height: 350px; display: flex; flex-direction: column; backdrop-filter: blur(10px); }
-        .chart-title { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 12px; }
-        .chart-body { flex: 1; width: 100%; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .chart-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 24px; height: 380px; display: flex; flex-direction: column; backdrop-filter: blur(16px); box-shadow: var(--shadow-sm); transition: var(--transition); min-width: 0; overflow: hidden; }
+        .chart-card:hover { border-color: var(--card-border-hover); box-shadow: var(--shadow-md); }
+        .chart-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .chart-body { flex: 1; width: 100%; min-height: 0; position: relative; }
 
-        .table-wrapper-center { max-width: 1250px; margin: 0 auto; width: 100%; }
+        /* -------------------- 🌟 TABLES -------------------- */
+        .table-wrapper-center { max-width: 1300px; margin: 0 auto; width: 100%; }
         
         .table-container { 
-            overflow-x: hidden; 
+            overflow-x: auto; 
+            overflow-y: auto;
+            max-height: 65vh;
+            max-width: 100%;
             background: var(--card-bg); 
-            border-radius: var(--radius-lg); 
+            border-radius: var(--radius-md); 
             border: 1px solid var(--card-border); 
-            backdrop-filter: blur(10px); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-sm);
         }
 
         table { 
             width: 100%; 
-            border-collapse: collapse; 
-            font-size: 12px; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            font-size: 13px; 
             table-layout: fixed; 
         }
 
         th { 
-            padding: 10px 8px; 
+            position: sticky; top: 0; z-index: 10;
+            background: var(--sidebar-fixed);
+            backdrop-filter: blur(20px);
+            padding: 14px 12px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
             white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis; 
-            vertical-align: middle;
+            color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;
         }
 
         td { 
-            padding: 10px 8px; 
+            padding: 14px 12px; 
             text-align: left; 
             border-bottom: 1px solid var(--card-border);
             white-space: normal; 
             word-wrap: break-word;
             overflow-wrap: break-word;
+            word-break: break-word;
             vertical-align: top;
+            transition: background 0.2s;
         } 
         
-        #mainTable th:nth-child(1) { width: 40px; text-align: center; } 
-        #mainTable th:nth-child(2) { width: 70px; } 
-        #mainTable th:nth-child(3) { width: 80px; } 
-        #mainTable th:nth-child(4) { width: 14%; } 
-        #mainTable th:nth-child(5) { width: 10%; } 
-        #mainTable th:nth-child(6) { width: 18%; } 
-        #mainTable th:nth-child(7) { width: 18%; } 
+        tr:hover td { background: var(--card-border-hover); }
+        tr:last-child td { border-bottom: none; }
+
+        #mainTable th:nth-child(1) { width: 50px; text-align: center; } 
+        #mainTable th:nth-child(2) { width: 80px; } 
+        #mainTable th:nth-child(3) { width: 90px; } 
+        #mainTable th:nth-child(4) { width: 15%; } 
+        #mainTable th:nth-child(5) { width: 12%; } 
+        #mainTable th:nth-child(6) { width: 20%; } 
+        #mainTable th:nth-child(7) { width: 20%; } 
         #mainTable th:nth-child(8) { width: 80px; } 
-        #mainTable th:nth-child(9) { width: 80px; } 
-        #mainTable th:nth-child(10) { width: 110px; } 
+        #mainTable th:nth-child(9) { width: 90px; } 
+        #mainTable th:nth-child(10) { width: 120px; } 
         #mainTable th:nth-child(11) { width: 100px; } 
 
-        #crmTable th:nth-child(1) { width: 40px; text-align: center; } 
-        #crmTable th:nth-child(2) { width: 80px; } 
-        #crmTable th:nth-child(3) { width: 100px; } 
-        #crmTable th:nth-child(4) { width: 70px; text-align:center; } 
-        #crmTable th:nth-child(5) { width: 14%; } 
-        #crmTable th:nth-child(6) { width: 90px; } 
-        #crmTable th:nth-child(7) { width: 14%; } 
-        #crmTable th:nth-child(8) { width: 70px; text-align:right; } 
-        #crmTable th:nth-child(9) { width: 80px; } 
-
-        th { color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; background: rgba(0,0,0,0.02); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        [data-theme="light"] tr:hover td { background: rgba(0,0,0,0.02); }
+        #crmTable th:nth-child(1) { width: 50px; text-align: center; } 
+        #crmTable th:nth-child(2) { width: 90px; } 
+        #crmTable th:nth-child(3) { width: 110px; } 
+        #crmTable th:nth-child(4) { width: 80px; text-align:center; } 
+        #crmTable th:nth-child(5) { width: 16%; } 
+        #crmTable th:nth-child(6) { width: 100px; } 
+        #crmTable th:nth-child(7) { width: 15%; } 
+        #crmTable th:nth-child(8) { width: 80px; text-align:right; } 
+        #crmTable th:nth-child(9) { width: 100px; } 
 
         th:first-child, td:first-child { text-align: center; }
 
-        .form-select, .form-input { width: 100%; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.03); color: var(--text-main); outline: none; font-family: var(--font-main); transition: 0.2s; font-size: 12px; }
-        .form-select:focus, .form-input:focus { border-color: var(--primary-color); background: rgba(255,255,255,0.08); }
-        [data-theme="light"] .form-select, .form-input { background: #f1f5f9; border-color: #cbd5e1; }
+        /* -------------------- 🌟 FORMS & BUTTONS -------------------- */
+        .form-select, .form-input { 
+            width: 100%; height: 40px; padding: 0 14px; 
+            border-radius: var(--radius-sm); border: 1px solid var(--card-border); 
+            background: rgba(255,255,255,0.03); color: var(--text-main); outline: none; 
+            font-family: var(--font-main); transition: var(--transition); font-size: 13px; 
+        }
+        .form-select:focus, .form-input:focus { 
+            border-color: var(--primary-color); 
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        [data-theme="light"] .form-select, [data-theme="light"] .form-input { background: #ffffff; border-color: #cbd5e1; }
         
-        .input-label { display: block; font-size: 10px; margin-bottom: 4px; color: var(--text-secondary); font-weight: 600; }
+        .input-label { display: block; font-size: 11px; margin-bottom: 6px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
         
-        .btn-primary { background: var(--primary-color); color: white; border: none; padding: 0 16px; height: 32px; border-radius: 99px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px var(--primary-glow); transition: 0.2s; font-size: 12px; }
-        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-secondary); padding: 0 10px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 14px; }
-        .btn-outline:hover { color: var(--text-main); border-color: var(--text-main); background: rgba(255,255,255,0.05); }
+        .btn-primary { 
+            background: var(--primary-color); color: white; border: none; 
+            height: 40px; border-radius: var(--radius-pill); font-weight: 600; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; 
+            box-shadow: 0 4px 14px var(--primary-glow); transition: var(--transition); font-size: 14px; padding: 0 24px; width: fit-content; 
+        }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px var(--primary-glow); }
+        .btn-primary:active { transform: translateY(0); }
+        
+        .btn-outline { 
+            background: transparent; border: 1px solid var(--card-border); color: var(--text-secondary); 
+            padding: 0 16px; height: 40px; border-radius: var(--radius-sm); cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 14px; font-family: var(--font-main); font-weight: 500;
+        }
+        .btn-outline:hover { color: var(--text-main); border-color: var(--text-main); background: var(--card-border-hover); transform: translateY(-1px); }
 
-        .status-badge { padding: 4px 14px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap; display: inline-block; }
-        .status-closed { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .status-doing { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
-        .status-pending { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-        .status-assigned { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
-        .urgent-badge { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; box-shadow: 0 0 4px currentColor; }
+        /* -------------------- 🌟 STATUS BADGES -------------------- */
+        .status-badge { padding: 6px 16px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+        .status-closed { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-doing { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .status-assigned { background: var(--info-bg); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .urgent-badge { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 6px currentColor; }
 
-        .click-to-copy { cursor: pointer; text-decoration: none; transition: all 0.2s; color: var(--link-color); font-weight: 600; position: relative; }
-        .click-to-copy:hover { text-decoration: underline; filter: brightness(1.2); }
-        .copy-toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); color: #fff; padding: 10px 20px; border-radius: 99px; font-weight: 600; display: none; z-index: 10000; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5); font-size: 13px; pointer-events: none; animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes slideUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        /* -------------------- 🌟 UTILITIES & MISC -------------------- */
+        .click-to-copy { cursor: pointer; text-decoration: none; transition: var(--transition); color: var(--link-color); font-weight: 600; position: relative; }
+        .click-to-copy:hover { text-decoration: underline; text-underline-offset: 4px; filter: brightness(1.2); }
+        
+        .copy-toast { 
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); 
+            background: var(--text-main); color: var(--bg-body); padding: 12px 24px; border-radius: var(--radius-pill); 
+            font-weight: 600; display: none; z-index: 10000; box-shadow: var(--shadow-lg); font-size: 14px; pointer-events: none; 
+            animation: slideUpToast 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        @keyframes slideUpToast { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
-        .ticker-wrap { width: 100%; overflow: hidden; height: 32px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; }
-        .ticker-content { white-space: nowrap; padding-left: 100%; display: inline-block; animation: ticker 30s linear infinite; color: var(--danger); font-weight: 600; font-size: 12px; }
+        .ticker-wrap { width: 100%; overflow: hidden; height: 36px; background: var(--danger-bg); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-sm); margin-bottom: 24px; display: flex; align-items: center; }
+        .ticker-content { white-space: nowrap; padding-left: 100%; display: inline-block; animation: ticker 30s linear infinite; color: var(--danger); font-weight: 600; font-size: 13px; letter-spacing: 0.5px;}
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .mobile-search-row { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
-        .mobile-toggle-btn { display: none; white-space: nowrap; font-size: 12px; font-weight: 600; padding: 0 12px; }
-        .filter-panel { display: flex; transition: all 0.3s ease; }
-        .action-btn { width: 36px; flex-shrink: 0; }
+        .mobile-search-row { display: flex; gap: 12px; margin-bottom: 20px; width: 100%; }
+        .mobile-toggle-btn { display: none; white-space: nowrap; font-size: 13px; font-weight: 600; padding: 0 16px; }
+        .filter-panel { display: flex; transition: var(--transition); }
+        .action-btn { width: 40px; padding: 0; flex-shrink: 0; }
 
+        /* -------------------- 🌟 DROPDOWN -------------------- */
         .dropdown { position: relative; display: inline-flex; }
         .dropdown-content {
-            display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
-            background: var(--sidebar-fixed); padding: 8px; border-radius: var(--radius-lg);
-            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            min-width: 160px; flex-direction: column; gap: 4px; z-index: 1000;
+            display: none; position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+            background: var(--sidebar-fixed); padding: 8px; border-radius: var(--radius-md);
+            border: 1px solid var(--card-border); box-shadow: var(--shadow-lg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            min-width: 180px; flex-direction: column; gap: 4px; z-index: 1000;
         }
         
         .dropdown:hover .dropdown-content,
         .dropdown:focus-within .dropdown-content { 
             display: flex; 
-            animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+            animation: popDown 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         
         @keyframes popDown {
-            from { opacity: 0; transform: translate(-50%, 10px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+            from { opacity: 0; transform: translate(-50%, -10px) scale(0.95); }
+            to { opacity: 1; transform: translate(-50%, 0) scale(1); }
         }
-        [data-theme="light"] .dropdown-content { background: #ffffff; border-color: var(--card-border); }
         
-        .dropdown-content .nav-btn { width: 100%; justify-content: center; border-radius: 8px; }
-        
-        .dropdown:has(.dropdown-content .nav-btn.active) .dropdown-trigger {
-            background: var(--primary-color); color: white; box-shadow: 0 2px 10px var(--primary-glow); font-weight: 600;
-        }
+        .dropdown-content .nav-btn { width: 100%; justify-content: flex-start; border-radius: var(--radius-sm); padding: 10px 16px; }
+        .dropdown:has(.dropdown-content .nav-btn.active) .dropdown-trigger { background: var(--primary-color); color: white; box-shadow: 0 4px 14px var(--primary-glow); font-weight: 600; }
 
+        /* -------------------- 🌟 MODAL -------------------- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 2000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-box { 
+            background: var(--sidebar-fixed); border: 1px solid var(--card-border); 
+            width: 90%; max-width: 550px; border-radius: var(--radius-lg); padding: 32px; 
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); 
+            transform: scale(0.95) translateY(20px); transition: var(--transition); opacity: 0;
+        }
+        .modal-overlay.open .modal-box { transform: scale(1) translateY(0); opacity: 1; }
+
+        /* -------------------- 🌟 MOBILE RESPONSIVENESS -------------------- */
         @media (max-width: 1024px) {
             body { overflow: auto !important; height: auto !important; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .main-content { overflow: visible; height: auto; }
-            
-            .content-scroll { overflow: visible; height: auto; padding: 15px; padding-bottom: 90px; } 
+            .content-scroll { overflow: visible; height: auto; padding: 16px; padding-bottom: 100px; } 
             
             .sidebar { 
-                height: auto; 
-                flex-wrap: wrap; 
-                padding: 12px 16px; 
-                gap: 8px; 
-                justify-content: space-between; 
-                align-items: center;
-                margin: 10px; 
-                border-radius: 20px; 
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-                background: transparent !important;
+                height: auto; flex-wrap: wrap; padding: 16px; gap: 12px; 
+                justify-content: space-between; align-items: center; margin: 12px; 
+                border-radius: var(--radius-lg); backdrop-filter: none !important; background: transparent !important; box-shadow: none; border: none;
             }
             .sidebar::before {
-                content: "";
-                position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: var(--sidebar-fixed);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border-radius: inherit;
-                z-index: -1;
+                content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                background: var(--sidebar-fixed); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+                border-radius: inherit; z-index: -1; border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);
             }
             .brand-area { margin-bottom: 0; width: auto; justify-content: flex-start; order: 1; }
             .sidebar > .nav-group:last-child { width: auto !important; margin-top: 0 !important; order: 2; }
             
             .nav-center { 
-                position: fixed !important; 
-                top: auto !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                background: rgba(39, 39, 42, 0.65) !important;
-                backdrop-filter: blur(25px) saturate(180%) !important;
-                -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-                border: none !important;
-                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-                border-radius: 0 !important;
-                padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px !important; 
-                margin: 0 !important;
-                justify-content: space-around !important; 
-                align-items: center !important;
-                z-index: 9999 !important;
-                box-shadow: 0 -4px 30px rgba(0,0,0,0.3) !important;
-                transform: none !important;
-                flex-wrap: nowrap !important;
-                flex-direction: row !important;
-            }
-
-            [data-theme="light"] .nav-center {
-                background: rgba(255, 255, 255, 0.75) !important;
-                border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+                position: fixed !important; top: auto !important; bottom: calc(24px + env(safe-area-inset-bottom)) !important; 
+                left: 50% !important; transform: translateX(-50%) !important; width: calc(100% - 32px) !important; 
+                max-width: 420px !important; background: var(--sidebar-fixed) !important; 
+                backdrop-filter: blur(24px) saturate(200%) !important; -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+                border: 1px solid var(--card-border) !important; border-radius: var(--radius-pill) !important; 
+                padding: 8px 12px !important; margin: 0 !important; justify-content: space-between !important; 
+                z-index: 9999 !important; box-shadow: var(--shadow-lg), inset 0 1px 1px rgba(255,255,255,0.05) !important; 
             }
             
-            .nav-btn { 
-                width: auto; 
-                flex: 1;
-                background: transparent; 
-                padding: 12px 4px;
-                font-size: 13px;
-                border-radius: 12px;
-                justify-content: center;
-                margin: 0 4px;
-            }
-
-            .dropdown { flex: 1; display: flex; justify-content: center; position: static; margin: 0 4px; }
+            .nav-btn { flex: 1; padding: 12px 4px; font-size: 12px; margin: 0 4px; flex-direction: column; gap: 4px; border-radius: var(--radius-md); }
+            .dropdown { flex: 1; position: static; margin: 0 4px; width: 100%;}
             .dropdown .dropdown-trigger { width: 100%; margin: 0; }
             .dropdown-content { 
-                top: auto; 
-                bottom: calc(100% + 15px); 
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 30px);
-                max-width: 320px;
-                border-radius: var(--radius-lg);
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
-                padding: 10px;
+                top: auto; bottom: calc(100% + 16px); left: 50%; transform: translateX(-50%);
+                width: calc(100% - 32px); max-width: 320px; padding: 12px; border-radius: var(--radius-lg);
             }
-            
-            .dropdown:hover .dropdown-content,
-            .dropdown:focus-within .dropdown-content { 
-                animation: popUpMobile 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-                display: flex; 
-            }
+            .dropdown:hover .dropdown-content, .dropdown:focus-within .dropdown-content { animation: popUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
             .version-text { display: none; } 
-            
             .compact-wrapper, .table-wrapper-center { width: 100%; max-width: 100%; }
-            .summary-grid { grid-template-columns: 1fr; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .summary-grid { grid-template-columns: 1fr; gap: 16px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .crm-filter-group { flex-wrap: wrap; }
-            .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 10px 12px; font-size: 13px;}
+            .crm-filter-btn { flex: 1; text-align: center; white-space: nowrap; padding: 12px 8px; font-size: 13px;}
             
-            #home-kpis { 
-                grid-template-columns: repeat(2, 1fr) !important; 
-                gap: 10px !important; 
-                margin-bottom: 15px;
-            }
-            #home-kpis .stat-item { padding: 15px; }
-
-            .leaderboard-row { 
-                grid-template-columns: repeat(5, 1fr) !important; 
-                gap: 4px !important; 
-                margin-bottom: 15px;
-            }
-            .lb-card { padding: 8px 4px; text-align: center; }
-            .lb-card h3 { font-size: 10px; margin-bottom: 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-            .lb-card .count { font-size: 15px; }
-            .progress-label { font-size: 8px; margin-top: 3px; display: block; }
-            .progress-track { margin-top: 4px; height: 3px; }
-
-            .stat-item { padding: 10px; }
-            .stat-item .val { font-size: 18px; }
-
+            #home-kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; margin-bottom: 20px; }
+            .leaderboard-row { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; margin-bottom: 20px; }
+            .lb-card { padding: 16px; text-align: left; }
+            .lb-card .count { font-size: 24px; margin: 8px 0; }
+            
             .mobile-toggle-btn { display: flex; align-items: center; justify-content: center; height: 40px;}
-            .filter-panel { display: none; flex-direction: column; align-items: stretch; gap: 8px; margin-top: -5px; }
+            .filter-panel { display: none; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; margin-top: -8px; }
             .filter-panel.show { display: flex; animation: slideDownFilter 0.3s ease-out forwards; }
-            .action-btn { width: 100% !important; justify-content: center; margin-top: 5px; height: 40px;}
+            .action-btn { width: 100% !important; justify-content: center; margin-top: 4px; height: 40px;}
             
-            .dashboard-controls { padding: 12px 10px; flex-direction: column; gap: 8px; }
+            .dashboard-controls { padding: 16px; flex-direction: column; gap: 12px; }
             .dashboard-controls > div { width: 100%; min-width: unset; }
 
-            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            table { min-width: 1250px; font-size: 11px; } 
-            
-            .chart-card { height: 300px; padding: 10px; }
-            .chart-body { height: 100%; }
+            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: none; }
+            table { min-width: 1000px; font-size: 12px; } 
+            th { padding: 12px 10px; } td { padding: 12px 10px; }
+            .chart-card { height: 320px; padding: 16px; }
         }
 
-        @keyframes slideDownFilter {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideDownFilter { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popUpMobile { from { opacity: 0; transform: translate(-50%, 15px) scale(0.95); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
 
-        @keyframes popUpMobile {
-            from { opacity: 0; transform: translate(-50%, 15px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+        /* ✨ MODERN GOOGLE CHARTS OVERRIDES ✨ */
+        .chart-body svg g > rect { rx: 6px; ry: 6px; transition: all 0.3s ease; }
+        .chart-body svg > rect { rx: 0; ry: 0; } 
+        div.google-visualization-tooltip {
+            border: 1px solid var(--card-border) !important; border-radius: var(--radius-md) !important;
+            background: var(--sidebar-fixed) !important; box-shadow: var(--shadow-lg) !important;
+            padding: 12px 16px !important; font-family: var(--font-main) !important; pointer-events: none; backdrop-filter: blur(16px);
+            color: var(--text-main) !important; /* บังคับสีตัวอักษรหลัก */
         }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .modal-overlay.open { display: flex; }
-        .modal-box { background: var(--bg-body); border: 1px solid var(--card-border); width: 90%; max-width: 500px; border-radius: var(--radius-lg); padding: 20px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        div.google-visualization-tooltip * {
+            color: var(--text-main) !important; /* บังคับให้ text ทุกชิ้นใน tooltip โดนเปลี่ยนสีด้วย */
+        }
+        [data-theme="light"] div.google-visualization-tooltip { background: rgba(255,255,255,0.95) !important; }
+        div.google-visualization-tooltip > ul > li { color: var(--text-main) !important; font-size: 13px !important;}
+        div.google-visualization-tooltip-item span { color: var(--text-main) !important; font-family: var(--font-main) !important; }
+        
+        /* --- NEW CRM MODIFICATIONS --- */
+        #crmTable td {
+            white-space: nowrap !important; /* บังคับให้ข้อความอยู่ในบรรทัดเดียวกัน */
+            font-size: 14px !important; /* ปรับให้อ่านง่าย */
+            word-wrap: normal !important;
+            word-break: normal !important;
+        }
+        div.google-visualization-tooltip {
+            border-color: var(--primary-color) !important; /* ทำให้ tooltip เด่นขึ้นในโหมด dark */
+            z-index: 9999 !important;
+        }
     </style>
 </head>
 <body>
@@ -450,32 +489,28 @@
             </div>
             <button class="nav-btn" onclick="switchPage('installq', this)">Install Q+</button>
         </div>
-        <div class="nav-group" style="gap:10px; justify-content: flex-end; width:100%; margin-top:5px;">
+        <div class="nav-group" style="gap:12px; justify-content: flex-end; width:100%;">
             <span id="countdown" class="version-text">v.0.7.10 Beta • Loading...</span>
-            <button class="btn-primary" onclick="openModal()">+</button>
+            <button class="btn-primary" onclick="openModal()" style="width: auto; padding: 0 16px;">+ </button>
             <button class="icon-btn" onclick="toggleTheme()" title="สลับโหมด">✹</button>
         </div>
     </nav>
 
     <main class="main-content">
-        <div class="content-scroll">
+        <div class="content-scroll custom-scroll">
             <div id="urgentTicker" class="ticker-wrap" style="display:none;">
                 <div class="ticker-content" id="tickerContent"></div>
             </div>
 
             <div id="view-home" class="page-view">
-                <div class="page-header" style="justify-content: flex-start;">
-                    
-                </div>
-                
                 <div class="compact-wrapper">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
-                        <h3 style="font-size: 16px; margin:0; color: var(--text-main);">จำนวนแเคสแก้ปัญหาประจำเดือนกุมภาพันธ์</h3>
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 16px;">
+                        <h3 style="font-size: 18px; margin:0; color: var(--text-main);">จำนวนเคสแก้ปัญหาประจำเดือน</h3>
                     </div>
                     
                     <div class="leaderboard-row" id="home-kpis"></div>
 
-                    <div class="summary-grid" style="margin-top: 20px;">
+                    <div class="summary-grid" style="margin-top: 24px;">
                         <div class="chart-card">
                             <div class="chart-title">🚨 ปัญหาที่พบเจอมากที่สุด (Top Issues)</div>
                             <div id="chart_home_issue_div" class="chart-body"></div>
@@ -486,9 +521,9 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 25px;">
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
-                            <h3 style="font-size: 16px; margin:0; color: var(--danger);">🔥 เคสด่วนมาก และ ปานกลางที่ยังค้างอยู่</h3>
+                    <div style="margin-top: 32px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; margin:0; color: var(--danger);">🔥 เคสด่วนมาก และ ปานกลางที่ยังค้างอยู่</h3>
                         </div>
                         <div class="table-container">
                             <table>
@@ -507,15 +542,16 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 25px;">
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 12px;">
-                            <h3 style="font-size: 16px; margin:0; color: var(--text-main);">Install Q+ QuickDash</h3>
+                    <div style="margin-top: 32px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; margin:0; color: var(--text-main);">Install Q+ QuickDash</h3>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;" id="homeInstallSummary">
-                            </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;" id="homeInstallSummary">
+                        </div>
                     </div>
-                    </div>
+                </div>
             </div>
+            
             <div id="view-dashboard" class="page-view active">
                 <div class="compact-wrapper">
                     <div class="leaderboard-row" id="leaderboard"></div>
@@ -529,14 +565,18 @@
                     </div>
                     
                     <div class="mobile-search-row">
-                        <input type="text" id="searchInput" class="form-input" placeholder="🔍 ค้นหา Ticket, ชื่อลูกค้า..." onkeyup="renderTable()" style="flex:1;">
+                        <input type="text" id="searchInput" class="form-input" placeholder="🔍 ค้นหา Ticket, ชื่อลูกค้า..." onkeyup="filterOPS()" style="flex:1;">
                         <button class="btn-outline mobile-toggle-btn" onclick="document.getElementById('opsFilterPanel').classList.toggle('show')">⚙️ Filter ▾</button>
                     </div>
                     
                     <div class="dashboard-controls filter-panel" id="opsFilterPanel">
-                        <div style="flex:1; min-width:130px;"><input type="date" id="dateFilter" class="form-input" onchange="renderTable()"></div>
-                        <div style="flex:1; min-width:130px;">
-                            <select id="statusFilter" class="form-select" onchange="renderTable()">
+                        <div style="flex:1; min-width:140px;">
+                            <label class="input-label" style="display:none;">วันที่</label>
+                            <input type="date" id="dateFilter" class="form-input" onchange="filterOPS()">
+                        </div>
+                        <div style="flex:1; min-width:140px;">
+                            <label class="input-label" style="display:none;">สถานะ</label>
+                            <select id="statusFilter" class="form-select" onchange="filterOPS()">
                                 <option value="total-all">สถานะ: ทั้งหมด</option>
                                 <option value="all" selected>งานในระบบ</option>
                                 <option value="รอดำเนินการ">รอดำเนินการ</option>
@@ -545,8 +585,9 @@
                                 <option value="พิเศษ">พิเศษ</option>
                             </select>
                         </div>
-                        <div style="flex:1; min-width:130px;">
-                            <select id="csFilter" class="form-select" onchange="renderTable()">
+                        <div style="flex:1; min-width:140px;">
+                            <label class="input-label" style="display:none;">ทีม</label>
+                            <select id="csFilter" class="form-select" onchange="filterOPS()">
                                 <option value="all">ทีม: ทั้งหมด</option>
                                 <option value="Best">Best</option>
                                 <option value="Friend">Friend</option>
@@ -558,18 +599,22 @@
                         <button class="btn-outline action-btn" onclick="resetFilters()" title="รีเซ็ต">↺</button>
                         <button class="btn-outline action-btn" onclick="exportCSV()" title="Export CSV">📥</button>
                     </div>
-                    </div>
-                <div class="table-wrapper-center">
-                    <div class="table-container">
-                        <table id="mainTable">
-                            <thead>
-                                <tr>
-                                    <th>#</th><th>Ticket</th><th>Date</th><th>Customer</th><th>Model / Type</th>
-                                    <th>Issue</th><th>Solution</th><th>CS Name</th><th>Urgency</th><th>Status</th><th>Assignee</th> 
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody"></tbody>
-                        </table>
+                    
+                    <div class="table-wrapper-center">
+                        <div class="table-container custom-scroll">
+                            <table id="mainTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th><th>Ticket</th><th>Date</th><th>Customer</th><th>Model / Type</th>
+                                        <th>Issue</th><th>Solution</th><th>CS Name</th><th>Urgency</th><th>Status</th><th>Assignee</th> 
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                        <div style="text-align:center; margin-top:20px; margin-bottom:10px;">
+                            <button id="opsLoadMoreBtn" class="btn-outline" style="width:auto; padding:0 24px; display:none; margin:0 auto;" onclick="loadMoreOPS()">แสดงเพิ่มเติม</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -591,7 +636,7 @@
                     </div>
                     
                     <div class="dashboard-controls filter-panel" id="crmFilterPanel">
-                        <div style="flex:1; min-width:130px;">
+                        <div style="flex:1; min-width:140px;">
                             <select id="crmOwnerFilter" class="form-select" onchange="resetCRMAndRender()">
                                 <option value="all">ดูแลโดย: ทั้งหมด</option>
                                 <option value="Best">Best</option>
@@ -601,23 +646,36 @@
                                 <option value="Tar">Tar</option>
                             </select>
                         </div>
-                        <div style="flex:0 0 150px;">
-                            <div class="stat-item" style="padding:4px 12px; height:36px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <div style="flex:0 0 160px;">
+                            <div class="stat-item" style="padding:0 16px; height:40px; display:flex; align-items:center; justify-content:center; gap:12px; border-radius:var(--radius-sm);">
                                 <h4 style="margin:0;">List Count</h4>
-                                <div class="val" id="crm-total" style="font-size:16px; margin:0;">0</div>
+                                <div class="val" id="crm-total" style="font-size:18px; margin:0;">0</div>
                             </div>
                         </div>
                     </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <div class="chart-card" style="height: auto; min-height: 400px; padding: 20px;">
+                            <div class="chart-title" style="justify-content: space-between; flex-wrap: wrap;">
+                                <span>📍 แผนที่ลูกค้า (แบ่งตามจังหวัด)</span>
+                                <span style="font-size: 11px; font-weight: normal; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--card-border);">🖱️ หมุนลูกกลิ้งเพื่อซูม | ลากเพื่อเลื่อน | ดับเบิ้ลคลิกเพื่อรีเซ็ต</span>
+                            </div>
+                            <div style="height: 400px; width: 100%; overflow: hidden; position: relative; border-radius: var(--radius-sm);">
+                                <div id="crm_map_div" class="chart-body" style="height: 100%; width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-wrapper-center">
-                        <div class="table-container">
+                        <div class="table-container custom-scroll">
                             <table id="crmTable">
                                 <thead>
-                                    </thead>
+                                </thead>
                                 <tbody id="crmBody"></tbody>
                             </table>
                         </div>
-                        <div style="text-align:center; margin-top:15px; margin-bottom:10px;">
-                            <button id="crmLoadMoreBtn" class="btn-outline" style="width:auto; padding:8px 20px; display:none; margin:0 auto;" onclick="loadMoreCRM()">แสดงเพิ่มเติม</button>
+                        <div style="text-align:center; margin-top:20px; margin-bottom:10px;">
+                            <button id="crmLoadMoreBtn" class="btn-outline" style="width:auto; padding:0 24px; display:none; margin:0 auto;" onclick="loadMoreCRM()">แสดงเพิ่มเติม</button>
                         </div>
                     </div>
                 </div>
@@ -625,30 +683,30 @@
 
             <div id="view-tec" class="page-view">
                 <div class="page-header"><h2>TEC301</h2></div>
-                <div class="compact-wrapper" style="display:flex; justify-content:center; align-items:center; height:300px; color:var(--text-secondary);">
+                <div class="compact-wrapper" style="display:flex; justify-content:center; align-items:center; height:350px; color:var(--text-secondary); background:var(--card-bg); border-radius:var(--radius-lg); border:1px dashed var(--card-border);">
                     <div style="text-align:center;">
-                        <div style="font-size:40px; margin-bottom:10px;">🛠️</div>
-                        <div>Coming Soon</div>
+                        <div style="font-size:48px; margin-bottom:16px; filter: grayscale(0.5); opacity: 0.7;">🛠️</div>
+                        <div style="font-size: 18px; font-weight: 500;">Coming Soon</div>
                     </div>
                 </div>
             </div>
 
             <div id="view-installq" class="page-view">
                 <div class="page-header">
-                    <h2>Install Q+ <span style="font-size: 14px; font-weight: normal; color: var(--text-secondary); margin-left: 10px;">ตารางคิวงานติดตั้ง</span></h2>
+                    <h2>Install Q+ <span style="font-size: 15px; font-weight: normal; color: var(--text-secondary); margin-left: 12px;">ตารางคิวงานติดตั้ง</span></h2>
                 </div>
                 <div class="compact-wrapper">
                     
-                    <div class="dashboard-controls" style="margin-bottom: 25px;">
-                        <div style="flex:1; min-width:150px;">
+                    <div class="dashboard-controls" style="margin-bottom: 32px;">
+                        <div style="flex:1; min-width:160px;">
                             <label class="input-label">ค้นหาวันที่</label>
                             <input type="date" id="installDateFilter" class="form-input" onchange="renderInstall()">
                         </div>
-                        <div style="flex:1; min-width:150px;">
+                        <div style="flex:1; min-width:160px;">
                             <label class="input-label">ค้นหาลูกค้า/สถานที่</label>
                             <input type="text" id="installSearch" class="form-input" placeholder="🔍 พิมพ์เพื่อค้นหา..." onkeyup="renderInstall()">
                         </div>
-                        <div style="flex:1; min-width:150px;">
+                        <div style="flex:1; min-width:160px;">
                             <label class="input-label">ผู้ปฏิบัติงาน</label>
                             <select id="installTeamFilter" class="form-select" onchange="renderInstall()">
                                 <option value="all">ทั้งหมด</option>
@@ -659,28 +717,32 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 24px; position: relative;">
-                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: var(--primary-color); border-left: 4px solid var(--primary-color); padding-left: 8px;">📍 แผนที่ภาพรวมงานติดตั้ง (กำลังดำเนินการ)</h3>
-                        <div id="installMap" style="height: 350px; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--card-border); z-index: 1; background: var(--card-bg);"></div>
-                        <div id="mapWarning" style="font-size: 11px; color: var(--warning); margin-top: 8px; margin-left: 10px; display: none;">* บางหมุดอาจไม่แสดงผล หากลิงก์ Location เป็นลิงก์ย่อ (Short Link) หรือไม่มีพิกัด (Lat/Lng) ชัดเจน</div>
+                    <div style="margin-bottom: 32px; position: relative;">
+                        <h3 style="font-size: 18px; margin: 0 0 16px 12px; color: var(--primary-color); border-left: 4px solid var(--primary-color); padding-left: 12px;">📍 แผนที่ภาพรวมงานติดตั้ง (กำลังดำเนินการ)</h3>
+                        <div id="installMap" style="height: 400px; width: 100%; border-radius: var(--radius-md); border: 1px solid var(--card-border); z-index: 1; background: var(--card-bg); box-shadow: var(--shadow-sm);"></div>
+                        <div id="mapWarning" style="font-size: 12px; color: var(--warning); margin-top: 12px; margin-left: 12px; display: none;">* บางหมุดอาจไม่แสดงผล หากลิงก์ Location เป็นลิงก์ย่อ (Short Link) หรือไม่มีพิกัด (Lat/Lng) ชัดเจน</div>
                     </div>
 
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #ff4d4d; border-left: 4px solid #ff4d4d; padding-left: 8px;">กำลังดำเนินการ</h3>
-                        <div class="table-container">
+                    <style>
+                        .install-section-title { font-size: 18px; margin: 0 0 16px 12px; padding-left: 12px; border-left: 4px solid; display: flex; align-items: center; }
+                    </style>
+
+                    <div style="margin-bottom: 32px;">
+                        <h3 class="install-section-title" style="color: var(--danger); border-color: var(--danger);">กำลังดำเนินการ</h3>
+                        <div class="table-container custom-scroll">
                             <table id="installRunningTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 90px;">วันที่</th>
                                         <th style="width: 12%;">เวลา/รายละเอียด</th>
-                                        <th style="width: 12%;">รหัสงาน</th>
+                                        <th style="width: 15%;">ลูกค้า/สถานที่</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
                                         <th style="width: 12%;">เครื่องกรองน้ำ</th>
                                         <th style="width: 10%;">ทีมช่าง</th>
                                         <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
-                                        <th style="width: 100px;">สถานะ</th>
+                                        <th style="width: 120px;">สถานะ</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -688,22 +750,22 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #10b981; border-left: 4px solid #10b981; padding-left: 8px;">คอนเฟิร์มแล้ว</h3>
-                        <div class="table-container">
+                    <div style="margin-bottom: 32px;">
+                        <h3 class="install-section-title" style="color: var(--success); border-color: var(--success);">คอนเฟิร์มแล้ว</h3>
+                        <div class="table-container custom-scroll">
                             <table id="installConfirmTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 90px;">วันที่</th>
                                         <th style="width: 12%;">เวลา/รายละเอียด</th>
-                                        <th style="width: 12%;">รหัสงาน</th>
+                                        <th style="width: 15%;">ลูกค้า/สถานที่</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
                                         <th style="width: 12%;">เครื่องกรองน้ำ</th>
                                         <th style="width: 10%;">ทีมช่าง</th>
                                         <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
-                                        <th style="width: 100px;">สถานะ</th>
+                                        <th style="width: 120px;">สถานะ</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -711,22 +773,22 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #3b82f6; border-left: 4px solid #3b82f6; padding-left: 8px;">จองคิว</h3>
-                        <div class="table-container">
+                    <div style="margin-bottom: 32px;">
+                        <h3 class="install-section-title" style="color: var(--info); border-color: var(--info);">จองคิว</h3>
+                        <div class="table-container custom-scroll">
                             <table id="installBookingTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 90px;">วันที่</th>
                                         <th style="width: 12%;">เวลา/รายละเอียด</th>
-                                        <th style="width: 12%;">รหัสงาน</th>
+                                        <th style="width: 15%;">ลูกค้า/สถานที่</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
                                         <th style="width: 12%;">เครื่องกรองน้ำ</th>
                                         <th style="width: 10%;">ทีมช่าง</th>
                                         <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
-                                        <th style="width: 100px;">สถานะ</th>
+                                        <th style="width: 120px;">สถานะ</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -734,22 +796,22 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 16px; margin: 0 0 12px 10px; color: #94a3b8; border-left: 4px solid #94a3b8; padding-left: 8px;">คิวว่าง</h3>
-                        <div class="table-container">
+                    <div style="margin-bottom: 32px;">
+                        <h3 class="install-section-title" style="color: var(--text-secondary); border-color: var(--text-secondary);">คิวว่าง</h3>
+                        <div class="table-container custom-scroll">
                             <table id="installAvailableTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px;">วันที่</th>
+                                        <th style="width: 90px;">วันที่</th>
                                         <th style="width: 12%;">เวลา/รายละเอียด</th>
-                                        <th style="width: 12%;">รหัสงาน</th>
+                                        <th style="width: 15%;">ลูกค้า/สถานที่</th>
                                         <th style="width: 15%;">Location</th>
                                         <th style="width: 12%;">ประเภทงาน</th>
                                         <th style="width: 15%;">สินค้าหลัก</th>
                                         <th style="width: 12%;">เครื่องกรองน้ำ</th>
                                         <th style="width: 10%;">ทีมช่าง</th>
                                         <th style="width: 10%;">ผู้ปฏิบัติงาน</th>
-                                        <th style="width: 100px;">สถานะ</th>
+                                        <th style="width: 120px;">สถานะ</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -768,7 +830,7 @@
                         <div class="chart-card"><div class="chart-title">📦 10 อันดับประเภทสินค้าทักเข้ามาเยอะที่สุด</div><div id="chart_type_div" class="chart-body"></div></div>
                         <div class="chart-card"><div class="chart-title">🔥 ค่าเฉลี่ยความเร่งด่วนของเคส</div><div id="chart_urgent_div" class="chart-body"></div></div>
                         <div class="chart-card"><div class="chart-title">⭐ ค่าเฉลี่ยลูกค้าประเมินคะแนน</div><div id="chart_csat_div" class="chart-body"></div></div>
-                        <div class="chart-card" style="grid-column: span 1;"><div class="chart-title">⏱️ ค่าเฉลี่ยการตอบกลับลูกค้าครั้งแรก (คน/นาที)</div><div id="chart_resp_div" class="chart-body"></div></div>
+                        <div class="chart-card" style="grid-column: 1 / -1;"><div class="chart-title">⏱️ ค่าเฉลี่ยการตอบกลับลูกค้าครั้งแรก (คน/นาที)</div><div id="chart_resp_div" class="chart-body"></div></div>
                     </div>
                 </div>
             </div>
@@ -779,39 +841,78 @@
 
 <div class="modal-overlay" id="addModal">
     <div class="modal-box">
-        <h2 style="margin-top:0;">📂 เปิดเคสใหม่</h2>
-        <form id="ticketForm" style="display:flex; flex-direction:column; gap:12px;">
-            <div><label class="input-label">CS Name (ผู้รับผิดชอบ)</label>
-            <select name="owner" class="form-select" required>
-                <option value="Best">Best</option>
-                <option value="Friend">Friend</option>
-                <option value="Ball">Ball</option>
-                <option value="Ohm">Ohm</option>
-                <option value="Tar">Tar</option>
-            </select></div>
-            <div><label class="input-label">ลูกค้า</label><input name="customerName" class="form-input" required placeholder="ชื่อลูกค้า..."></div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div><label class="input-label">ประเภท</label><select name="type" class="form-select"><option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="FUME">FUME</option><option value="BLENDER">BLENDER</option><option value="SODA">SODA</option><option value="เครื่องกรองน้ำ">เครื่องกรองน้ำ</option><option value="ปั๊มดูดน้ำจากถัง">ปั๊มดูดน้ำจากถัง</option><option value="ตู้แช่นม">ตู้แช่นม</option></select></div>
-                <div><label class="input-label">รุ่น</label><select name="model" class="form-select">
-                    <option value="">-- เลือกรุ่น --</option><option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option><option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option><option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option><option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option><option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option><option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option><option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option><option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option><option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
-                </select></div>
+        <h2 style="margin-top:0; font-weight: 700; margin-bottom: 24px; color: var(--text-main);">📂 เปิดเคสใหม่</h2>
+        <form id="ticketForm" style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <label class="input-label">CS Name (ผู้รับผิดชอบ)</label>
+                <select name="owner" class="form-select" required>
+                    <option value="Best">Best</option>
+                    <option value="Friend">Friend</option>
+                    <option value="Ball">Ball</option>
+                    <option value="Ohm">Ohm</option>
+                    <option value="Tar">Tar</option>
+                </select>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div><label class="input-label">ความด่วน</label><select name="urgency" class="form-select"><option value="3.ไม่รีบ">ปกติ</option><option value="2.ปานกลาง">ปานกลาง</option><option value="1.ด่วนมาก">🔥 ด่วนมาก</option></select></div>
-                <div><label class="input-label">ช่องทาง</label><select name="channel" class="form-select"><option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option></select></div>
+            <div>
+                <label class="input-label">ลูกค้า</label>
+                <input name="customerName" class="form-input" required placeholder="ระบุชื่อลูกค้า...">
             </div>
-            <div><label class="input-label">อาการเสีย</label><textarea name="issue" class="form-input" style="height:70px; padding-top:10px;"></textarea></div>
-            <div><label class="input-label">การแก้ไข</label><textarea name="solution" class="form-input" style="height:50px; padding-top:10px;"></textarea></div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button type="submit" class="btn-primary" style="flex:1; justify-content:center;">บันทึก</button>
-                <button type="button" class="btn-outline" style="flex:1; justify-content:center;" onclick="closeModal()">ยกเลิก</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div>
+                    <label class="input-label">ประเภท</label>
+                    <select name="type" class="form-select">
+                        <option value="ICE">ICE</option><option value="COFFEE">COFFEE</option><option value="FUME">FUME</option>
+                        <option value="BLENDER">BLENDER</option><option value="SODA">SODA</option><option value="เครื่องกรองน้ำ">เครื่องกรองน้ำ</option>
+                        <option value="ปั๊มดูดน้ำจากถัง">ปั๊มดูดน้ำจากถัง</option><option value="ตู้แช่นม">ตู้แช่นม</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="input-label">รุ่น</label>
+                    <select name="model" class="form-select">
+                        <option value="">-- เลือกรุ่น --</option><option value="12A">12A</option><option value="12B">12B</option><option value="12C">12C</option>
+                        <option value="15AF">15AF</option><option value="RoG600">RoG600</option><option value="S72C">S72C</option><option value="006C/H">006C/H</option>
+                        <option value="S9C">S9C</option><option value="07S">07S</option><option value="38F">38F</option><option value="20AF">20AF</option>
+                        <option value="120F">120F</option><option value="13F-W">13F-W</option><option value="P3B">P3B</option><option value="ProSoda">ProSoda</option>
+                        <option value="Pro soda max">Pro soda max</option><option value="65S">65S</option><option value="45F">45F</option><option value="ROA4">ROA4</option>
+                        <option value="U5">U5</option><option value="13F-PS">13F-PS</option><option value="220F">220F</option><option value="700xj">700xj</option>
+                        <option value="FE 401">FE 401</option><option value="15SA">15SA</option><option value="13F-WB">13F-WB</option><option value="190F">190F</option>
+                        <option value="20YLR">20YLR</option><option value="Blender">Blender</option><option value="ro-g600">ro-g600</option><option value="M7A">M7A</option>
+                        <option value="RoA4">RoA4</option><option value="9CN">9CN</option><option value="เครื่องนอกแบรนด์">เครื่องนอกแบรนด์</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div>
+                    <label class="input-label">ความด่วน</label>
+                    <select name="urgency" class="form-select">
+                        <option value="3.ไม่รีบ">ปกติ</option><option value="2.ปานกลาง">ปานกลาง</option><option value="1.ด่วนมาก">🔥 ด่วนมาก</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="input-label">ช่องทาง</label>
+                    <select name="channel" class="form-select">
+                        <option value="Line OA">Line OA</option><option value="Facebook">Facebook</option><option value="Shopee">Shopee</option><option value="โทร">โทร</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="input-label">อาการเสีย</label>
+                <textarea name="issue" class="form-input" style="height:80px; padding-top:12px; resize: none;"></textarea>
+            </div>
+            <div>
+                <label class="input-label">การแก้ไข</label>
+                <textarea name="solution" class="form-input" style="height:60px; padding-top:12px; resize: none;"></textarea>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:16px;">
+                <button type="submit" class="btn-primary" style="flex:1; width: 100%;">บันทึก</button>
+                <button type="button" class="btn-outline" style="flex:1;" onclick="closeModal()">ยกเลิก</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    google.charts.load('current', {'packages':['corechart']});
+    google.charts.load('current', {'packages':['corechart', 'geochart']});
     
     // --- CONFIGS ---
     const MAIN_SHEET_ID = '1yP4soDSWwjomPVP3_udd2m3SZlm5j5XVo32tbKGvwdA', MAIN_GID = '816388223';
@@ -821,16 +922,16 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDRJpLUw51hZi3WI6Su7_LgeXz0GG-bK4CtfGygkmbfne2dMdtbVAVjD0NDmuEaL8v/exec';
 
     let allTickets = [], filteredExport = [];
-    let allCRM = []; // Store CRM data
-    let currentCRMFilter = 7; // Default to 7 days
-    let crmLimit = 10; // CRM: Limit items per load
-    let allInstalls = []; // Store Install Q+ data
+    let opsLimit = 50; 
+    let allCRM = []; 
+    let currentCRMFilter = 7; 
+    let crmLimit = 10; 
+    let allInstalls = []; 
 
     let countdownSec = 300;
     const savedTheme = localStorage.getItem('cs_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // 🗺️ ตัวแปรสำหรับแผนที่
     let installMap = null;
     let markersLayer = null;
 
@@ -838,6 +939,7 @@
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next); localStorage.setItem('cs_theme', next);
         drawChart(allTickets);
+        if(document.getElementById('view-crm').classList.contains('active')) drawCRMMap();
     }
 
     function switchPage(pageId, btn) {
@@ -847,7 +949,6 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
 
-        // 🔥 Save Last Page to Local Storage
         localStorage.setItem('cs_last_page', pageId);
         
         const titles = {
@@ -859,14 +960,12 @@
             'summary': 'CS Summary'
         };
         
-        // 🔥 เปลี่ยนข้อความต่อท้ายแบรนด์โลโก้ให้เป็นวิชาที่กำลังเปิดอยู่ 🔥
         const titleEl = document.getElementById('brandPageTitle');
         if(titleEl) titleEl.innerText = `| ${titles[pageId]}`;
 
-        // โหลดกราฟทันทีหากเปิดหน้า Summary หรือ Home
         if(pageId === 'summary' || pageId === 'home') setTimeout(() => drawChart(allTickets), 100); 
+        if(pageId === 'crm') setTimeout(() => drawCRMMap(), 100);
 
-        // 🗺️ ต้องแจ้งให้ Leaflet รีเฟรชขนาดแผนที่ เมื่อเปิดหน้าต่างขึ้นมา (แก้บั๊กภาพแผนที่เทา)
         if(pageId === 'installq' && installMap) {
             setTimeout(() => installMap.invalidateSize(), 300);
         }
@@ -874,13 +973,24 @@
 
     function openModal() { document.getElementById('addModal').classList.add('open'); }
     function closeModal() { document.getElementById('addModal').classList.remove('open'); }
-    function filterStatus(s) { document.getElementById('statusFilter').value = s; renderTable(); }
+    function filterStatus(s) { document.getElementById('statusFilter').value = s; filterOPS(); }
     
+    // OPS SPECIFIC FUNCTIONS
+    function filterOPS() {
+        opsLimit = 50;
+        renderTable();
+    }
+
+    function loadMoreOPS() {
+        opsLimit += 50;
+        renderTable();
+    }
+
     function resetFilters() {
         document.getElementById('dateFilter').value = '';
         document.getElementById('statusFilter').value = 'all'; document.getElementById('csFilter').value = 'all';
         document.getElementById('searchInput').value = '';
-        renderTable();
+        filterOPS();
     }
 
     // CRM SPECIFIC FUNCTIONS
@@ -919,24 +1029,20 @@
         } else location.reload();
     }, 1000);
 
-    // --- FETCH MAIN DATA (OPS101) ---
     const script1 = document.createElement('script');
     script1.src = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=responseHandler:handleData&gid=${MAIN_GID}`;
     document.body.appendChild(script1);
 
-    // --- FETCH CRM DATA (CRM201) ---
     const script2 = document.createElement('script');
     script2.src = `https://docs.google.com/spreadsheets/d/${CRM_SHEET_ID}/gviz/tq?tqx=responseHandler:handleCRM&gid=${CRM_GID}`;
     document.body.appendChild(script2);
 
-    // --- FETCH INSTALL Q+ DATA ---
     const INSTALL_SHEET_ID = '1eQPV2iY_l7dW22DnFqFXcx3R0i9sfkua8Gxw2eC901Y';
     const INSTALL_GID = '1567272905';
     const scriptInstall = document.createElement('script');
     scriptInstall.src = `https://docs.google.com/spreadsheets/d/${INSTALL_SHEET_ID}/gviz/tq?tqx=responseHandler:handleInstall&gid=${INSTALL_GID}`;
     document.body.appendChild(scriptInstall);
 
-    // Callback for OPS101
     window.handleData = (json) => {
         const rows = json.table.rows;
         allTickets = rows.map(r => {
@@ -961,16 +1067,14 @@
             return (sMap[a.status]||99) - (sMap[b.status]||99);
         });
         updateDashboard(); 
-        updateHome(); // 🔥 ทำการอัปเดตหน้า Home 
+        updateHome(); 
         renderTable();
         
-        // 🔥 FIX: ให้ทำการวาดกราฟทันทีที่โหลดข้อมูลเสร็จ
         if (typeof google !== 'undefined' && google.visualization) {
             drawChart(allTickets);
         }
     };
 
-    // Callback for CRM201
     window.handleCRM = (json) => {
         const rows = json.table.rows;
         allCRM = rows.map(r => {
@@ -978,43 +1082,42 @@
             return {
                 date: v(0), platform: v(1), name: v(2), phone: v(3), items: v(4), 
                 total: v(5), address: v(6), province: v(7), tracking: v(8),
-                owner: v(11), // Column L (Index 11) -> Owner/Officer
+                owner: v(11), 
                 done7: v(12),  
-                colP: v(15), colQ: v(16), // 7 Days Data (P,Q)
+                colP: v(15), colQ: v(16), 
                 done30: v(19), 
-                colU: v(20), colV: v(21), // 30 Days Data (U,V)
+                colU: v(20), colV: v(21), 
                 done60: v(24),
-                colZ: v(25), colAA: v(26) // 60 Days Data (Z,AA)
+                colZ: v(25), colAA: v(26) 
             };
         }).filter(x => x.date !== 'วันที่/เวลา' && x.name !== '-');
         
         renderCRMTable();
+        drawCRMMap();
     };
 
-    // Callback สำหรับ Install Q+
     window.handleInstall = (json) => {
         const rows = json.table.rows;
         allInstalls = rows.map(r => {
             const v = (i) => (r.c[i] ? (r.c[i].f || r.c[i].v) : "-");
             return {
-                date: v(0),       // คอลัมน์ A (วันที่)
-                customer: v(1),   // คอลัมน์ B (ลูกค้า/สถานที่)
-                task: v(2),       // คอลัมน์ C (งานที่ต้องทำ)
-                team: v(3),       // คอลัมน์ D (ทีมช่าง)
-                status: v(4),     // คอลัมน์ E (สถานะ)
-                timeDetail: v(7), // 🔥 NEW: คอลัมน์ H (เวลา/รายละเอียด)
-                operator: v(8),   // คอลัมน์ I (ผู้ปฏิบัติงาน)
-                waterFilter: v(13),// คอลัมน์ N (เครื่องกรองน้ำ)
-                mainProduct: v(15),// คอลัมน์ P (สินค้าหลัก)
-                location: v(19)   // คอลัมน์ T (Location)
+                date: v(0),        
+                customer: v(1),    
+                task: v(2),        
+                team: v(3),        
+                status: v(4),      
+                timeDetail: v(7), 
+                operator: v(8),    
+                waterFilter: v(13),
+                mainProduct: v(15),
+                location: v(19)    
             };
-        }).filter(x => x.date !== 'วันที่' && x.date !== '-'); // ข้าม Header
+        }).filter(x => x.date !== 'วันที่' && x.date !== '-'); 
         
         renderInstall();
-        updateHomeInstallSummary(); // 🔥 NEW CALL สร้างสรุปหน้า Home
+        updateHomeInstallSummary(); 
     };
 
-    // 🔥 NEW: ฟังก์ชันประมวลผลสรุป Install Q+ ไว้ในหน้า Home
     function updateHomeInstallSummary() {
         const container = document.getElementById('homeInstallSummary');
         if (!container) return;
@@ -1024,11 +1127,10 @@
         let bookingHtml = "";
         let availHtml = "";
 
-        // Template สำหรับการแสดงรายการขนาดเล็กกระชับ (ปรับดึงเวลา + ลูกค้า มาแสดงให้ชัดเจน)
         const formatItem = (t) => {
             const timeStr = (t.timeDetail && t.timeDetail !== '-') ? `<span style="color: var(--primary-color); font-weight: 700; margin-right: 6px;">[${t.timeDetail}]</span>` : '';
             const customerStr = (t.customer && t.customer !== '-') ? `<span style="font-weight: 600; color: var(--link-color);">${t.customer}</span> : ` : '';
-            return `<div style="font-size:11px; padding:6px 0; border-bottom:1px solid var(--card-border); color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${t.date} ${t.timeDetail} - ${t.customer}: ${t.task}">
+            return `<div style="font-size:12px; padding:8px 0; border-bottom:1px solid var(--card-border); color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${t.date} ${t.timeDetail} - ${t.customer}: ${t.task}">
                 <span style="color:var(--text-secondary); margin-right:6px; font-weight: 500;">${t.date}</span>
                 ${timeStr}
                 <span style="opacity: 0.9;">${customerStr}${t.task}</span>
@@ -1043,48 +1145,46 @@
             else if (s.includes('ว่าง')) availHtml += formatItem(t);
         });
 
-        const emptyMsg = `<div style="font-size:11px; color:var(--text-secondary); padding:10px 0; text-align:center;">ไม่มีคิว</div>`;
+        const emptyMsg = `<div style="font-size:12px; color:var(--text-secondary); padding:16px 0; text-align:center;">ไม่มีคิว</div>`;
 
         container.innerHTML = `
-            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #ff4d4d; border-radius: 8px;">
-                <h4 style="margin:0 0 10px 0; color:#ff4d4d; font-size:13px; display:flex; justify-content:space-between;">
+            <div class="chart-card" style="height:auto; padding:20px; border-top: 4px solid var(--danger); border-radius: var(--radius-md);">
+                <h4 style="margin:0 0 12px 0; color:var(--danger); font-size:14px; display:flex; justify-content:space-between; font-weight: 700;">
                     กำลังดำเนินการ
                 </h4>
-                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                <div style="max-height:200px; overflow-y:auto; padding-right:8px;" class="custom-scroll">
                     ${runningHtml || emptyMsg}
                 </div>
             </div>
-            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #10b981; border-radius: 8px;">
-                <h4 style="margin:0 0 10px 0; color:#10b981; font-size:13px; display:flex; justify-content:space-between;">
+            <div class="chart-card" style="height:auto; padding:20px; border-top: 4px solid var(--success); border-radius: var(--radius-md);">
+                <h4 style="margin:0 0 12px 0; color:var(--success); font-size:14px; display:flex; justify-content:space-between; font-weight: 700;">
                     คอนเฟิร์มแล้ว
                 </h4>
-                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                <div style="max-height:200px; overflow-y:auto; padding-right:8px;" class="custom-scroll">
                     ${confirmHtml || emptyMsg}
                 </div>
             </div>
-            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #3b82f6; border-radius: 8px;">
-                <h4 style="margin:0 0 10px 0; color:#3b82f6; font-size:13px; display:flex; justify-content:space-between;">
+            <div class="chart-card" style="height:auto; padding:20px; border-top: 4px solid var(--info); border-radius: var(--radius-md);">
+                <h4 style="margin:0 0 12px 0; color:var(--info); font-size:14px; display:flex; justify-content:space-between; font-weight: 700;">
                     จองคิว
                 </h4>
-                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                <div style="max-height:200px; overflow-y:auto; padding-right:8px;" class="custom-scroll">
                     ${bookingHtml || emptyMsg}
                 </div>
             </div>
-            <div class="chart-card" style="height:auto; padding:15px; border-top: 3px solid #94a3b8; border-radius: 8px;">
-                <h4 style="margin:0 0 10px 0; color:#94a3b8; font-size:13px; display:flex; justify-content:space-between;">
+            <div class="chart-card" style="height:auto; padding:20px; border-top: 4px solid var(--text-secondary); border-radius: var(--radius-md);">
+                <h4 style="margin:0 0 12px 0; color:var(--text-secondary); font-size:14px; display:flex; justify-content:space-between; font-weight: 700;">
                     คิวว่าง
                 </h4>
-                <div style="max-height:180px; overflow-y:auto; padding-right:5px;" class="custom-scroll">
+                <div style="max-height:200px; overflow-y:auto; padding-right:8px;" class="custom-scroll">
                     ${availHtml || emptyMsg}
                 </div>
             </div>
         `;
     }
 
-    // 🗺️ ฟังก์ชันวาดแผนที่สำหรับคิวงานกำลังดำเนินการ
     function updateInstallMap(runningData) {
         if (!installMap) {
-            // เซ็ตจุดศูนย์กลางเริ่มต้น (กรุงเทพฯ)
             installMap = L.map('installMap').setView([13.7563, 100.5018], 10);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -1100,7 +1200,6 @@
             let loc = String(t.location || "");
             if (loc === '-' || loc === '') return;
 
-            // พยายามแกะ Lat/Lng จากลิงก์ Google Maps หลายๆ รูปแบบ
             let lat = null, lng = null;
             const regexAt = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
             const regexQ = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
@@ -1112,7 +1211,7 @@
                 lat = parseFloat(match[1]);
                 lng = parseFloat(match[2]);
             } else {
-                unmappedCount++; // ถ้าหาไม่เจอ เช่นเป็น goo.gl สั้นๆ
+                unmappedCount++; 
                 return;
             }
 
@@ -1130,14 +1229,12 @@
             }
         });
 
-        // เลื่อนมุมกล้องให้ครอบคลุมหมุดทั้งหมด
         if (bounds.length > 0) {
             installMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
         } else {
-            installMap.setView([13.7563, 100.5018], 10); // กลับไปจุดเริ่มต้นถ้าไม่มีหมุด
+            installMap.setView([13.7563, 100.5018], 10); 
         }
 
-        // แสดงคำเตือนถ้ามีหมุดที่ปักไม่ได้
         const warningEl = document.getElementById('mapWarning');
         if (warningEl) {
             if (unmappedCount > 0) {
@@ -1196,24 +1293,17 @@
         
         const ownerFilter = document.getElementById('crmOwnerFilter').value;
 
-        // 1. HEADER LOGIC (ADDED Products, Total, Province to ALL VIEWS)
         let headers = `<tr><th>#</th><th>Buy Date</th><th>Call Date</th><th>CS Name</th><th>Customer Name</th><th>Phone</th>
         <th>Products</th><th>Total</th><th>Province</th>`;
         
         if (currentCRMFilter === 'all') {
-            // Already added in base headers
-        } else if (currentCRMFilter === 7) {
-            headers += `<th>Detail</th><th>Link</th>`;
-        } else if (currentCRMFilter === 30) {
-            headers += `<th>Detail</th><th>Link</th>`;
-        } else if (currentCRMFilter === 60) {
+        } else if (currentCRMFilter === 7 || currentCRMFilter === 30 || currentCRMFilter === 60) {
             headers += `<th>Detail</th><th>Link</th>`;
         }
         headers += `</tr>`;
         thead.innerHTML = headers;
 
 
-        // 2. FILTER LOGIC
         const search = document.getElementById('crmSearch').value.toLowerCase();
         const today = new Date(); today.setHours(0,0,0,0);
 
@@ -1231,31 +1321,21 @@
         });
 
         const filtered = displayData.filter(t => {
-            // Search Filter
             if(search && !JSON.stringify(t).toLowerCase().includes(search)) return false;
-            
-            // 🔥 Officer (Owner) Filter 🔥
             if(ownerFilter !== 'all' && t.owner !== ownerFilter) return false;
 
-            // 🔥 Content Check Logic (New v.0.5.34) 🔥
-            // Show only if there is a Link or Note (value is not '-')
             const hasData = (val) => val && String(val).trim() !== '-' && String(val).trim() !== '';
 
             if (currentCRMFilter === 7) {
-                // Must have content in P or Q
                 if (!hasData(t.colP) && !hasData(t.colQ)) return false;
             } else if (currentCRMFilter === 30) {
-                // Must have content in U or V
                 if (!hasData(t.colU) && !hasData(t.colV)) return false;
             } else if (currentCRMFilter === 60) {
-                // Must have content in Z or AA
                 if (!hasData(t.colZ) && !hasData(t.colAA)) return false;
             }
-
             return true;
         });
 
-        // Sort
         filtered.sort((a,b) => {
             if (currentCRMFilter !== 'all') return (a.targetDate || 0) - (b.targetDate || 0);
             return (b.buyDateObj || 0) - (a.buyDateObj || 0);
@@ -1263,7 +1343,7 @@
 
         document.getElementById('crm-total').innerText = filtered.length;
 
-        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px; opacity:0.5;">ไม่พบข้อมูล</td></tr>`; return; }
+        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:40px; opacity:0.5; font-size: 14px;">ไม่พบข้อมูล</td></tr>`; return; }
 
         if(filtered.length > crmLimit) {
             document.getElementById('crmLoadMoreBtn').style.display = 'inline-flex';
@@ -1284,17 +1364,14 @@
                 <td>${i+1}</td>
                 <td>${t.date}</td>
                 <td>${callDateDisplay}</td>
-                <td><span class="status-badge status-assigned">${t.owner}</span></td>
+                <td><span class="status-badge status-assigned" style="padding: 4px 12px; font-size: 11px;">${t.owner}</span></td>
                 <td style="font-weight:600; color:var(--primary-color); cursor:pointer;" onclick="copyText('${t.name}')">${t.name}</td>
                 <td style="cursor:pointer;" onclick="copyText('${t.phone}')">${t.phone}</td>
-                <td style="font-size:11px;">${t.items}</td>
+                <td style="font-size:12px;">${t.items}</td>
                 <td style="text-align:right;">${t.total}</td>
                 <td>${t.province}</td>`;
 
-            // DYNAMIC COLUMNS
-            if (currentCRMFilter === 'all') {
-                // Already added base columns
-            } else if (currentCRMFilter === 7) {
+            if (currentCRMFilter === 7) {
                 rowHtml += `<td>${formatLink(t.colP)}</td><td>${formatLink(t.colQ)}</td>`;
             } else if (currentCRMFilter === 30) {
                 rowHtml += `<td>${formatLink(t.colU)}</td><td>${formatLink(t.colV)}</td>`;
@@ -1307,13 +1384,11 @@
         });
     }
 
-    // 🏠 ฟังก์ชันคำนวณและแสดงผลข้อมูลหน้า Home โดยเฉพาะ
     function updateHome() {
         const todayObj = new Date();
         const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}-${String(todayObj.getDate()).padStart(2,'0')}`;
         const currentMonthStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth()+1).padStart(2,'0')}`;
 
-        // เตรียมตัวแปรสำหรับเก็บข้อมูลรายบุคคล (เอา Friend ออก ตามคำสั่ง)
         const team = { 
             'Best':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
             'Ball':   { monthCases: 0, activeCases: 0, todayTotal: 0, todayClosed: 0 }, 
@@ -1329,38 +1404,23 @@
             const isClosed = t.status.includes('ปิด');
             const isUrgent = t.urgent.includes('1') || t.urgent.includes('2') || t.urgent.includes('พิเศษ');
 
-            // 1. ตรวจสอบข้อมูล KPI
             if (team[owner]) {
-                // นับเคสของเดือนนี้
-                if (dateStr.startsWith(currentMonthStr)) {
-                    team[owner].monthCases++;
-                }
-                
-                // นับจำนวนเคสค้างทั้งหมดในระบบ
-                if (!isClosed) {
-                    team[owner].activeCases++;
-                }
-
-                // นับเคสเฉพาะวันนี้ เพื่อหา % การปิดเคส
+                if (dateStr.startsWith(currentMonthStr)) team[owner].monthCases++;
+                if (!isClosed) team[owner].activeCases++;
                 if (dateStr === todayStr) {
                     team[owner].todayTotal++;
-                    if (isClosed) {
-                        team[owner].todayClosed++;
-                    }
+                    if (isClosed) team[owner].todayClosed++;
                 }
             }
 
-            // 2. ดึงเคสด่วนมาก และปานกลาง ที่ยังค้างอยู่ (ไม่นับอันที่ปิดแล้ว) มาแสดงด้านล่าง
             if (!isClosed && isUrgent) {
-                const uCol = t.urgent.includes('1') ? '#ef4444' : '#f59e0b';
+                const uCol = t.urgent.includes('1') ? 'var(--danger)' : 'var(--warning)';
                 let sClass = t.status.includes('กำลัง') ? 'status-doing' : (t.status.includes('มอบ') ? 'status-assigned' : 'status-pending');
 
-                // เวลากดให้เด้งไปหน้า Dashboard แล้วค้นหา Ticket ID นั้นทันที
-                // * ปรับแก้สไตล์ให้สีตัวหนังสือปรับตามโหมด Light/Dark ได้อัตโนมัติ
-                urgentHtml += `<tr style="cursor:pointer;" onclick="switchPage('dashboard', document.querySelector('.dropdown-trigger')); document.getElementById('searchInput').value='${t.id}'; renderTable();">
-                    <td style="font-weight:600; color:var(--primary-color)">${t.id}</td>
-                    <td style="font-weight:500; color:var(--text-main);">${t.customer}</td>
-                    <td style="color:var(--text-main);">${t.issue}</td>
+                urgentHtml += `<tr style="cursor:pointer;" onclick="switchPage('dashboard', document.querySelector('.dropdown-trigger')); document.getElementById('searchInput').value='${t.id}'; filterOPS();">
+                    <td style="font-weight:700; color:var(--primary-color)">${t.id}</td>
+                    <td style="font-weight:600; color:var(--text-main);">${t.customer}</td>
+                    <td style="color:var(--text-secondary);">${t.issue}</td>
                     <td><span class="urgent-badge" style="background:${uCol}"></span><span style="color:var(--text-main);">${t.urgent.split('.')[1]||t.urgent}</span></td>
                     <td><span class="status-badge" style="border: 1px solid var(--card-border); color:var(--text-main); background: transparent;">${t.owner}</span></td>
                     <td><span class="status-badge ${sClass}">${t.status}</span></td>
@@ -1368,11 +1428,9 @@
             }
         });
 
-        // นำข้อมูลลงไปแสดงบน KPI Card
         const kpiContainer = document.getElementById('home-kpis');
         kpiContainer.innerHTML = '';
         
-        // ชุดสีสำหรับแต่ละคน เพื่อให้ชื่อดูโดดเด่นและชัดเจน
         const themeColors = ['var(--danger)', 'var(--info)', 'var(--success)', 'var(--warning)'];
         let colorIndex = 0;
 
@@ -1380,25 +1438,18 @@
             const todayPct = s.todayTotal ? Math.round((s.todayClosed / s.todayTotal) * 100) : 0;
             const nameColor = themeColors[colorIndex % 4];
             
-            // * นำ bg-gradient ออกเพื่อใช้ Card แบบมาตรฐานที่ปรับสีตาม Light/Dark ได้เอง
-            // * ปรับขนาดชื่อ (h3) ใหญ่ขึ้นเป็น 24px และใช้สีจาก themeColors
             kpiContainer.innerHTML += `
-            <div class="stat-item" style="text-align:left; padding:15px; display:flex; flex-direction:column; gap:8px;">
-                <h3 style="margin:0; font-size:24px; font-weight:700; color:${nameColor}; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${name}</h3>
-                <div style="font-size:12px; color:var(--text-secondary);">เดือนนี้: <strong style="font-size:16px; color:var(--text-main);">${s.monthCases}</strong> เคส</div>
-                <div style="font-size:12px; color:var(--text-secondary);">งานค้าง (Active): <strong style="font-size:16px; color:var(--text-main);">${s.activeCases}</strong></div>
-                <div style="font-size:12px; color:var(--text-secondary);">ปิดงานวันนี้: <strong style="font-size:16px; color:var(--text-main);">${todayPct}%</strong> (${s.todayClosed}/${s.todayTotal})</div>
+            <div class="stat-item" style="text-align:left; padding:20px; display:flex; flex-direction:column; gap:8px;">
+                <h3 style="margin:0; font-size:24px; font-weight:700; color:${nameColor};">${name}</h3>
+                <div style="font-size:13px; color:var(--text-secondary); font-weight:500;">เดือนนี้: <strong style="font-size:16px; color:var(--text-main);">${s.monthCases}</strong> เคส</div>
+                <div style="font-size:13px; color:var(--text-secondary); font-weight:500;">งานค้าง (Active): <strong style="font-size:16px; color:var(--text-main);">${s.activeCases}</strong></div>
+                <div style="font-size:13px; color:var(--text-secondary); font-weight:500;">ปิดงานวันนี้: <strong style="font-size:16px; color:var(--text-main);">${todayPct}%</strong> (${s.todayClosed}/${s.todayTotal})</div>
             </div>`;
             colorIndex++;
         }
 
-        // นำข้อมูลลงตาราง Urgent
         const urgentBody = document.getElementById('homeUrgentBody');
-        if(urgentHtml === "") {
-            urgentBody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding:30px; color:var(--text-main);">🎉 ยอดเยี่ยม! ไม่มีเคสด่วนหรือปานกลางค้างอยู่เลย</td></tr>`;
-        } else {
-            urgentBody.innerHTML = urgentHtml;
-        }
+        urgentBody.innerHTML = urgentHtml || `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding:40px; color:var(--text-main); font-size: 14px;">🎉 ยอดเยี่ยม! ไม่มีเคสด่วนหรือปานกลางค้างอยู่เลย</td></tr>`;
     }
 
     function updateDashboard() {
@@ -1430,20 +1481,18 @@
         if(tickerText) { 
             document.getElementById('urgentTicker').style.display = 'flex'; 
             document.getElementById('tickerContent').innerHTML = tickerText; 
-        } else {
-            document.getElementById('urgentTicker').style.display = 'none';
-        }
+        } else document.getElementById('urgentTicker').style.display = 'none';
 
         const lb = document.getElementById('leaderboard'); lb.innerHTML = '';
         let i = 1;
         for(const [name, s] of Object.entries(team)) {
             const pct = s.t ? Math.round((s.c/s.t)*100) : 0;
             lb.innerHTML += `
-            <div class="lb-card bg-gradient-${i}" onclick="document.getElementById('csFilter').value='${name}';renderTable()">
+            <div class="lb-card bg-gradient-${i}" onclick="document.getElementById('csFilter').value='${name}';filterOPS()">
                 <h3>${name}</h3>
                 <div class="count">${s.t}</div>
                 <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-                <div class="progress-label">${pct}% Closed</div>
+                <div class="progress-label" style="font-size: 11px; margin-top: 8px; font-weight: 500;">${pct}% Closed</div>
             </div>`; 
             i++;
         }
@@ -1489,19 +1538,27 @@
             return true;
         });
         filteredExport = filtered; 
-        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; opacity:0.5;">ไม่พบข้อมูล</td></tr>`; return; }
+        if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:40px; opacity:0.5; font-size: 14px;">ไม่พบข้อมูล</td></tr>`; return; }
 
-        filtered.forEach((t, i) => {
-            const uCol = t.urgent.includes('1') ? '#ef4444' : ((t.urgent.includes('2') || t.urgent.includes('พิเศษ')) ? '#f59e0b' : '#3b82f6');
+        if(filtered.length > opsLimit) {
+            document.getElementById('opsLoadMoreBtn').style.display = 'inline-flex';
+        } else {
+            document.getElementById('opsLoadMoreBtn').style.display = 'none';
+        }
+
+        const itemsToShow = filtered.slice(0, opsLimit);
+
+        itemsToShow.forEach((t, i) => {
+            const uCol = t.urgent.includes('1') ? 'var(--danger)' : ((t.urgent.includes('2') || t.urgent.includes('พิเศษ')) ? 'var(--warning)' : 'var(--info)');
             let sClass = 'status-pending'; 
             if(t.status.includes('ปิด')) sClass = 'status-closed'; 
             else if(t.status.includes('กำลัง')) sClass = 'status-doing'; 
             else if(t.status.includes('มอบ')) sClass = 'status-assigned';
 
             tbody.innerHTML += `<tr>
-                <td>${i+1}</td><td style="font-weight:600; color:var(--primary-color)">${t.id}</td><td>${t.date}</td> 
+                <td>${i+1}</td><td style="font-weight:700; color:var(--primary-color)">${t.id}</td><td>${t.date}</td> 
                 <td style="font-weight:600;"><span class="click-to-copy" onclick="copyText(this.innerText)">${t.customer}</span></td>
-                <td><div>${t.model}</div><small style="opacity:0.6">${t.type}</small></td>
+                <td><div style="font-weight:600; margin-bottom: 4px;">${t.model}</div><small style="opacity:0.7; font-size: 11px;">${t.type}</small></td>
                 <td>${t.issue}</td><td>${t.solution}</td><td>${t.owner}</td>
                 <td><span class="urgent-badge" style="background:${uCol}"></span>${t.urgent.split('.')[1]||t.urgent}</td>
                 <td><span class="status-badge ${sClass}">${t.status}</span></td><td>${t.assignee}</td>
@@ -1509,7 +1566,6 @@
         });
     }
 
-    // ฟังก์ชัน Render ลงตาราง Install Q+ ทั้ง 4 กล่อง
     function renderInstall() {
         const runningBody = document.querySelector('#installRunningTable tbody');
         const confirmBody = document.querySelector('#installConfirmTable tbody');
@@ -1517,175 +1573,222 @@
         const availableBody = document.querySelector('#installAvailableTable tbody');
 
         if(!runningBody) return;
-
-        runningBody.innerHTML = '';
-        confirmBody.innerHTML = '';
-        bookingBody.innerHTML = '';
-        availableBody.innerHTML = '';
+        runningBody.innerHTML = confirmBody.innerHTML = bookingBody.innerHTML = availableBody.innerHTML = '';
 
         const dateFilter = document.getElementById('installDateFilter').value;
         const search = document.getElementById('installSearch').value.toLowerCase();
         const teamFilter = document.getElementById('installTeamFilter').value;
 
-        // ฟิลเตอร์ข้อมูล
         const filtered = allInstalls.filter(t => {
-            if (dateFilter) { 
-                const rowDate = parseDate(t.date); 
-                if (rowDate !== dateFilter) return false; 
-            }
+            if (dateFilter) if (parseDate(t.date) !== dateFilter) return false; 
             if (teamFilter !== 'all' && t.team && !t.team.includes(teamFilter.split(' ')[0])) return false;
             if (search && !JSON.stringify(t).toLowerCase().includes(search)) return false;
             return true;
         });
 
         let cRunning = 0, cConfirm = 0, cBooking = 0, cAvail = 0;
-        let runningJobsForMap = []; // 🗺️ เก็บข้อมูลสำหรับส่งไปแผนที่
+        let runningJobsForMap = [];
 
         filtered.forEach(t => {
             const s = String(t.status).toLowerCase();
-            let tr = `<tr>
-                <td>${t.date}</td>
-                <td>${t.timeDetail}</td>
-                <td style="font-weight:600; color:var(--text-main);">${t.customer}</td>
-                <td>${formatLink(t.location)}</td> <td>${t.task}</td>
-                <td>${t.mainProduct}</td>
-                <td>${t.waterFilter}</td>
-                <td>${t.team}</td>
-                <td>${t.operator}</td>`;
+            let tr = `<tr><td>${t.date}</td><td>${t.timeDetail}</td><td style="font-weight:600; color:var(--text-main);">${t.customer}</td>
+                <td>${formatLink(t.location)}</td><td>${t.task}</td><td>${t.mainProduct}</td><td>${t.waterFilter}</td><td>${t.team}</td><td>${t.operator}</td>`;
 
-            // แยกสถานะลงกล่องตามเงื่อนไขเป๊ะๆ
             if (s.includes('กำลังดำเนินการ')) {
-                tr += `<td><span class="status-badge status-doing" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.2);">${t.status}</span></td></tr>`;
-                runningBody.innerHTML += tr;
-                cRunning++;
-                runningJobsForMap.push(t); // 🗺️ เพิ่มลง Array รอส่งให้แผนที่
-            } 
-            else if (s.includes('comfirm') || s.includes('confirm') || s.includes('คอนเฟิร์ม')) {
+                tr += `<td><span class="status-badge status-doing" style="color: var(--danger); background: var(--danger-bg);">${t.status}</span></td></tr>`;
+                runningBody.innerHTML += tr; cRunning++; runningJobsForMap.push(t);
+            } else if (s.includes('confirm') || s.includes('คอนเฟิร์ม')) {
                 tr += `<td><span class="status-badge status-closed">${t.status}</span></td></tr>`;
-                confirmBody.innerHTML += tr;
-                cConfirm++;
-            } 
-            else if (s.includes('จอง')) {
+                confirmBody.innerHTML += tr; cConfirm++;
+            } else if (s.includes('จอง')) {
                 tr += `<td><span class="status-badge status-assigned">${t.status}</span></td></tr>`;
-                bookingBody.innerHTML += tr;
-                cBooking++;
-            } 
-            else if (s.includes('ว่าง')) {
-                // คิวว่างใช้คอลัมน์เหมือนกันเพื่อความเรียบร้อย
-                let trAvail = `<tr>
-                    <td>${t.date}</td>
-                    <td>${t.timeDetail}</td>
-                    <td style="color:var(--text-secondary);">${t.customer !== '-' ? t.customer : 'รอใส่ข้อมูล'}</td>
-                    <td>${formatLink(t.location)}</td> <td>${t.task}</td>
-                    <td>${t.mainProduct}</td>
-                    <td>${t.waterFilter}</td>
-                    <td>${t.team}</td>
-                    <td>${t.operator}</td>
-                    <td><span class="status-badge status-pending">${t.status}</span></td></tr>`;
-                availableBody.innerHTML += trAvail;
-                cAvail++;
+                bookingBody.innerHTML += tr; cBooking++;
+            } else if (s.includes('ว่าง')) {
+                tr += `<td><span class="status-badge status-pending">${t.status}</span></td></tr>`;
+                availableBody.innerHTML += tr; cAvail++;
             }
         });
 
-        // หากตารางไหนไม่มีข้อมูลเลย ให้แสดงข้อความเตือน
-        const emptyRow = (colspan) => `<tr><td colspan="${colspan}" style="text-align:center; padding:20px; color:var(--text-secondary);">ไม่มีข้อมูล</td></tr>`;
-        if (cRunning === 0) runningBody.innerHTML = emptyRow(10);
-        if (cConfirm === 0) confirmBody.innerHTML = emptyRow(10);
-        if (cBooking === 0) bookingBody.innerHTML = emptyRow(10);
-        if (cAvail === 0) availableBody.innerHTML = emptyRow(10);
+        const emptyRow = (c) => `<tr><td colspan="${c}" style="text-align:center; padding:30px; opacity:0.5; font-size: 14px;">ไม่มีข้อมูล</td></tr>`;
+        if(!cRunning) runningBody.innerHTML = emptyRow(10); if(!cConfirm) confirmBody.innerHTML = emptyRow(10);
+        if(!cBooking) bookingBody.innerHTML = emptyRow(10); if(!cAvail) availableBody.innerHTML = emptyRow(10);
 
-        // 🗺️ เรียกใช้ฟังก์ชันอัปเดตแผนที่ พร้อมส่งข้อมูลคิวกำลังดำเนินการไปปักหมุด
         updateInstallMap(runningJobsForMap);
+    }
+
+    function drawCRMMap() {
+        if(typeof google === 'undefined' || !google.visualization || !google.visualization.GeoChart || allCRM.length === 0) return;
+        const mapDiv = document.getElementById('crm_map_div');
+        if(!mapDiv) return;
+
+        const provCounts = {};
+        
+        // 1. นำรายชื่อจังหวัดทั้งหมดในไทยมาเตรียมไว้ (เพื่อให้โชว์ Tooltip ได้แม้ยังไม่มีข้อมูลลูกค้า)
+        const allThaiProvinces = ['กรุงเทพมหานคร', 'กระบี่', 'กาญจนบุรี', 'กาฬสินธุ์', 'กำแพงเพชร', 'ขอนแก่น', 'จันทบุรี', 'ฉะเชิงเทรา', 'ชลบุรี', 'ชัยนาท', 'ชัยภูมิ', 'ชุมพร', 'เชียงราย', 'เชียงใหม่', 'ตรัง', 'ตราด', 'ตาก', 'นครนายก', 'นครปฐม', 'นครพนม', 'นครราชสีมา', 'นครศรีธรรมราช', 'นครสวรรค์', 'นนทบุรี', 'นราธิวาส', 'น่าน', 'บึงกาฬ', 'บุรีรัมย์', 'ปทุมธานี', 'ประจวบคีรีขันธ์', 'ปราจีนบุรี', 'ปัตตานี', 'พระนครศรีอยุธยา', 'พะเยา', 'พังงา', 'พัทลุง', 'พิจิตร', 'พิษณุโลก', 'เพชรบุรี', 'เพชรบูรณ์', 'แพร่', 'ภูเก็ต', 'มหาสารคาม', 'มุกดาหาร', 'แม่ฮ่องสอน', 'ยโสธร', 'ยะลา', 'ร้อยเอ็ด', 'ระนอง', 'ระยอง', 'ราชบุรี', 'ลพบุรี', 'ลำปาง', 'ลำพูน', 'เลย', 'ศรีสะเกษ', 'สกลนคร', 'สงขลา', 'สตูล', 'สมุทรปราการ', 'สมุทรสงคราม', 'สมุทรสาคร', 'สระแก้ว', 'สระบุรี', 'สิงห์บุรี', 'สุโขทัย', 'สุพรรณบุรี', 'สุราษฎร์ธานี', 'สุรินทร์', 'หนองคาย', 'หนองบัวลำภู', 'อ่างทอง', 'อำนาจเจริญ', 'อุดรธานี', 'อุตรดิตถ์', 'อุทัยธานี', 'อุบลราชธานี'];
+        allThaiProvinces.forEach(p => provCounts[p] = 0);
+
+        allCRM.forEach(t => {
+            let p = t.province;
+            if (p && p !== '-' && p !== '') {
+                p = p.replace(/^จ\./, '').replace(/^จังหวัด/, '').trim();
+                if (p === 'กทม' || p === 'กทม.') p = 'กรุงเทพมหานคร';
+                provCounts[p] = (provCounts[p] || 0) + 1;
+            }
+        });
+
+        const dataTable = [['Province', 'Customers']];
+        for (const [prov, count] of Object.entries(provCounts)) {
+            dataTable.push([prov, count]);
+        }
+
+        const data = google.visualization.arrayToDataTable(dataTable);
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+        const options = {
+            region: 'TH',
+            resolution: 'provinces',
+            backgroundColor: 'transparent',
+            datalessRegionColor: isDark ? '#27272a' : '#e2e8f0',
+            // 🎨 ตั้งค่าช่วงสีตามจำนวนลูกค้า โดยให้เลข 0 เป็นสีเทากลืนกับพื้นฐาน
+            colorAxis: {
+                values: [0, 0.9, 1, 4.9, 5, 14.9, 15, 29.9, 30, 49.9, 50],
+                colors: [
+                    isDark ? '#27272a' : '#e2e8f0', // 0 คน (สีเดียวกับไม่มีข้อมูล)
+                    isDark ? '#27272a' : '#e2e8f0', // 0.9
+                    '#10b981', '#10b981', // 1 - 4 สีเขียว
+                    '#eab308', '#eab308', // 5 - 14 สีเหลือง
+                    '#8b4513', '#8b4513', // 15 - 29 สีน้ำตาล
+                    '#f97316', '#f97316', // 30 - 49 สีส้ม
+                    '#ef4444'             // >= 50 สีแดง
+                ]
+            },
+            // isHtml ช่วยให้ Tooltip โดน Override สี CSS ได้สมบูรณ์ขึ้น
+            tooltip: { isHtml: true, textStyle: { color: isDark ? '#ffffff' : '#0f172a', fontName: 'Noto Sans Thai' } }
+        };
+
+        const chart = new google.visualization.GeoChart(mapDiv);
+
+        // --- 2. สร้างระบบ Zoom & Pan ให้ Map โดยการใช้ Event Wheel/Mouse ---
+        google.visualization.events.addListener(chart, 'ready', function () {
+            if (!mapDiv.hasAttribute('data-zoom-init')) {
+                mapDiv.setAttribute('data-zoom-init', 'true');
+                let zoomLevel = 1;
+                let isDragging = false;
+                let startX, startY, translateX = 0, translateY = 0;
+
+                const container = mapDiv.parentElement;
+                
+                mapDiv.style.transformOrigin = 'center center';
+                mapDiv.style.transition = 'transform 0.1s ease-out';
+                mapDiv.style.width = '100%';
+                mapDiv.style.height = '100%';
+                mapDiv.style.cursor = 'grab';
+
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    zoomLevel += e.deltaY * -0.002;
+                    zoomLevel = Math.min(Math.max(1, zoomLevel), 8); // จำกัดการซูม 1x ถึง 8x
+                    mapDiv.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
+                });
+
+                container.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    mapDiv.style.cursor = 'grabbing';
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    mapDiv.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
+                });
+
+                window.addEventListener('mouseup', () => { 
+                    isDragging = false; 
+                    mapDiv.style.cursor = 'grab';
+                });
+                
+                container.addEventListener('mouseleave', () => { 
+                    isDragging = false; 
+                    mapDiv.style.cursor = 'grab';
+                });
+
+                // ดับเบิ้ลคลิกเพื่อรีเซ็ต
+                container.addEventListener('dblclick', () => {
+                    zoomLevel = 1; translateX = 0; translateY = 0;
+                    mapDiv.style.transform = `translate(0px, 0px) scale(1)`;
+                });
+            }
+        });
+
+        chart.draw(data, options);
     }
 
     function drawChart(data) {
         if(typeof google === 'undefined' || !google.visualization) return;
-        if(!document.getElementById('view-summary').classList.contains('active') && !document.getElementById('view-home').classList.contains('active')) return;
-        
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const textStyle = { color: isDark ? '#94a3b8' : '#64748b', fontName:'Inter', fontSize:12 };
-        const baseOpt = { backgroundColor: 'transparent', legend: { position: 'right', textStyle: textStyle }, chartArea: { left:10, top:20, width:'90%', height:'80%' }, pieSliceBorderColor: 'transparent', sliceVisibilityThreshold: 0 };
+        
+        const textStyle = { color: isDark ? '#a1a1aa' : '#64748b', fontName:'Noto Sans Thai', fontSize:12 };
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+        const modernColors = ['#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#f43f5e', '#6366f1', '#14b8a6', '#f97316', '#84cc16'];
 
-        // ================= กราฟสำหรับหน้า CS SUMMARY =================
+        const baseOpt = { 
+            backgroundColor: 'transparent', 
+            colors: modernColors,
+            legend: { position: window.innerWidth < 1024 ? 'bottom' : 'right', textStyle: textStyle, alignment: 'center' }, 
+            chartArea: { left: 50, top: 20, right: 20, bottom: 60, width:'80%', height:'75%' }, 
+            pieSliceBorderColor: 'transparent',
+            pieHole: 0.65, 
+            pieSliceText: 'percentage',
+            pieSliceTextStyle: { color: '#ffffff', fontName: 'Noto Sans Thai', fontSize: 13, bold: true },
+            tooltip: { isHtml: true }, 
+            hAxis: { textStyle: textStyle, gridlines: { color: 'transparent' }, baselineColor: 'transparent' },
+            vAxis: { textStyle: textStyle, gridlines: { color: gridColor }, baselineColor: gridColor },
+            animation: { startup: true, duration: 1000, easing: 'out' } 
+        };
+
         if(document.getElementById('view-summary').classList.contains('active')) {
             const mCounts = {}; data.forEach(t => { if(t.model && t.model!=='-') mCounts[t.model] = (mCounts[t.model]||0)+1; });
             const mData = [['Model','Count']]; Object.entries(mCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => mData.push(x));
-            new google.visualization.PieChart(document.getElementById('chart_div')).draw(google.visualization.arrayToDataTable(mData), {...baseOpt, pieHole: 0.5});
+            new google.visualization.ColumnChart(document.getElementById('chart_div')).draw(google.visualization.arrayToDataTable(mData), {
+                ...baseOpt, legend: 'none', bar: { groupWidth: '60%' },
+                hAxis: { ...baseOpt.hAxis, slantedText: true, slantedTextAngle: 45 },
+                chartArea: { left: 50, top: 20, right: 20, bottom: 80, width:'100%' }
+            });
 
             const tCounts = {}; data.forEach(t => { if(t.type && t.type!=='-') tCounts[t.type] = (tCounts[t.type]||0)+1; });
             const tData = [['Type','Count']]; Object.entries(tCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => tData.push(x));
-            new google.visualization.PieChart(document.getElementById('chart_type_div')).draw(google.visualization.arrayToDataTable(tData), {...baseOpt, pieHole: 0.5});
-
-            const uCounts = {}; data.forEach(t => { if(t.urgent) { const label = t.urgent.split('.')[1] || t.urgent; uCounts[label] = (uCounts[label]||0)+1; } });
-            const uData = [['Urgency','Count']]; Object.entries(uCounts).forEach(x => uData.push(x));
-            new google.visualization.PieChart(document.getElementById('chart_urgent_div')).draw(google.visualization.arrayToDataTable(uData), {...baseOpt, pieHole: 0.5, colors: ['#ef4444', '#f59e0b', '#3b82f6']});
-
-            const sCounts = {}; data.forEach(t => { const s = t.satisfaction || 'N/A'; sCounts[s] = (sCounts[s]||0)+1; });
-            const sData = [['Rating','Count', { role: 'style' }]]; Object.entries(sCounts).sort().forEach(([k,v]) => sData.push([k, v, '#10b981']));
-            new google.visualization.BarChart(document.getElementById('chart_csat_div')).draw(google.visualization.arrayToDataTable(sData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
-
-            const csResp = { 'Best': {sum:0, count:0}, 'Friend': {sum:0, count:0}, 'Ball': {sum:0, count:0}, 'Ohm': {sum:0, count:0}, 'Tar': {sum:0, count:0} }; 
-            data.forEach(t => { 
-                const val = parseFloat(t.responseTime); const owner = t.owner;
-                if(!isNaN(val) && owner && owner !== '-') { 
-                    if(!csResp[owner]) csResp[owner] = { sum:0, count:0 }; 
-                    csResp[owner].sum += val; csResp[owner].count++; 
-                }
+            new google.visualization.PieChart(document.getElementById('chart_type_div')).draw(google.visualization.arrayToDataTable(tData), {
+                ...baseOpt, chartArea: { left: '10%', top: '10%', right: '10%', bottom: '15%', width:'80%', height:'75%' } 
             });
-            const rData = [['CS Name','Avg Minutes', { role: 'style' }]]; 
-            Object.entries(csResp).forEach(([k,v]) => { rData.push([k, parseFloat((v.count?v.sum/v.count:0).toFixed(2)), '#3b82f6']); });
-            if (rData.length === 1) rData.push(['No Data', 0, '#3b82f6']);
-            new google.visualization.ColumnChart(document.getElementById('chart_resp_div')).draw(google.visualization.arrayToDataTable(rData), {...baseOpt, legend:'none', hAxis:{textStyle}, vAxis:{textStyle}});
         }
 
-        // ================= กราฟสำหรับหน้า HOME =================
         if(document.getElementById('view-home').classList.contains('active')) {
-            
-            // 1. กราฟวงกลม: ปัญหาที่พบเจอมากที่สุด (Top Issues)
-            const issueCounts = {}; 
-            data.forEach(t => { 
-                if(t.issue && t.issue !== '-' && t.issue !== '') {
-                    issueCounts[t.issue] = (issueCounts[t.issue]||0)+1; 
-                }
+            const issueCounts = {}; data.forEach(t => { if(t.issue && t.issue !== '-') issueCounts[t.issue] = (issueCounts[t.issue]||0)+1; });
+            const iData = [['Issue','Count']]; Object.entries(issueCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => iData.push(x));
+            if(iData.length > 1) new google.visualization.PieChart(document.getElementById('chart_home_issue_div')).draw(google.visualization.arrayToDataTable(iData), {
+                ...baseOpt, chartArea: { left: '10%', top: '10%', right: '10%', bottom: '15%', width:'80%', height:'75%' }
             });
-            const iData = [['Issue','Count']]; 
-            // เลือก Top 10 เพื่อไม่ให้กราฟแน่นเกินไป
-            Object.entries(issueCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(x => iData.push(x));
-            if(iData.length > 1) {
-                new google.visualization.PieChart(document.getElementById('chart_home_issue_div')).draw(google.visualization.arrayToDataTable(iData), {...baseOpt, pieHole: 0.5});
-            }
 
-            // 2. กราฟเส้น: ความเร็วในการตอบเฉลี่ยรายวัน (Last 14 Active Days)
-            const dateResp = {};
-            data.forEach(t => {
-                const dateStr = parseDate(t.date);
-                const val = parseFloat(t.responseTime);
-                if(dateStr && !isNaN(val)) {
-                    if(!dateResp[dateStr]) dateResp[dateStr] = {sum:0, count:0};
-                    dateResp[dateStr].sum += val;
-                    dateResp[dateStr].count++;
-                }
+            const dateResp = {}; data.forEach(t => { 
+                const d = parseDate(t.date); const v = parseFloat(t.responseTime);
+                if(d && !isNaN(v)) { if(!dateResp[d]) dateResp[d]={s:0,c:0}; dateResp[d].s+=v; dateResp[d].c++; }
             });
-            const lineData = [['Date', 'Avg Minutes']];
-            // เรียงวันที่จากน้อยไปมาก และดึงแค่ 14 วันล่าสุดที่มีการตอบ
-            const sortedDates = Object.keys(dateResp).sort().slice(-14);
-            sortedDates.forEach(d => {
-                // เปลี่ยน Format วันที่ให้สั้นลงเป็น DD/MM เช่น 15/02
-                const shortDate = d.substring(8,10) + "/" + d.substring(5,7);
-                lineData.push([shortDate, parseFloat((dateResp[d].sum / dateResp[d].count).toFixed(2))]);
+            const lineData = [['Date', 'Avg Min']];
+            Object.keys(dateResp).sort().slice(-14).forEach(d => lineData.push([d.substring(8,10)+"/"+d.substring(5,7), parseFloat((dateResp[d].s/dateResp[d].c).toFixed(2))]));
+            if(lineData.length > 1) new google.visualization.AreaChart(document.getElementById('chart_home_resp_div')).draw(google.visualization.arrayToDataTable(lineData), {
+                ...baseOpt, 
+                legend:'none', 
+                colors:['#f97316'], 
+                curveType:'function', 
+                lineWidth: 4, 
+                pointSize: 6,
+                areaOpacity: 0.2,
+                chartArea: { left: 40, top: 20, right: 20, bottom: 40, width:'85%', height:'75%' } 
             });
-            if(lineData.length > 1) {
-                new google.visualization.LineChart(document.getElementById('chart_home_resp_div')).draw(google.visualization.arrayToDataTable(lineData), {
-                    ...baseOpt, 
-                    legend: 'none', 
-                    curveType: 'function',
-                    pointSize: 6,
-                    lineWidth: 3,
-                    hAxis: {textStyle, slantedText: false}, 
-                    vAxis: {textStyle, minValue: 0},
-                    colors: ['#f97316'] // ใช้สี Primary Color
-                });
-            }
         }
     }
 
@@ -1700,12 +1803,19 @@
         fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams(new FormData(this)), mode: 'no-cors' }).then(() => location.reload());
     };
 
-    // 🔥 Restore Last Page on Load
     const lastPage = localStorage.getItem('cs_last_page');
     if (lastPage) {
         const btn = document.querySelector(`button[onclick="switchPage('${lastPage}', this)"]`);
         if(btn) switchPage(lastPage, btn);
     }
+
+    // 🌟 Added window resize listener to automatically fit charts properly when screen changes 🌟
+    window.addEventListener('resize', () => {
+        if(typeof google !== 'undefined' && google.visualization) {
+            if(allTickets.length > 0) drawChart(allTickets);
+            if(allCRM.length > 0 && document.getElementById('view-crm').classList.contains('active')) drawCRMMap();
+        }
+    });
 </script>
 </body>
 </html>
